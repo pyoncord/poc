@@ -5,6 +5,7 @@
 // }
 
 export function getCurrentTheme() {
+    // hardcoding the https://github.com/Fierdetta/themes/blob/main/monokai-night.json for now
     return {
         data: {
             "name": "Monokai Night",

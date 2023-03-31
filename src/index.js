@@ -7,8 +7,10 @@ export default async () => {
     patchChatInput();
     patchJSTheme();
     patchExperiments();
+    patchIdle();
 }
 
+// under metro
 // Get all already initialized modules
 function* getInititializedModules() {
     for (const id in window.modules) {
@@ -20,6 +22,7 @@ function* getInititializedModules() {
 
 const moduleLoadEvent = new EventEmitter();
 
+// under core
 function patchFactories() {
     for (const id in window.modules) {
         const module = window.modules[id];
@@ -49,6 +52,7 @@ function patchFactories() {
     }
 }
 
+// under utils
 const waitFor = (condition) => new Promise((resolve) => {
     const interval = setInterval(() => {
         if (condition()) {
@@ -58,6 +62,7 @@ const waitFor = (condition) => new Promise((resolve) => {
     }, 100);
 });
 
+// under metro
 function waitForModule(filter, callback) {
     const matches = (exports) => {
         if (exports.default && exports.__esModule && filter(exports.default)) {
@@ -74,6 +79,7 @@ function waitForModule(filter, callback) {
     moduleLoadEvent.on("export", matches);
 }
 
+// under metro
 function getLoadedStore(storeName) {
     for (const { exports } of getInititializedModules()) {
         if (exports?.default?.getName?.() === storeName) {
@@ -82,32 +88,7 @@ function getLoadedStore(storeName) {
     }
 }
 
-async function patchExperiments() {
-    waitForModule(
-        (m) => m?.getName?.() === "UserStore",
-        async (exports) => {
-            const UserStore = exports;
-
-            await waitFor(() => UserStore.getCurrentUser());
-            const ExperimentStore = getLoadedStore("ExperimentStore");
-
-            UserStore.getCurrentUser().flags += 1;
-
-            const actionHandlers = UserStore._dispatcher._actionHandlers._computeOrderedActionHandlers("OVERLAY_INITIALIZE").filter(e => e.name.includes("Experiment"));
-
-            for (let a of actionHandlers) {
-                a.actionHandler({
-                    serializedExperimentStore: ExperimentStore.getSerializedState(),
-                    user: { flags: 1 },
-                });
-            }
-
-            ExperimentStore.storeDidChange();
-            UserStore.getCurrentUser().flags -= 1;
-        }
-    );
-}
-
+// under patches/external
 function patchChatInput() {
     waitForModule(
         (m) => m?.name === "ChatInput",
@@ -115,8 +96,38 @@ function patchChatInput() {
     );
 }
 
-const currentTheme = getCurrentTheme();
+// under patches/external
+async function patchExperiments() {
+    waitForModule(
+        (m) => m?.getName?.() === "UserStore",
+        async (exports) => {
+            // wait for user to exist
+            await waitFor(() => exports.getCurrentUser());
+
+            // thanks https://github.com/Beefers/strife/blob/master/plugins/Experiments/src/index.ts
+            const UserStore = exports;
+            const ExperimentStore = getLoadedStore("ExperimentStore");
+
+            UserStore.getCurrentUser().flags += 1;
+
+            for (let a of UserStore._dispatcher._actionHandlers._computeOrderedActionHandlers("OVERLAY_INITIALIZE").filter(e => e.name.includes("Experiment"))) {
+                a.actionHandler({
+                    serializedExperimentStore: ExperimentStore.getSerializedState(),
+                    user: { flags: 1 },
+                });
+            }
+
+            ExperimentStore.storeDidChange();
+
+            UserStore.getCurrentUser().flags -= 1;
+        }
+    );
+}
+
+// under patches/external
 function patchJSTheme() {
+    const currentTheme = getCurrentTheme();
+
     waitForModule(
         (m) => m?.unsafe_rawColors && m.meta,
         (exports) => {
@@ -136,6 +147,24 @@ function patchJSTheme() {
 
                 return orig(theme, key);
             };
+        }
+    );
+}
+
+// under patches/external
+function patchIdle() {
+    waitForModule(
+        (m) => m?.dispatch && m._actionHandlers?._orderedActionHandlers,
+        (exports) => {
+            exports.dispatch = new Proxy(exports.dispatch, {
+                apply: (target, thisArg, argumentsList) => {
+                    if (argumentsList[0].type === "IDLE") {
+                        return;
+                    }
+
+                    return target.apply(thisArg, argumentsList);
+                }
+            });
         }
     );
 }
