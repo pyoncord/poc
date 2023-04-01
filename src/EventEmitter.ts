@@ -1,36 +1,25 @@
 // crazy
 export default class EventEmitter {
-    constructor() {
-        this.events = new Map();
-    }
+    events = new Map();
 
-    on(eventName, listener) {
+    on(eventName: string, listener: Function) {
         if (this.events.has(eventName)) {
-            const listeners = this.events.get(eventName);
-            listeners.add(listener);
+            this.events.get(eventName).add(listener);
         } else {
             this.events.set(eventName, new Set([listener]));
         }
     }
 
-    emit(eventName, ...args) {
+    emit(eventName: string, ...args: Function[]) {
         const listeners = this.events.get(eventName);
         if (listeners) {
-            listeners.forEach((listener) => {
+            listeners.forEach((listener: Function) => {
                 listener(...args);
             });
         }
     }
 
-    once(eventName, listener) {
-        const onceWrapper = (...args) => {
-            this.removeListener(eventName, onceWrapper);
-            listener(...args);
-        };
-        this.on(eventName, onceWrapper);
-    }
-
-    off(eventName, listenerToRemove) {
+    off(eventName: string, listenerToRemove: Function) {
         const listeners = this.events.get(eventName);
         if (!listeners) {
             return;

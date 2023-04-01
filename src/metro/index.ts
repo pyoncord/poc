@@ -1,6 +1,6 @@
 import EventEmitter from "../EventEmitter";
 
-// declare const modules: Record<string | number, any>;
+declare const modules: Record<string | number, any>;
 export const moduleLoadEvent = new EventEmitter();
 
 /**
@@ -9,8 +9,8 @@ export const moduleLoadEvent = new EventEmitter();
  * Patches the module factory to emit an event when the module is loaded.
  */
 export function patchFactories() {
-    for (const id in window.modules) {
-        const module = window.modules[id];
+    for (const id in modules) {
+        const module = modules[id];
 
         if (module.factory) {
             /**
@@ -42,10 +42,10 @@ export function patchFactories() {
  * @returns An iterable of the modules
  * @example for (const m of getInititializedModules()) { console.log(m.exports) }
  */
-export function* getInititializedModules() {
-    for (const id in window.modules) {
-        if (window.modules[id].isInitialized) {
-            yield window.modules[id].publicModule;
+export function* getInititializedModules(): IterableIterator<any> {
+    for (const id in modules) {
+        if (modules[id].isInitialized) {
+            yield modules[id].publicModule;
         }
     }
 }
@@ -56,7 +56,7 @@ export function* getInititializedModules() {
  * @param {string} storeName The Flux store name
  * @returns The Flux store
 */
-export function getLoadedStore(storeName) {
+export function getLoadedStore(storeName: string) {
     for (const { exports } of getInititializedModules()) {
         if (exports?.default?.getName?.() === storeName) {
             return exports.default;
@@ -70,7 +70,7 @@ export function getLoadedStore(storeName) {
  * @param {(exports) => void} callback 
  * @returns {void}
  */
-export function waitForModule(filter, callback) {
+export function waitForModule(filter: (m: any) => boolean, callback: (exports: any) => void): void {
     const matches = (exports) => {
         if (exports.default && exports.__esModule && filter(exports.default)) {
             moduleLoadEvent.off("export", matches);

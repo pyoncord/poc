@@ -13,7 +13,7 @@ export default () => {
             };
 
             const orig = exports.meta.resolveSemanticColor;
-            exports.meta.resolveSemanticColor = (theme, key) => {
+            exports.meta.resolveSemanticColor = (theme: string, key: { [key: symbol]: string }) => {
                 const realKey = key[orig._sym ??= Object.getOwnPropertySymbols(key)[0]];
                 const themeIndex = theme === "dark" ? 0 : theme === "light" ? 1 : 2;
 
