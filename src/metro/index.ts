@@ -42,7 +42,7 @@ export function patchFactories() {
  * @returns An iterable of the modules
  * @example for (const m of getInititializedModules()) { console.log(m.exports) }
  */
-export function* getInititializedModules(): IterableIterator<any> {
+export function* getInitializedModules(): IterableIterator<any> {
     for (const id in modules) {
         if (modules[id].isInitialized) {
             yield modules[id].publicModule;
@@ -57,7 +57,7 @@ export function* getInititializedModules(): IterableIterator<any> {
  * @returns The Flux store
 */
 export function getLoadedStore(storeName: string) {
-    for (const { exports } of getInititializedModules()) {
+    for (const { exports } of getInitializedModules()) {
         if (exports?.default?.getName?.() === storeName) {
             return exports.default;
         }
