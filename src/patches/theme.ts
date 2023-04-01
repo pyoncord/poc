@@ -1,5 +1,8 @@
 import { waitForModule } from "../metro";
 import { getCurrentTheme } from "../themes";
+import { createReverseable } from "../utils/createReverseable";
+
+const patchReverse = createReverseable();
 
 export default () => {
     const currentTheme = getCurrentTheme();
@@ -7,6 +10,12 @@ export default () => {
     waitForModule(
         (m) => m?.unsafe_rawColors && m.meta,
         (exports) => {
+            // TODO: Do something so it unsubscribes on unload
+            if (patchReverse.hasReversed) {
+                return;
+            }
+
+            const orig_rawColors = exports.unsafe_rawColors;
             exports.unsafe_rawColors = {
                 ...exports.unsafe_rawColors,
                 ...currentTheme.data.rawColors
@@ -23,6 +32,13 @@ export default () => {
 
                 return orig(theme, key);
             };
+
+            patchReverse(() => {
+                exports.unsafe_rawColors = orig_rawColors;
+                exports.meta.resolveSemanticColor = orig;
+            });
         }
     );
+
+    return patchReverse;
 }

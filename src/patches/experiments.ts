@@ -1,7 +1,7 @@
 import { waitForModule, getLoadedStore } from "../metro";
 import { awaitUntil } from "../utils";
 
-export default async () => {
+export default () => {
     waitForModule(
         (m) => m?.getName?.() === "ExperimentStore",
         async (ExperimentStore) => {
