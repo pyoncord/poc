@@ -10,7 +10,7 @@ export default class EventEmitter {
         }
     }
 
-    emit(eventName: string, ...args: Function[]) {
+    emit(eventName: string, ...args: any[]) {
         const listeners = this.events.get(eventName);
         if (listeners) {
             listeners.forEach((listener: Function) => {

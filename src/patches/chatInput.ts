@@ -1,16 +1,12 @@
-import { waitForModule } from "../metro";
-import { createReverseable } from "../utils/createReverseable";
+import { findByNameLazy, waitForModule } from "../metro";
+import { awaitUntil, createReverseable } from "../utils";
 
 const patcherReverser = createReverseable();
+const ChatInput = findByNameLazy("ChatInput");
 
-export default () => {
-    waitForModule(
-        (m) => m?.name === "ChatInput",
-        (exports) => {
-            exports.defaultProps.hideGiftButton = !patcherReverser.hasReversed;
-            patcherReverser(() => exports.defaultProps.hideGiftButton = false);
-        }
-    );
+export default async () => {
+    await awaitUntil(() => ChatInput?.defaultProps?.hideGiftButton !== undefined);
 
-    return patcherReverser;
+    ChatInput.defaultProps.hideGiftButton = !patcherReverser.hasReversed;
+    return patcherReverser(() => ChatInput.defaultProps.hideGiftButton = false);
 }
