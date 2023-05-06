@@ -31,6 +31,7 @@ export function patchFactories() {
 
             instead("factory", module, function (args, orig) {
                 orig(...args);
+                module.dependencyMap = args[6];
                 moduleLoadEvent.emit("export", args[5]);
             });
         }

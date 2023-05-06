@@ -30,12 +30,6 @@ function treeSearch(tree: any, filter: any, opts: Required<any>, depth: number):
     }
 }
 
-export default (
-    tree: any,
-    filter: any,
-    {
-        walkable = [],
-        ignore = [],
-        maxDepth = 100
-    }: any = {},
-): any | undefined => treeSearch(tree, filter, { walkable, ignore, maxDepth }, 0);
+export default function findInTree(tree: any, filter: any, opts: any = {}): any | undefined {
+    return treeSearch(tree, filter, { walkable: [], ignore: [], maxDepth: 100, ...opts }, 0);
+}

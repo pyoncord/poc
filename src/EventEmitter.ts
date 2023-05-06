@@ -1,11 +1,9 @@
 // crazy
 export default class EventEmitter {
-    events = new Map();
+    events = new Map<string, Set<Function>>();
 
     on(eventName: string, listener: Function) {
-        if (this.events.has(eventName)) {
-            this.events.get(eventName).add(listener);
-        } else {
+        if (!this.events.get(eventName)?.add(listener)) {
             this.events.set(eventName, new Set([listener]));
         }
     }

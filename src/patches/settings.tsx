@@ -1,6 +1,6 @@
 import { waitForModule } from "../metro"
-import { Forms, I18n, React } from "../metro/common";
-import { findInReactTree } from "../utils";
+import { Forms, I18n, NavigationNative, React } from "../metro/common";
+import { findInReactTree, lazyNavigate } from "../utils";
 import { getAssetIDByName } from "../utils/assets";
 
 import Patcher from "../patcher"
@@ -8,7 +8,10 @@ import Patcher from "../patcher"
 const patcher = new Patcher("settings-patcher");
 
 function SettingsSection() {
+    // This has to be destructured here, otherwise it will throw
     const { FormSection, FormRow, FormIcon } = Forms;
+
+    const navigation = NavigationNative.useNavigation();
 
     return (
         <FormSection key="Pyoncord" title="Pyoncord">
@@ -16,21 +19,29 @@ function SettingsSection() {
                 label="General"
                 leading={<FormIcon source={getAssetIDByName("ic_settings")} />}
                 trailing={FormRow.Arrow}
-                onPress={() => void 0}
+                onPress={() => lazyNavigate(navigation, import("../ui/screens/General"), "Pyoncord")}
             />
         </FormSection>
     )
 }
 
-export default () => {
+export default function patchSettings() {
     const unwaitScreens = waitForModule(
         (m) => m.default?.name === "getScreens",
         (exports) => {
             patcher.after(exports, "default", (args, screens) => {
-                return Object.assign({}, screens, {
-                    PyoncordSettings: {
+                return Object.assign(screens, {
+                    PyoncordCustomPage: {
                         title: "Pyoncord",
-                        render: () => null
+                        render: ({ render: PageComponent, ...args }) => {
+                            const navigation = NavigationNative.useNavigation();
+
+                            React.useEffect(() => {
+                                navigation.setOptions({ ...args });
+                            }, []);
+
+                            return <PageComponent />
+                        },
                     }
                 })
             })

@@ -6,12 +6,12 @@ export default async () => {
     console.log("Initalizing pyoncord...");
 
     patchFactories();
-    patchAssets();
 
     const patches = [
+        patchAssets(),
         patchExperiments(),
         patchChatInput(),
-        patchTheme(),
+        // patchTheme(),
         patchIdle(),
         patchSettings()
     ];
