@@ -1,16 +1,20 @@
 {
-  "name": "usagicord",
+  "name": "pyoncord",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Discord React Native client mod",
   "scripts": {
     "build": "node build.mjs"
   },
-  "keywords": [],
+  "keywords": [
+    "discord",
+    "discordrn",
+    "react-native"
+  ],
   "author": "amsyarasyiq",
   "license": "GPL-3.0",
   "devDependencies": {
-    "@swc/core": "^1.3.44",
-    "@swc/helpers": "^0.4.14",
-    "esbuild": "^0.17.14"
+    "@swc/core": "^1.3.56",
+    "@swc/helpers": "^0.5.1",
+    "esbuild": "^0.17.18"
   }
 }

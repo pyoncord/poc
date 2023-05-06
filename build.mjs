@@ -5,12 +5,12 @@ import swc from "@swc/core";
 await esbuild.build({
     entryPoints: ["entry.js"],
     bundle: true,
-    minify: true,
+    minify: false,
     format: "iife",
     target: "esnext",
     outfile: "dist/index.js",
     footer: {
-        js: "//# sourceURL=usagicord",
+        js: "//# sourceURL=pyoncord",
     },
     legalComments: "none",
     plugins: [{
