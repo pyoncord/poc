@@ -19,7 +19,7 @@ export default async () => {
                 ...currentTheme.data.rawColors
             };
 
-            patcher.registerOnUnpatched(() => {
+            patcher.addUnpatcher(() => {
                 ColorModule.unsafe_rawColors = orig_rawColors;
             });
 
@@ -35,4 +35,6 @@ export default async () => {
             })
         }
     );
+
+    return () => patcher.unpatchAllAndStop();
 }

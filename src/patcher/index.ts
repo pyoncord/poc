@@ -11,7 +11,7 @@ export const patchesInstances = new Map<string, Patcher>();
 export default class Patcher {
     identifier: string;
     patches: Unpatcher[] = [];
-    onUnpatch: (() => void)[] = [];
+    stopped = false;
 
     constructor(identifier: string) {
         if (!identifier || typeof identifier !== "string") {
@@ -27,42 +27,50 @@ export default class Patcher {
     }
 
     before = (parent: any, method: string, patch: BeforeCallback) => {
+        if (this.stopped) return () => false;
+
         const unpatch = before(method, parent, patch);
         this.patches.push(unpatch);
         return unpatch;
     }
 
     after = (parent: any, method: string, patch: AfterCallback) => {
+        if (this.stopped) return () => false;
+
         const unpatch = after(method, parent, patch);
         this.patches.push(unpatch);
         return unpatch;
     }
 
     instead = (parent: any, method: string, patch: InsteadCallback) => {
+        if (this.stopped) return () => false;
+
         const unpatch = instead(method, parent, patch);
         this.patches.push(unpatch);
         return unpatch;
     }
 
-    unpatch = () => {
+    unpatchAllAndStop = () => {
         let success = true;
+        this.stopped = true;
 
-        for (const patch of this.patches) {
-            success = patch() && success;
-        }
-
-        for (const callback of this.onUnpatch) {
+        for (const unpatch of this.patches) {
             try {
-                callback();
-            } catch (err) {
+                success = unpatch?.() && success;
+            } catch {
                 success = false;
             }
         }
 
+        patchesInstances.delete(this.identifier);
         return success;
     }
 
-    registerOnUnpatched = (callback: () => void) => {
-        this.onUnpatch.push(callback);
+    addUnpatcher = (callback: () => void) => {
+        if (typeof callback !== "function") {
+            throw new Error("Unpatcher must be a function");
+        }
+
+        this.patches.push(callback as () => boolean);
     }
 }

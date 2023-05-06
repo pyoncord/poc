@@ -31,7 +31,6 @@ export function patchFactories() {
             module.factory = new Proxy(module.factory, {
                 apply: (target, thisArg, argumentsList) => {
                     target.apply(thisArg, argumentsList);
-                    moduleLoadEvent.emit("factory", Number(id));
                     moduleLoadEvent.emit("export", argumentsList[5]);
                 }
             });
@@ -56,9 +55,8 @@ export function* getInitializedModules(): IterableIterator<any> {
  * Wait for a module to be loaded, then call a callback with the module exports.
  * @param {(m) => boolean} filter 
  * @param {(exports) => void} callback 
- * @returns {void}
 */
-export function waitForModule(filter: (m: any) => boolean, callback: (exports: any) => void): void {
+export function waitForModule(filter: (m: any) => boolean, callback: (exports: any) => void) {
     const matches = (exports) => {
         if (exports.default && exports.__esModule && filter(exports.default)) {
             moduleLoadEvent.off("export", matches);
@@ -72,6 +70,7 @@ export function waitForModule(filter: (m: any) => boolean, callback: (exports: a
     }
 
     moduleLoadEvent.on("export", matches);
+    return () => moduleLoadEvent.off("export", matches);
 }
 
 /**

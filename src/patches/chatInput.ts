@@ -1,13 +1,19 @@
-import { findByNameLazy, waitForModule } from "../metro";
-import { awaitUntil } from "../utils";
-
-import Patcher from "../patcher";
-
-const ChatInput = findByNameLazy("ChatInput");
+import { waitForModule } from "../metro";
 
 export default async () => {
-    await awaitUntil(() => ChatInput?.defaultProps?.hideGiftButton !== undefined);
+    let hideGiftButton, moduleExports;
 
-    ChatInput.defaultProps.hideGiftButton = false;
-    return () => ChatInput.defaultProps.hideGiftButton = true;
+    const unwait = waitForModule(
+        (m) => typeof m?.defaultProps?.hideGiftButton === "boolean",
+        (exports) => {
+            moduleExports = exports;
+            hideGiftButton = exports.defaultProps.hideGiftButton;
+
+            exports.defaultProps.hideGiftButton = true;
+        }
+    )
+
+    return hideGiftButton !== undefined
+        ? () => moduleExports.defaultProps.hideGiftButton = hideGiftButton
+        : () => unwait();
 }
