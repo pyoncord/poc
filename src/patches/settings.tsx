@@ -52,22 +52,27 @@ export default function patchSettings() {
         (m) => m.default?.name === "UserSettingsOverviewWrapper",
         (exports) => {
             const unpatch = patcher.after(exports, "default", (_args, ret) => {
-                const Overview = findInReactTree(ret.props.children, i => i.type && i.type.name === "UserSettingsOverview");
+                const UserSettingsOverview = findInReactTree(ret.props.children, i => i.type && i.type.name === "UserSettingsOverview");
 
                 // Upload logs button gone
-                patcher.after(Overview.type.prototype, "renderSupportAndAcknowledgements", (_args, { props: { children } }) => {
+                patcher.after(UserSettingsOverview.type.prototype, "renderSupportAndAcknowledgements", (_args, { props: { children } }) => {
                     const index = children.findIndex((c: any) => c?.type?.name === "UploadLogsButton");
                     if (index !== -1) children.splice(index, 1);
                 });
 
-                patcher.after(Overview.type.prototype, "render", (_args, { props: { children } }) => {
+                patcher.after(UserSettingsOverview.type.prototype, "render", (_args, res) => {
                     const titles = [I18n.Messages["BILLING_SETTINGS"], I18n.Messages["PREMIUM_SETTINGS"]];
 
-                    //! Fix for Android 174201 and iOS 42188
-                    children = findInReactTree(children, (tree) => tree.children[1].type === Forms.FormSection).children;
+                    // https://github.com/vendetta-mod/Vendetta/blob/f66e62d13b4ed7b272d87e8f4519c0ca3a6e34b1/src/ui/settings/index.tsx#LL73C13-L73C114
+                    const sections = findInReactTree(
+                        res.props.children,
+                        (tree) => tree.children[1].type === Forms.FormSection
+                    ).children;
 
-                    const index = children.findIndex((c: any) => titles.includes(c?.props.label));
-                    children.splice(index === -1 ? 4 : index, 0, <SettingsSection />);
+                    console.log(sections);
+
+                    const index = sections.findIndex((c: any) => titles.includes(c?.props.label));
+                    sections.splice(-~index || 4, 0, <SettingsSection />);
                 });
 
                 unpatch();

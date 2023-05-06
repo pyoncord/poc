@@ -1,3 +1,9 @@
+/**
+ * BSD 3-Clause License
+ * Copyright (c) 2023 Team Vendetta
+ * -------------------------------------------
+ * Original code: https://github.com/vendetta-mod/Vendetta/blob/rewrite/src/lib/utils/findInReactTree.ts
+ */
 
 function treeSearch(tree: any, filter: any, opts: Required<any>, depth: number): any {
     if (depth > opts.maxDepth) return;

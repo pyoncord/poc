@@ -16,22 +16,19 @@ const lazyHandler: ProxyHandler<any> = {
         const descriptor = Reflect.getOwnPropertyDescriptor(target[factorySymbol](), p);
         if (descriptor) Object.defineProperty(target, p, descriptor);
         return descriptor;
-    }
+    },
+    ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(fnName => {
+        return [fnName, (target: any, ...args: any[]) => {
+            return Reflect[fnName](target[factorySymbol](), ...args);
+        }];
+    }))
 }
-
-// Mirror all Reflect methods
-Object.getOwnPropertyNames(Reflect).forEach(fnName => {
-    lazyHandler[fnName] ??= (target: any, ...args: any[]) => {
-        return Reflect[fnName](target[factorySymbol](), ...args);
-    };
-})
 
 /**
  * Lazy proxy that will only call the factory function when needed (when a property is accessed)
  * @param factory Factory function to create the object
  * @param fallback A fallback value to return if the factory returns undefined
  * @returns A proxy that will call the factory function only when needed
- * @example const ChannelStore = proxyLazy(() => findByProps("getChannelId"));
  */
 export default function proxyLazy<T>(factory: () => T): T {
     const dummy = function () { } as any;
