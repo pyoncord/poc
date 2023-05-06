@@ -33,10 +33,10 @@ Object.getOwnPropertyNames(Reflect).forEach(fnName => {
  * @returns A proxy that will call the factory function only when needed
  * @example const ChannelStore = proxyLazy(() => findByProps("getChannelId"));
  */
-export default function proxyLazy<T>(factory: () => T, fallback?: any): T {
+export default function proxyLazy<T>(factory: () => T): T {
     const dummy = function () { } as any;
     dummy[factorySymbol] = () => {
-        return (dummy[cacheSymbol] ??= factory()) ?? fallback;
+        return (dummy[cacheSymbol] ??= factory());
     };
 
     return new Proxy(dummy, lazyHandler) as any;

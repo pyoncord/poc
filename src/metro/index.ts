@@ -1,3 +1,4 @@
+import { instead } from "spitroast";
 import EventEmitter from "../EventEmitter";
 import { proxyLazy } from "../utils";
 
@@ -5,7 +6,7 @@ declare const modules: Record<string | number, any>;
 export const moduleLoadEvent = new EventEmitter();
 
 /**
- * @protected
+ * @private
  * Called during the initialization of a module.
  * Patches the module factory to emit an event when the module is loaded.
  */
@@ -16,23 +17,21 @@ export function patchFactories() {
         if (module.factory) {
             /**
              * The factory method contains these args:
-             * 0: the globalThis object
+             * 0: the global object
              * 1: the metroRequire function (window.__r)
              * 2: the metroImportDefault function (window.__r.metroImportDefault)
              * 3: the metroImportAll function (window.__r.metroImportAll)
              * 4: the exports object
              * 5: the module/return object
-             * 6: the module dependencies ids
+             * 6: the module dependencies ids (array)
              * 
              * - It doesn't return any value, but it modifies the module/return object.
              * - Everything is done synchronously.
             */
-            // TODO: Is using a Proxy here is a good practice?
-            module.factory = new Proxy(module.factory, {
-                apply: (target, thisArg, argumentsList) => {
-                    target.apply(thisArg, argumentsList);
-                    moduleLoadEvent.emit("export", argumentsList[5]);
-                }
+
+            instead("factory", module, function (args, orig) {
+                orig(...args);
+                moduleLoadEvent.emit("export", args[5]);
             });
         }
     }
@@ -97,7 +96,7 @@ export function findInitializedModule(filter: (m: any) => boolean, returnDefault
  * @returns A proxy that will return the module exports when a property is accessed
  */
 export function findLazy(filter: (m: any) => boolean, returnDefault = true): any {
-    return proxyLazy(() => findInitializedModule(filter, returnDefault), {});
+    return proxyLazy(() => findInitializedModule(filter, returnDefault));
 }
 
 /**
@@ -106,14 +105,14 @@ export function findLazy(filter: (m: any) => boolean, returnDefault = true): any
  * @returns The module's export
  */
 export function findByProps(...props: string[]) {
-    return findInitializedModule((m) => props.every((prop) => m[prop]));
+    return findInitializedModule((m) => props.every((prop) => m?.[prop]));
 }
 
 /**
  * Same as findByProps, but lazy.
  */
 export function findByPropsLazy(...props: string[]) {
-    return proxyLazy(() => findByProps(...props), {});
+    return proxyLazy(() => findByProps(...props));
 }
 
 /**
@@ -130,7 +129,7 @@ export function findByName(name: string, defaultExport: boolean = true) {
  * Same as findByName, but lazy.
  */
 export function findByNameLazy(name: string, defaultExport: boolean = true) {
-    return proxyLazy(() => findByName(name, defaultExport), {});
+    return proxyLazy(() => findByName(name, defaultExport));
 }
 
 /**
@@ -147,7 +146,7 @@ export function findByDisplayName(displayName: string, defaultExport: boolean = 
  * Same as findByDisplayName, but lazy.
  */
 export function findByDisplayNameLazy(displayName: string, defaultExport = true) {
-    return proxyLazy(() => findByDisplayName(displayName, defaultExport), {});
+    return proxyLazy(() => findByDisplayName(displayName, defaultExport));
 }
 
 /**
@@ -164,5 +163,5 @@ export function findByStoreName(storeName: string) {
  * Same as findByStoreName, but lazy.
  */
 export function findByStoreNameLazy(storeName: string) {
-    return proxyLazy(() => findByStoreName(storeName), {});
+    return proxyLazy(() => findByStoreName(storeName));
 }
