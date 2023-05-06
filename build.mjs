@@ -2,6 +2,11 @@
 import esbuild from "esbuild";
 import swc from "@swc/core";
 
+import { execSync } from "child_process";
+import { argv } from "process";
+
+const flags = argv.slice(2).filter((arg) => arg.startsWith("--")).map((arg) => arg.slice(2));
+
 await esbuild.build({
     entryPoints: ["entry.js"],
     bundle: true,
@@ -35,3 +40,16 @@ await esbuild.build({
         }
     }]
 });
+
+if (flags.includes("deploy-root")) {
+    console.log("Deploying to root...");
+
+    // Hardcode stuff because I'm lazy :trollface:
+    const packageName = "com.pyoncord";
+
+    // Make sure to configure the loader to load from an invalid URL so it uses the cache
+    execSync("adb wait-for-device root");
+    execSync(`adb shell am force-stop ${packageName}`);
+    execSync(`adb push dist/index.js /data/data/${packageName}/cache/vendetta.js`);
+    execSync(`adb shell am start ${packageName}/com.discord.main.MainActivity`);
+}

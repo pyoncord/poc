@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "A Discord React Native client mod",
   "scripts": {
-    "build": "node build.mjs"
+    "build": "node build.mjs",
+    "deploy:root": "node build.mjs --deploy-root"
   },
   "keywords": [
     "discord",
