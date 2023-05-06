@@ -5,6 +5,11 @@ const unconfigurable = ["arguments", "caller", "prototype"];
 const isUnconfigurable = (key: PropertyKey) => typeof key === "string" && unconfigurable.includes(key);
 
 const lazyHandler: ProxyHandler<any> = {
+    ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(fnName => {
+        return [fnName, (target: any, ...args: any[]) => {
+            return Reflect[fnName](target[factorySymbol](), ...args);
+        }];
+    })),
     ownKeys: (target) => {
         const cacheKeys = Reflect.ownKeys(target[factorySymbol]());
         unconfigurable.forEach(key => isUnconfigurable(key) && cacheKeys.push(key));
@@ -17,11 +22,6 @@ const lazyHandler: ProxyHandler<any> = {
         if (descriptor) Object.defineProperty(target, p, descriptor);
         return descriptor;
     },
-    ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(fnName => {
-        return [fnName, (target: any, ...args: any[]) => {
-            return Reflect[fnName](target[factorySymbol](), ...args);
-        }];
-    }))
 }
 
 /**

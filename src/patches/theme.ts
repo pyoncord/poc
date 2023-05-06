@@ -5,8 +5,11 @@ import Patcher from "../patcher";
 
 const patcher = new Patcher("theme-patcher");
 
+// TODO: Implement theming
 export default async () => {
-    const currentTheme = getCurrentTheme();
+    return;
+
+    const currentTheme = getCurrentTheme() as any;
 
     waitForModule(
         (m) => m?.unsafe_rawColors && m.meta,

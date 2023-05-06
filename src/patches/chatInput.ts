@@ -13,7 +13,7 @@ export default async () => {
         }
     )
 
-    return hideGiftButton !== undefined
-        ? () => moduleExports.defaultProps.hideGiftButton = hideGiftButton
-        : () => unwait();
+    return () => hideGiftButton !== undefined
+        ? moduleExports.defaultProps.hideGiftButton = hideGiftButton
+        : unwait();
 }

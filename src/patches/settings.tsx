@@ -48,31 +48,39 @@ export default function patchSettings() {
         }
     );
 
+    // https://github.com/vendetta-mod/Vendetta/blob/f66e62d13b4ed7b272d87e8f4519c0ca3a6e34b1/src/ui/settings/index.tsx#
     const unwaitWrapper = waitForModule(
         (m) => m.default?.name === "UserSettingsOverviewWrapper",
         (exports) => {
             const unpatch = patcher.after(exports, "default", (_args, ret) => {
-                const UserSettingsOverview = findInReactTree(ret.props.children, i => i.type && i.type.name === "UserSettingsOverview");
+                const UserSettingsOverview = findInReactTree(ret.props.children, (n) => n.type?.name === "UserSettingsOverview");
 
-                // Upload logs button gone
                 patcher.after(UserSettingsOverview.type.prototype, "renderSupportAndAcknowledgements", (_args, { props: { children } }) => {
-                    const index = children.findIndex((c: any) => c?.type?.name === "UploadLogsButton");
-                    if (index !== -1) children.splice(index, 1);
+                    try {
+                        const index = children.findIndex((c: any) => c?.type?.name === "UploadLogsButton");
+                        if (index !== -1) children.splice(index, 1);
+                    } catch {
+                        // Ignore, this is not a big deal
+                    }
                 });
 
                 patcher.after(UserSettingsOverview.type.prototype, "render", (_args, res) => {
                     const titles = [I18n.Messages["BILLING_SETTINGS"], I18n.Messages["PREMIUM_SETTINGS"]];
 
-                    // https://github.com/vendetta-mod/Vendetta/blob/f66e62d13b4ed7b272d87e8f4519c0ca3a6e34b1/src/ui/settings/index.tsx#LL73C13-L73C114
-                    const sections = findInReactTree(
-                        res.props.children,
-                        (tree) => tree.children[1].type === Forms.FormSection
-                    ).children;
+                    try {
+                        const sections = findInReactTree(
+                            res.props.children,
+                            (n) => n?.children?.[1]?.type === Forms.FormSection
+                        ).children;
 
-                    console.log(sections);
-
-                    const index = sections.findIndex((c: any) => titles.includes(c?.props.label));
-                    sections.splice(-~index || 4, 0, <SettingsSection />);
+                        const index = sections.findIndex((c: any) => titles.includes(c?.props.label));
+                        sections.splice(-~index || 4, 0, <SettingsSection />);
+                    } catch (e) {
+                        console.error(
+                            "An error occurred while trying to append Pyoncord's settings section. " +
+                            e?.stack ?? e
+                        );
+                    }
                 });
 
                 unpatch();

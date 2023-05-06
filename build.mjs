@@ -13,7 +13,7 @@ await esbuild.build({
     minify: false,
     format: "iife",
     target: "esnext",
-    outfile: "dist/index.js",
+    outfile: "dist/pyoncord.js",
     footer: {
         js: "//# sourceURL=pyoncord",
     },
@@ -50,6 +50,6 @@ if (flags.includes("deploy-root")) {
     // Make sure to configure the loader to load from an invalid URL so it uses the cache
     execSync("adb wait-for-device root");
     execSync(`adb shell am force-stop ${packageName}`);
-    execSync(`adb push dist/index.js /data/data/${packageName}/cache/vendetta.js`);
+    execSync(`adb push dist/pyoncord.js /data/data/${packageName}/cache/vendetta.js`);
     execSync(`adb shell am start ${packageName}/com.discord.main.MainActivity`);
 }
