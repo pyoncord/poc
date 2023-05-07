@@ -1,4 +1,5 @@
-import EventEmitter from "@EventEmitter";
+// NOTE: This file is import-sensitive, circular dependencies might crash the app!
+import EventEmitter from "@utils/EventEmitter";
 import proxyLazy from "@utils/proxyLazy";
 import { instead } from "spitroast";
 

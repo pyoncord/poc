@@ -5,7 +5,9 @@
  * Original code: https://github.com/vendetta-mod/Vendetta/blob/rewrite/src/lib/utils/findInReactTree.ts
  */
 
-function treeSearch(tree: any, filter: any, opts: Required<any>, depth: number): any {
+import { FindInTreeOptions, SearchFilter, SearchTree } from "@def";
+
+function treeSearch(tree: SearchTree, filter: SearchFilter, opts: Required<FindInTreeOptions>, depth: number): any {
     if (depth > opts.maxDepth) return;
     if (!tree) return;
 
@@ -36,6 +38,6 @@ function treeSearch(tree: any, filter: any, opts: Required<any>, depth: number):
     }
 }
 
-export default function findInTree(tree: any, filter: any, opts: any = {}): any | undefined {
+export default function findInTree(tree: SearchTree, filter: SearchFilter, opts: FindInTreeOptions = {}): any | undefined {
     return treeSearch(tree, filter, { walkable: [], ignore: [], maxDepth: 100, ...opts }, 0);
 }

@@ -61,10 +61,10 @@
     }
   });
 
-  // src/EventEmitter.ts
+  // src/utils/EventEmitter.ts
   var EventEmitter;
   var init_EventEmitter = __esm({
-    "src/EventEmitter.ts"() {
+    "src/utils/EventEmitter.ts"() {
       "use strict";
       init_class_call_check();
       init_create_class();
@@ -847,7 +847,7 @@
   function SettingsSection() {
     const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
     const navigation = NavigationNative.useNavigation();
-    const title = `Pyoncord (${"651d91c"}) ${true ? "(DEV)" : ""}`.trimEnd();
+    const title = `Pyoncord (${"2fd6c4d"}) ${true ? "(DEV)" : ""}`.trimEnd();
     return /* @__PURE__ */ React.createElement(FormSection2, {
       key: "Pyoncord",
       title
@@ -1018,7 +1018,6 @@
   // src/index.ts
   var src_exports = {};
   __export(src_exports, {
-    EventEmitter: () => EventEmitter,
     default: () => src_default,
     metro: () => metro_exports,
     patches: () => patches_exports,
@@ -1026,7 +1025,7 @@
     utils: () => utils_exports
   });
   async function src_default() {
-    console.log(`Initializing Pyoncord (hash=${"651d91c"} dev=${true})`);
+    console.log(`Initializing Pyoncord (hash=${"2fd6c4d"} dev=${true})`);
     patchFactories();
     const patches = [
       patchAssets(),
@@ -1046,7 +1045,6 @@
   var init_src = __esm({
     "src/index.ts"() {
       "use strict";
-      init_EventEmitter();
       init_metro();
       init_patches();
       init_assets();
