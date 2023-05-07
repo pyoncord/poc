@@ -323,6 +323,23 @@
   });
 
   // src/metro/index.ts
+  var metro_exports = {};
+  __export(metro_exports, {
+    findByDisplayName: () => findByDisplayName,
+    findByDisplayNameLazy: () => findByDisplayNameLazy,
+    findByName: () => findByName,
+    findByNameLazy: () => findByNameLazy,
+    findByProps: () => findByProps,
+    findByPropsLazy: () => findByPropsLazy,
+    findByStoreName: () => findByStoreName,
+    findByStoreNameLazy: () => findByStoreNameLazy,
+    findInitializedModule: () => findInitializedModule,
+    findLazy: () => findLazy,
+    getInitializedModules: () => getInitializedModules,
+    moduleLoadEvent: () => moduleLoadEvent,
+    patchFactories: () => patchFactories,
+    waitForModule: () => waitForModule
+  });
   function patchFactories() {
     for (const id in modules) {
       const module = modules[id];
@@ -369,6 +386,12 @@
       }
     }
   }
+  function findLazy(filter) {
+    let returnDefault = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    return proxyLazy(function() {
+      return findInitializedModule(filter, returnDefault);
+    });
+  }
   function findByProps() {
     for (var _len = arguments.length, props = new Array(_len), _key = 0; _key < _len; _key++) {
       props[_key] = arguments[_key];
@@ -385,6 +408,30 @@
     }
     return proxyLazy(function() {
       return findByProps(...props);
+    });
+  }
+  function findByName(name) {
+    let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    return findInitializedModule(function(m) {
+      return m?.name === name;
+    }, defaultExport);
+  }
+  function findByNameLazy(name) {
+    let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    return proxyLazy(function() {
+      return findByName(name, defaultExport);
+    });
+  }
+  function findByDisplayName(displayName) {
+    let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    return findInitializedModule(function(m) {
+      return m?.displayName === displayName;
+    }, defaultExport);
+  }
+  function findByDisplayNameLazy(displayName) {
+    let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    return proxyLazy(function() {
+      return findByDisplayName(displayName, defaultExport);
     });
   }
   function findByStoreName(storeName) {
@@ -415,7 +462,7 @@
       return typeof m?.defaultProps?.hideGiftButton === "boolean";
     }, function(exports) {
       moduleExports = exports;
-      ({ hideGiftButton } = exports.defaultProps.hideGiftButton);
+      ({ hideGiftButton } = exports.defaultProps);
       exports.defaultProps.hideGiftButton = true;
     });
     return function() {
@@ -676,6 +723,15 @@
   });
 
   // src/utils/index.ts
+  var utils_exports = {};
+  __export(utils_exports, {
+    assets: () => assets_exports,
+    awaitUntil: () => awaitUntil,
+    findInReactTree: () => findInReactTree,
+    findInTree: () => findInTree,
+    lazyNavigate: () => lazyNavigate,
+    proxyLazy: () => proxyLazy
+  });
   var init_utils = __esm({
     "src/utils/index.ts"() {
       "use strict";
@@ -791,7 +847,7 @@
   function SettingsSection() {
     const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
     const navigation = NavigationNative.useNavigation();
-    const title = `Pyoncord (${"5bbd95b"}) ${true ? "(DEV)" : ""}`.trimEnd();
+    const title = `Pyoncord (${"651d91c"}) ${true ? "(DEV)" : ""}`.trimEnd();
     return /* @__PURE__ */ React.createElement(FormSection2, {
       key: "Pyoncord",
       title
@@ -885,6 +941,13 @@
   });
 
   // src/themes.ts
+  var themes_exports = {};
+  __export(themes_exports, {
+    getCurrentTheme: () => getCurrentTheme
+  });
+  function getCurrentTheme() {
+    throw new Error("Not implemented");
+  }
   var init_themes = __esm({
     "src/themes.ts"() {
       "use strict";
@@ -892,6 +955,35 @@
   });
 
   // src/patches/theme.ts
+  async function theme_default() {
+    return;
+    const currentTheme = getCurrentTheme();
+    waitForModule(function(m) {
+      return m?.unsafe_rawColors && m.meta;
+    }, function(ColorModule) {
+      let semanticColorsSymbol;
+      const orig_rawColors = ColorModule.unsafe_rawColors;
+      ColorModule.unsafe_rawColors = {
+        ...ColorModule.unsafe_rawColors,
+        ...currentTheme.data.rawColors
+      };
+      patcher3.addUnpatcher(function() {
+        ColorModule.unsafe_rawColors = orig_rawColors;
+      });
+      patcher3.instead(ColorModule.meta, "resolveSemanticColor", function(param, orig) {
+        let [theme, key] = param;
+        const realKey = key[semanticColorsSymbol ??= Object.getOwnPropertySymbols(key)[0]];
+        const themeIndex = theme === "dark" ? 0 : theme === "light" ? 1 : 2;
+        if (currentTheme.data.semanticColors[realKey]?.[themeIndex]) {
+          return currentTheme.data.semanticColors[realKey][themeIndex];
+        }
+        return orig(theme, key);
+      });
+    });
+    return function() {
+      return patcher3.unpatchAllAndStop();
+    };
+  }
   var patcher3;
   var init_theme = __esm({
     "src/patches/theme.ts"() {
@@ -904,6 +996,14 @@
   });
 
   // src/patches/index.ts
+  var patches_exports = {};
+  __export(patches_exports, {
+    patchChatInput: () => chatInput_default,
+    patchExperiments: () => experiments_default,
+    patchIdle: () => idle_default,
+    patchSettings: () => patchSettings,
+    patchTheme: () => theme_default
+  });
   var init_patches = __esm({
     "src/patches/index.ts"() {
       "use strict";
@@ -918,31 +1018,41 @@
   // src/index.ts
   var src_exports = {};
   __export(src_exports, {
-    default: () => src_default
+    EventEmitter: () => EventEmitter,
+    default: () => src_default,
+    metro: () => metro_exports,
+    patches: () => patches_exports,
+    themes: () => themes_exports,
+    utils: () => utils_exports
   });
   async function src_default() {
-    console.log("Initializing Pyoncord...");
+    console.log(`Initializing Pyoncord (hash=${"651d91c"} dev=${true})`);
     patchFactories();
     const patches = [
-      assets_exports.patchAssets(),
+      patchAssets(),
       experiments_default(),
       chatInput_default(),
-      // patchTheme(),
       idle_default(),
       patchSettings()
     ];
-    return async function() {
+    await Promise.all(patches);
+    return function() {
       console.log("Unloading Pyoncord...");
-      for (const patch of patches) {
-        (await patch)?.();
-      }
+      patches.forEach(async function(p) {
+        return (await p)?.();
+      });
     };
   }
   var init_src = __esm({
     "src/index.ts"() {
       "use strict";
+      init_EventEmitter();
       init_metro();
       init_patches();
+      init_assets();
+      init_metro();
+      init_patches();
+      init_themes();
       init_utils();
     }
   });
@@ -954,15 +1064,19 @@
     try {
       globalThis.React = findByProps("createElement");
       globalThis.ReactNative = findByProps("View");
-      await Promise.resolve().then(() => (init_src(), src_exports)).then(function(param) {
-        let { default: d } = param;
-        return d();
-      });
+      const pyoncord = await Promise.resolve().then(() => (init_src(), src_exports));
+      const unload = await pyoncord.default();
+      globalThis.pyoncord = {
+        ...pyoncord,
+        default: void 0,
+        unload
+      };
     } catch (error) {
       error = error?.stack ?? error;
       alert("Failed to load Pyoncord.\n" + error);
       console.error(error);
     }
+    console.log(globalThis.pyoncord);
   }
   init();
 })();

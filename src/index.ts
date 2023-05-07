@@ -1,25 +1,30 @@
+import EventEmitter from "@EventEmitter";
 import { patchFactories } from "@metro";
 import { patchChatInput, patchExperiments, patchIdle, patchSettings } from "@patches";
-import { assets } from "@utils";
+import { patchAssets } from "@utils/assets";
+
+export * as metro from "@metro";
+export * as patches from "@patches";
+export * as themes from "@themes";
+export * as utils from "@utils";
+export { EventEmitter };
 
 export default async () => {
-    console.log("Initializing Pyoncord...");
+    console.log(`Initializing Pyoncord (hash=${__PYONCORD_COMMIT_HASH__} dev=${__PYONCORD_DEV__})`);
     patchFactories();
 
     const patches = [
-        assets.patchAssets(),
+        patchAssets(),
         patchExperiments(),
         patchChatInput(),
-        // patchTheme(),
         patchIdle(),
         patchSettings()
     ];
 
-    return async () => {
-        console.log("Unloading Pyoncord...");
+    await Promise.all(patches);
 
-        for (const patch of patches) {
-            (await patch)?.();
-        }
+    return () => {
+        console.log("Unloading Pyoncord...");
+        patches.forEach(async p => (await p)?.());
     };
 };

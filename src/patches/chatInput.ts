@@ -7,7 +7,7 @@ export default async () => {
         m => typeof m?.defaultProps?.hideGiftButton === "boolean",
         exports => {
             moduleExports = exports;
-            ({ hideGiftButton } = exports.defaultProps.hideGiftButton);
+            ({ hideGiftButton } = exports.defaultProps);
 
             exports.defaultProps.hideGiftButton = true;
         }

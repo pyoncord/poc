@@ -7,12 +7,22 @@ async function init() {
         globalThis.React = findByProps("createElement");
         globalThis.ReactNative = findByProps("View");
 
-        await import("@").then(({ default: d }) => d());
+        const pyoncord = await import("@");
+        const unload = await pyoncord.default();
+
+        globalThis.pyoncord = {
+            ...pyoncord,
+            default: void 0,
+            unload
+        };
+
     } catch (error) {
         error = error?.stack ?? error;
         alert("Failed to load Pyoncord.\n" + error);
         console.error(error);
     }
+
+    console.log(globalThis.pyoncord);
 }
 
 init();
