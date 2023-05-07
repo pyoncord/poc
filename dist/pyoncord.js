@@ -352,34 +352,8 @@
     }
   });
 
-  // src/metro/common.ts
-  var common_exports = {};
-  __export(common_exports, {
-    AssetManager: () => AssetManager,
-    Forms: () => Forms,
-    I18n: () => I18n,
-    NavigationNative: () => NavigationNative,
-    React: () => React2,
-    ReactNative: () => ReactNative
-  });
-  var React2, ReactNative, I18n, Forms, AssetManager, NavigationNative;
-  var init_common = __esm({
-    "src/metro/common.ts"() {
-      init_metro();
-      React2 = window.React ??= findByPropsLazy("createElement");
-      ReactNative = window.ReactNative ??= findByPropsLazy("View");
-      I18n = findByPropsLazy("Messages");
-      Forms = findByPropsLazy("FormSection");
-      AssetManager = findByPropsLazy("registerAsset");
-      NavigationNative = findByPropsLazy("NavigationContainer");
-    }
-  });
-
   // src/utils/lazyNavigate.tsx
   async function lazyNavigate(navigation, renderPromise, screenOptions, props) {
-    const React1 = await Promise.resolve().then(() => (init_common(), common_exports)).then(function(m) {
-      return m.React;
-    });
     const Component = await renderPromise.then(function(m) {
       return m.default;
     });
@@ -717,6 +691,18 @@
     }
   });
 
+  // src/metro/common.ts
+  var I18n, Forms, AssetManager, NavigationNative;
+  var init_common = __esm({
+    "src/metro/common.ts"() {
+      init_metro();
+      I18n = findByPropsLazy("Messages");
+      Forms = findByPropsLazy("FormSection");
+      AssetManager = findByPropsLazy("registerAsset");
+      NavigationNative = findByPropsLazy("NavigationContainer");
+    }
+  });
+
   // src/utils/assets.ts
   function patchAssets() {
     const unpatch2 = after2(AssetManager, "registerAsset", function(param, id2) {
@@ -754,20 +740,20 @@
     default: () => General
   });
   function General() {
-    return /* @__PURE__ */ React2.createElement(ScrollView, {
+    return /* @__PURE__ */ React.createElement(ScrollView, {
       style: {
         flex: 1
       },
       contentContainerStyle: {
         paddingBottom: 38
       }
-    }, /* @__PURE__ */ React2.createElement(FormSection, {
+    }, /* @__PURE__ */ React.createElement(FormSection, {
       title: "Settings",
       titleStyleType: "no_border"
-    }, /* @__PURE__ */ React2.createElement(FormSwitchRow, {
+    }, /* @__PURE__ */ React.createElement(FormSwitchRow, {
       label: "Trigger Discord's experiments menu",
       subLabel: "Enables the experiments menu in Discord's settings, which only staff has access to.",
-      leading: /* @__PURE__ */ React2.createElement(FormRow.Icon, {
+      leading: /* @__PURE__ */ React.createElement(FormRow.Icon, {
         source: getAssetIDByName("ic_badge_staff")
       }),
       value: true,
@@ -790,13 +776,13 @@
   function SettingsSection() {
     const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
     const navigation = NavigationNative.useNavigation();
-    const title = `Pyoncord (${"6a08052"}) ${true ? "(DEV)" : ""}`.trimEnd();
-    return /* @__PURE__ */ React2.createElement(FormSection2, {
+    const title = `Pyoncord (${"345a8e2"}) ${true ? "(DEV)" : ""}`.trimEnd();
+    return /* @__PURE__ */ React.createElement(FormSection2, {
       key: "Pyoncord",
       title
-    }, /* @__PURE__ */ React2.createElement(FormRow2, {
+    }, /* @__PURE__ */ React.createElement(FormRow2, {
       label: "General",
-      leading: /* @__PURE__ */ React2.createElement(FormIcon, {
+      leading: /* @__PURE__ */ React.createElement(FormIcon, {
         source: getAssetIDByName("settings")
       }),
       trailing: FormRow2.Arrow,
@@ -816,12 +802,12 @@
             render: function(param) {
               let { render: PageComponent, ...args2 } = param;
               const navigation = NavigationNative.useNavigation();
-              React2.useEffect(function() {
+              React.useEffect(function() {
                 navigation.setOptions({
                   ...args2
                 });
               }, []);
-              return /* @__PURE__ */ React2.createElement(PageComponent, null);
+              return /* @__PURE__ */ React.createElement(PageComponent, null);
             }
           }
         });
@@ -857,7 +843,7 @@
             const index = sections.findIndex(function(c) {
               return titles.includes(c?.props.label);
             });
-            sections.splice(-~index || 4, 0, /* @__PURE__ */ React2.createElement(SettingsSection, null));
+            sections.splice(-~index || 4, 0, /* @__PURE__ */ React.createElement(SettingsSection, null));
           } catch (e) {
             console.error("An error occurred while trying to append Pyoncord's settings section. " + e?.stack);
           }
@@ -926,12 +912,21 @@
   });
 
   // entry.js
-  Promise.resolve().then(() => (init_src(), src_exports)).then(function(param) {
-    let { default: init } = param;
-    return init();
-  }).catch(function(error) {
-    alert("Failed to load pyoncord. " + error.message);
-    console.error(error?.stack ?? error);
-  });
+  init_metro();
+  async function init() {
+    try {
+      globalThis.React = findByProps("createElement");
+      globalThis.ReactNative = findByProps("View");
+      await Promise.resolve().then(() => (init_src(), src_exports)).then(function(param) {
+        let { default: d } = param;
+        return d();
+      });
+    } catch (error) {
+      error = error?.stack ?? error;
+      alert("Failed to load Pyoncord.\n" + error);
+      console.error(error);
+    }
+  }
+  init();
 })();
 //# sourceURL=pyoncord

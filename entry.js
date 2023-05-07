@@ -1,6 +1,16 @@
-import("./src")
-    .then(({ default: init }) => init())
-    .catch((error) => {
-        alert("Failed to load pyoncord. " + error.message);
-        console.error(error?.stack ?? error);
-    });
+import { findByProps } from "./src/metro";
+
+async function init() {
+    try {
+        globalThis.React = findByProps("createElement");
+        globalThis.ReactNative = findByProps("View");
+
+        await import("./src").then(({ default: d }) => d());
+    } catch (error) {
+        error = error?.stack ?? error;
+        alert("Failed to load Pyoncord.\n" + error);
+        console.error(error);
+    }
+}
+
+init();

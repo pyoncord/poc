@@ -1,4 +1,4 @@
-import { Forms, React, ReactNative } from "../../metro/common";
+import { Forms } from "../../metro/common";
 import { getAssetIDByName } from "../../utils/assets";
 
 const { ScrollView } = ReactNative;

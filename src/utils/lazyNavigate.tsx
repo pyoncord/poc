@@ -16,7 +16,6 @@ export default async function lazyNavigate(
     screenOptions: string | Record<string, any>,
     props?: any,
 ) {
-    const React = await import("../metro/common").then(m => m.React);
     const Component = await renderPromise.then(m => m.default);
 
     if (typeof screenOptions === "string") {

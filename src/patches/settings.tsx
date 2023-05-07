@@ -1,5 +1,5 @@
 import { waitForModule } from "../metro"
-import { Forms, I18n, NavigationNative, React } from "../metro/common";
+import { Forms, I18n, NavigationNative } from "../metro/common";
 import { findInReactTree, lazyNavigate } from "../utils";
 import { getAssetIDByName } from "../utils/assets";
 
