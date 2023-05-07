@@ -2,7 +2,7 @@
 import swc from "@swc/core";
 import { execSync } from "child_process";
 import esbuild from "esbuild";
-import alias from "esbuild-plugin-alias";
+import globalsPlugin from "esbuild-plugin-globals";
 import { argv } from "process";
 
 const flags = argv.slice(2).filter(arg => arg.startsWith("--")).map(arg => arg.slice(2));
@@ -13,6 +13,7 @@ console.log(`Building with commit hash ${commitHash}, isMainstream=${isMainstrea
 
 const buildOutput = "dist/pyoncord.js";
 
+/** @type {import("esbuild").Plugin}  */
 const swcPlugin = {
     name: "swc",
     setup(build) {
@@ -38,7 +39,7 @@ const swcPlugin = {
 await esbuild.build({
     entryPoints: ["entry.js"],
     bundle: true,
-    minify: false,
+    minify: isMainstream,
     format: "iife",
     target: "esnext",
     outfile: buildOutput,
@@ -46,13 +47,15 @@ await esbuild.build({
         js: "//# sourceURL=pyoncord",
     },
     define: {
-        "__PYONCORD_COMMIT_HASH__": JSON.stringify(commitHash),
-        "__PYONCORD_DEV__": JSON.stringify(!isMainstream),
+        __PYONCORD_COMMIT_HASH__: JSON.stringify(commitHash),
+        __PYONCORD_DEV__: JSON.stringify(!isMainstream),
     },
     legalComments: "none",
+    alias: {
+        "@/*": "./src/*"
+    },
     plugins: [
-        swcPlugin,
-        alias({ "@*": "./src/*" })
+        swcPlugin
     ]
 });
 

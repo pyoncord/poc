@@ -791,7 +791,7 @@
   function SettingsSection() {
     const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
     const navigation = NavigationNative.useNavigation();
-    const title = `Pyoncord (${"e11d6ed"}) ${true ? "(DEV)" : ""}`.trimEnd();
+    const title = `Pyoncord (${"5bbd95b"}) ${true ? "(DEV)" : ""}`.trimEnd();
     return /* @__PURE__ */ React.createElement(FormSection2, {
       key: "Pyoncord",
       title

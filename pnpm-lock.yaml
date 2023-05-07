@@ -24,9 +24,9 @@ devDependencies:
   esbuild:
     specifier: ^0.17.18
     version: 0.17.18
-  esbuild-plugin-alias:
-    specifier: ^0.2.1
-    version: 0.2.1
+  esbuild-plugin-globals:
+    specifier: ^0.2.0
+    version: 0.2.0
   eslint:
     specifier: ^8.40.0
     version: 8.40.0
@@ -1006,8 +1006,9 @@ packages:
       is-symbol: 1.0.4
     dev: true
 
-  /esbuild-plugin-alias@0.2.1:
-    resolution: {integrity: sha512-jyfL/pwPqaFXyKnj8lP8iLk6Z0m099uXR45aSN8Av1XD4vhvQutxxPzgA2bTcAwQpa1zCXDcWOlhFgyP3GKqhQ==}
+  /esbuild-plugin-globals@0.2.0:
+    resolution: {integrity: sha512-y+6utQVWrETQWs0J8EGLV5gEOP59mmjX+fKWoQHn4TYwFMaj0FxQYflc566tHuokBCzl+uNW2iIlM1o1jfNy6w==}
+    engines: {node: '>=7'}
     dev: true
 
   /esbuild@0.17.18:

@@ -4,7 +4,6 @@ import { assets } from "@utils";
 
 export default async () => {
     console.log("Initializing Pyoncord...");
-
     patchFactories();
 
     const patches = [
