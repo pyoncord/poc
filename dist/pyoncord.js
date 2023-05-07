@@ -847,7 +847,7 @@
   function SettingsSection() {
     const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
     const navigation = NavigationNative.useNavigation();
-    const title = `Pyoncord (${"2fd6c4d"}) ${true ? "(DEV)" : ""}`.trimEnd();
+    const title = `Pyoncord (${"0ac5881"}) ${true ? "(DEV)" : ""}`.trimEnd();
     return /* @__PURE__ */ React.createElement(FormSection2, {
       key: "Pyoncord",
       title
@@ -1020,12 +1020,12 @@
   __export(src_exports, {
     default: () => src_default,
     metro: () => metro_exports,
+    patcher: () => Patcher,
     patches: () => patches_exports,
     themes: () => themes_exports,
     utils: () => utils_exports
   });
   async function src_default() {
-    console.log(`Initializing Pyoncord (hash=${"2fd6c4d"} dev=${true})`);
     patchFactories();
     const patches = [
       patchAssets(),
@@ -1049,6 +1049,7 @@
       init_patches();
       init_assets();
       init_metro();
+      init_patcher();
       init_patches();
       init_themes();
       init_utils();
@@ -1057,21 +1058,25 @@
 
   // entry.js
   init_metro();
-  console.log("Hello from Pyoncord!");
+  console.log(`Pyon! (Pyoncord, hash=${"0ac5881"}, dev=${true})`);
   async function init() {
     try {
-      globalThis.React = findByProps("createElement");
-      globalThis.ReactNative = findByProps("View");
-      const pyoncord = await Promise.resolve().then(() => (init_src(), src_exports));
-      const unload = await pyoncord.default();
-      globalThis.pyoncord = {
-        ...pyoncord,
-        default: void 0,
-        unload
+      window.React = findByProps("createElement");
+      window.ReactNative = findByProps("View");
+      window.pyoncord = {
+        ...await Promise.resolve().then(() => (init_src(), src_exports))
       };
+      pyoncord.unload = await pyoncord.default();
+      delete pyoncord.default;
     } catch (error) {
       error = error?.stack ?? error;
-      alert("Failed to load Pyoncord.\n" + error);
+      alert([
+        "Failed to load Pyoncord.\n",
+        `Build Hash: ${"0ac5881"}`,
+        `Debug Build: ${true}`,
+        `Build Number: ${nativeModuleProxy.RTNClientInfoManager.Build}`,
+        error
+      ].join("\n"));
       console.error(error);
     }
     console.log(globalThis.pyoncord);

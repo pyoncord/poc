@@ -3,12 +3,12 @@ import { patchChatInput, patchExperiments, patchIdle, patchSettings } from "@pat
 import { patchAssets } from "@utils/assets";
 
 export * as metro from "@metro";
+export { default as patcher } from "@patcher";
 export * as patches from "@patches";
 export * as themes from "@themes";
 export * as utils from "@utils";
 
 export default async () => {
-    console.log(`Initializing Pyoncord (hash=${__PYONCORD_COMMIT_HASH__} dev=${__PYONCORD_DEV__})`);
     patchFactories();
 
     const patches = [
