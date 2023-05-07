@@ -4,7 +4,7 @@ import { awaitUntil } from "@utils";
 const UserStore = findByStoreNameLazy("UserStore");
 const ExperimentStore = findByStoreNameLazy("ExperimentStore");
 
-export default async () => {
+export default async function patchExperiments() {
     try {
         // Wait for UserStore to be initialized and user to be logged in
         await awaitUntil(() => UserStore.getCurrentUser?.());
@@ -21,4 +21,5 @@ export default async () => {
     } catch (err) {
         console.error("An error occurred while patching experiments", err);
     }
-};
+}
+

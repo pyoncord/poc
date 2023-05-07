@@ -5,7 +5,7 @@ import { getCurrentTheme } from "@themes";
 const patcher = new Patcher("theme-patcher");
 
 // TODO: Implement theming
-export default async () => {
+export default async function patchTheme() {
     return;
 
     const currentTheme = getCurrentTheme() as any;
@@ -39,4 +39,4 @@ export default async () => {
     );
 
     return () => patcher.unpatchAllAndStop();
-};
+}

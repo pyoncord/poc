@@ -3,7 +3,7 @@ import Patcher from "@patcher";
 
 const patcher = new Patcher("idle-patcher");
 
-export default () => {
+export default function patchIdle() {
     const unwait = waitForModule(
         m => m?.dispatch && m._actionHandlers?._orderedActionHandlers,
         exports => {
@@ -16,4 +16,4 @@ export default () => {
     );
 
     return () => (unwait(), patcher.unpatchAllAndStop());
-};
+}

@@ -1,6 +1,6 @@
 import { waitForModule } from "@metro";
 
-export default async () => {
+export default async function patchChatInput() {
     let hideGiftButton: boolean, moduleExports: any;
 
     const unwait = waitForModule(
@@ -16,4 +16,5 @@ export default async () => {
     return () => hideGiftButton !== undefined
         ? moduleExports.defaultProps.hideGiftButton = hideGiftButton
         : unwait();
-};
+}
+

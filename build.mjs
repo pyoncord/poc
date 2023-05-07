@@ -39,7 +39,7 @@ const swcPlugin = {
 await esbuild.build({
     entryPoints: ["entry.js"],
     bundle: true,
-    minify: isDev,
+    minify: !isDev,
     format: "iife",
     target: "esnext",
     outfile: buildOutput,

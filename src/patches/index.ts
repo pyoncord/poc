@@ -1,14 +1,5 @@
-/* eslint-disable path-alias/no-relative */
-import patchChatInput from "./chatInput";
-import patchExperiments from "./experiments";
-import patchIdle from "./idle";
-import patchSettings from "./settings";
-import patchTheme from "./theme";
-
-export {
-    patchChatInput,
-    patchExperiments,
-    patchIdle,
-    patchSettings,
-    patchTheme
-};
+export { default as patchChatInput } from "./chatInput";
+export { default as patchExperiments } from "./experiments";
+export { default as patchIdle } from "./idle";
+export { default as patchSettings } from "./settings";
+export { default as patchTheme } from "./theme";

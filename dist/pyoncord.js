@@ -1,4 +1,1163 @@
-"use strict";(()=>{var ne=Object.defineProperty;var c=(t,e)=>()=>(t&&(e=t(t=0)),e);var v=(t,e)=>{for(var n in e)ne(t,n,{get:e[n],enumerable:!0})};function j(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}var Q=c(()=>{});function Et(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}function St(t,e,n){return e&&Et(t.prototype,e),n&&Et(t,n),t}var Pt=c(()=>{});function d(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}var tt=c(()=>{});var U,et=c(()=>{"use strict";Q();Pt();tt();U=function(){"use strict";function t(){j(this,t),d(this,"events",new Map)}return St(t,[{key:"on",value:function(n,r){this.events.get(n)?.add(r)||this.events.set(n,new Set([r]))}},{key:"emit",value:function(n){for(var r=arguments.length,o=new Array(r>1?r-1:0),i=1;i<r;i++)o[i-1]=arguments[i];let a=this.events.get(n);a&&a.forEach(function(u){u(...o)})}},{key:"off",value:function(n,r){let o=this.events.get(n);o&&(o.delete(r),o.size===0&&this.events.delete(n))}}]),t}()});function y(t){let e=function(){};return e[H]=function(){return e[re]??=t()},new Proxy(e,oe)}var H,re,Ot,It,oe,nt=c(()=>{"use strict";H=Symbol("lazyFactory"),re=Symbol("lazyCache"),Ot=["arguments","caller","prototype"],It=function(t){return typeof t=="string"&&Ot.includes(t)},oe={...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(function(t){return[t,function(e){for(var n=arguments.length,r=new Array(n>1?n-1:0),o=1;o<n;o++)r[o-1]=arguments[o];return Reflect[t](e[H](),...r)}]})),ownKeys:function(t){let e=Reflect.ownKeys(t[H]());return Ot.forEach(function(n){return It(n)&&e.push(n)}),e},getOwnPropertyDescriptor:function(t,e){if(It(e))return Reflect.getOwnPropertyDescriptor(t,e);let n=Reflect.getOwnPropertyDescriptor(t[H](),e);return n&&Object.defineProperty(t,e,n),n}}});var At,w,k=c(()=>{At=["a","b","i"],w=new Map});function Rt(t,e,n,r,o){let i=w.get(e)?.[t];if(!i)return o?Reflect.construct(e[t],n,r):e[t].apply(r,n);for(let s of i.b.values()){let f=s.call(r,n);Array.isArray(f)&&(n=f)}let a=function(){for(var s=arguments.length,f=new Array(s),l=0;l<s;l++)f[l]=arguments[l];return o?Reflect.construct(i.o,f,r):i.o.apply(r,f)};for(let s of i.i.values()){let f=a;a=function(){for(var l=arguments.length,_=new Array(l),p=0;p<l;p++)_[p]=arguments[p];return s.call(r,_,f)}}let u=a(...n);for(let s of i.a.values())u=s.call(r,n,u)??u;return u}var Tt=c(()=>{k()});function Dt(t,e,n,r){let o=w.get(t),i=o?.[e];return i?.[r].has(n)?(i[r].delete(n),At.every(function(a){return i[a].size===0})&&(Reflect.defineProperty(t,e,{value:i.o,writable:!0,configurable:!0})||(t[e]=i.o),delete o[e]),Object.keys(o).length==0&&w.delete(t),!0):!1}var rt=c(()=>{k()});function $(t){return function(e,n,r){let o=arguments.length>3&&arguments[3]!==void 0?arguments[3]:!1;if(typeof n[e]!="function")throw new Error(`${e} is not a function in ${n.constructor.name}`);w.has(n)||w.set(n,{});let i=w.get(n);if(!i[e]){let s=n[e];i[e]={o:s,b:new Map,i:new Map,a:new Map};let f=function(p,b,A){let ee=Rt(e,n,b,p,A);return o&&u(),ee},l=new Proxy(s,{apply:function(p,b,A){return f(b,A,!1)},construct:function(p,b){return f(s,b,!0)},get:function(p,b,A){return b=="toString"?s.toString.bind(s):Reflect.get(p,b,A)}});Reflect.defineProperty(n,e,{value:l,configurable:!0,writable:!0})||(n[e]=l)}let a=Symbol(),u=function(){return Dt(n,e,a,t)};return i[e][t].set(a,r),u}}var Bt=c(()=>{Tt();k();rt()});var Ct,G,Mt,ot=c(()=>{Bt();rt();Ct=$("b"),G=$("i"),Mt=$("a")});var at={};v(at,{findByDisplayName:()=>zt,findByDisplayNameLazy:()=>ce,findByName:()=>Ft,findByNameLazy:()=>ae,findByProps:()=>E,findByPropsLazy:()=>R,findByStoreName:()=>Lt,findByStoreNameLazy:()=>V,findInitializedModule:()=>I,findLazy:()=>ie,getInitializedModules:()=>Nt,moduleLoadEvent:()=>P,patchFactories:()=>it,waitForModule:()=>h});function it(){for(let t in modules){let e=modules[t];e.factory&&G("factory",e,function(n,r){r(...n),e.dependencyMap=n[6],P.emit("export",n[5])})}}function*Nt(){for(let t in modules)modules[t].isInitialized&&(yield modules[t].publicModule)}function h(t,e){let n=function(r){r.default&&r.__esModule&&t(r.default)&&(P.off("export",n),e(r.default)),t(r)&&(P.off("export",n),e(r))};return P.on("export",n),function(){return P.off("export",n)}}function I(t){let e=arguments.length>1&&arguments[1]!==void 0?arguments[1]:!0;for(let{exports:n}of Nt()){if(n?.default&&n.__esModule&&t(n.default))return e?n.default:n;if(t(n))return n}}function ie(t){let e=arguments.length>1&&arguments[1]!==void 0?arguments[1]:!0;return y(function(){return I(t,e)})}function E(){for(var t=arguments.length,e=new Array(t),n=0;n<t;n++)e[n]=arguments[n];return I(function(r){return e.every(function(o){return r?.[o]})})}function R(){for(var t=arguments.length,e=new Array(t),n=0;n<t;n++)e[n]=arguments[n];return y(function(){return E(...e)})}function Ft(t){let e=arguments.length>1&&arguments[1]!==void 0?arguments[1]:!0;return I(function(n){return n?.name===t},e)}function ae(t){let e=arguments.length>1&&arguments[1]!==void 0?arguments[1]:!0;return y(function(){return Ft(t,e)})}function zt(t){let e=arguments.length>1&&arguments[1]!==void 0?arguments[1]:!0;return I(function(n){return n?.displayName===t},e)}function ce(t){let e=arguments.length>1&&arguments[1]!==void 0?arguments[1]:!0;return y(function(){return zt(t,e)})}function Lt(t){return I(function(e){return e?.getName?.()===t})}function V(t){return y(function(){return Lt(t)})}var P,g=c(()=>{"use strict";et();nt();ot();P=new U});var ct,m,S=c(()=>{"use strict";Q();tt();ot();ct=new Map,m=function t(e){"use strict";var n=this;if(j(this,t),d(this,"identifier",void 0),d(this,"patches",[]),d(this,"stopped",!1),d(this,"before",function(r,o,i){if(n.stopped)return function(){return!1};let a=Ct(o,r,i);return n.patches.push(a),a}),d(this,"after",function(r,o,i){if(n.stopped)return function(){return!1};let a=Mt(o,r,i);return n.patches.push(a),a}),d(this,"instead",function(r,o,i){if(n.stopped)return function(){return!1};let a=G(o,r,i);return n.patches.push(a),a}),d(this,"unpatchAllAndStop",function(){let r=!0;n.stopped=!0;for(let o of n.patches)try{r=o?.()&&r}catch{r=!1}return ct.delete(n.identifier),r}),d(this,"addUnpatcher",function(r){if(typeof r!="function")throw new Error("Unpatcher must be a function");n.patches.push(r)}),!e||typeof e!="string")throw new Error("Patcher identifier must be a non-empty string");if(ct.has(e))throw new Error(`Patcher with identifier "${e}" already exists`);this.identifier=e,ct.set(e,this)}});var st={};v(st,{connectToDebugger:()=>Y});async function Y(){if(!x){for(;;)try{x=new WebSocket("ws://localhost:9090/");break}catch{await new Promise(function(t){return setTimeout(t,3e3)})}x.addEventListener("open",function(){return console.log("Connected to debug websocket")}),x.addEventListener("error",function(t){return console.error(t.message)}),x.addEventListener("message",function(t){try{new ue(`return (${t.data})`)().then(console.log).catch(console.error)}catch(e){console.error(e)}}),x.addEventListener("close",function(){x=null,setTimeout(Y,3e3)}),se(globalThis,"nativeLoggingHook",function(t){let[e,n]=t;x?.readyState===WebSocket.OPEN&&x.send(JSON.stringify({level:n,message:e}))})}}var se,x,ue,ut=c(()=>{"use strict";S();({before:se}=new m("debug-ws-patcher")),x=null,ue=Object.getPrototypeOf(async function(){}).constructor});async function K(){let t,e,n=h(function(r){return typeof r?.defaultProps?.hideGiftButton=="boolean"},function(r){e=r,{hideGiftButton:t}=r.defaultProps,r.defaultProps.hideGiftButton=!0});return function(){return t!==void 0?e.defaultProps.hideGiftButton=t:n()}}var jt=c(()=>{"use strict";g()});var W,ft,T,lt,J=c(()=>{"use strict";g();W=E("getAssetByID"),ft=R("Messages"),T=R("FormSection"),lt=R("NavigationContainer")});var B={};v(B,{getAssetByID:()=>pe,getAssetByName:()=>le,getAssetIDByName:()=>mt,patchAssets:()=>pt,registeredAssets:()=>D});function pt(){let t=fe(W,"registerAsset",function(r,o){let[i]=r;D[i.name]={...i,id:o}}),e,n=1;for(;e=W.getAssetByID(n);)D[e.name]??={...e,id:n++};return t}var fe,D,le,pe,mt,X=c(()=>{"use strict";J();S();({after:fe}=new m("assets-patcher")),D={};le=function(t){return D[t]},pe=function(t){return W.getAssetByID(t)},mt=function(t){return D[t]?.id}});function C(t){let e=arguments.length>1&&arguments[1]!==void 0?arguments[1]:100;return new Promise(function(n){let r=setInterval(function(){t()&&(clearInterval(r),n())},e)})}var Ut=c(()=>{"use strict"});function O(t,e){return M(t,e,{walkable:["props","children","child","sibling"]})}var Ht=c(()=>{"use strict";N()});function dt(t,e,n,r){if(!(r>n.maxDepth)&&t){try{if(e(t))return t}catch{}if(Array.isArray(t)){for(let o of t)if(!(typeof o!="object"||o===null))try{let i=dt(o,e,n,r+1);if(i)return i}catch{}}else if(typeof t=="object"){for(let o of Object.keys(t))if(!(typeof t[o]!="object"||t[o]===null)&&!(n.walkable.length&&!n.walkable.includes(o))&&!n.ignore.includes(o))try{let i=dt(t[o],e,n,r+1);if(i)return i}catch{}}}}function M(t,e){let n=arguments.length>2&&arguments[2]!==void 0?arguments[2]:{};return dt(t,e,{walkable:[],ignore:[],maxDepth:100,...n},0)}var kt=c(()=>{"use strict"});async function F(t,e,n,r){let o=await e.then(function(i){return i.default});typeof n=="string"&&(n={title:n}),t.navigate("PyoncordCustomPage",{...n,render:function(){return React.createElement(o,r)}})}var $t=c(()=>{"use strict"});var ht={};v(ht,{EventEmitter:()=>U,assets:()=>B,awaitUntil:()=>C,findInReactTree:()=>O,findInTree:()=>M,lazyNavigate:()=>F,proxyLazy:()=>y});var N=c(()=>{"use strict";X();Ut();et();Ht();kt();$t();nt()});async function Z(){try{await C(function(){return gt.getCurrentUser?.()}),gt.getCurrentUser().flags|=1,gt._dispatcher._actionHandlers._computeOrderedActionHandlers("OVERLAY_INITIALIZE").forEach(function(t){let{name:e,actionHandler:n}=t;e.includes?.("Experiment")&&n?.({serializedExperimentStore:me.getSerializedState(),user:{flags:1}})})}catch(t){console.error("An error occurred while patching experiments",t)}}var gt,me,Gt=c(()=>{"use strict";g();N();gt=V("UserStore"),me=V("ExperimentStore")});function q(){let t=h(function(e){return e?.dispatch&&e._actionHandlers?._orderedActionHandlers},function(e){Vt.before(e,"dispatch",function(n){if(n[0].type==="IDLE")return[{type:"THIS_TYPE_DOES_NOT_EXIST"}]})});return function(){return t(),Vt.unpatchAllAndStop()}}var Vt,Yt=c(()=>{"use strict";g();S();Vt=new m("idle-patcher")});var Wt={};v(Wt,{default:()=>Kt});function Kt(){return React.createElement(de,{style:{flex:1},contentContainerStyle:{paddingBottom:38}},React.createElement(he,{title:"Settings",titleStyleType:"no_border"},React.createElement(ye,{label:"Trigger Discord's experiments menu",subLabel:"Enables the experiments menu in Discord's settings, which only staff has access to.",leading:React.createElement(ge.Icon,{source:mt("ic_badge_staff")}),value:!0,onValueChange:function(){}})))}var de,he,ge,ye,Jt=c(()=>{"use strict";J();X();({ScrollView:de}=ReactNative),{FormSection:he,FormRow:ge,FormSwitchRow:ye}=T});function we(){let{FormSection:t,FormRow:e,FormIcon:n}=T,r=lt.useNavigation(),o="Pyoncord (17b186f) (DEV)".trimEnd();return React.createElement(t,{key:"Pyoncord",title:o},React.createElement(e,{label:"General",leading:React.createElement(n,{source:B.getAssetIDByName("settings")}),trailing:e.Arrow,onPress:function(){return F(r,Promise.resolve().then(()=>(Jt(),Wt)),"Pyoncord")}}))}function L(){let t=h(function(n){return n.default?.name==="getScreens"},function(n){z.after(n,"default",function(r,o){return Object.assign(o,{PyoncordCustomPage:{title:"Pyoncord",render:function(i){let{render:a,...u}=i,s=lt.useNavigation();return React.useEffect(function(){s.setOptions({...u})},[]),React.createElement(a,null)}}})})}),e=h(function(n){return n.default?.name==="UserSettingsOverviewWrapper"},function(n){let r=z.after(n,"default",function(o,i){let a=O(i.props.children,function(u){return u.type?.name==="UserSettingsOverview"});z.after(a.type.prototype,"renderSupportAndAcknowledgements",function(u,s){let{props:{children:f}}=s;try{let l=f.findIndex(function(_){return _?.type?.name==="UploadLogsButton"});l!==-1&&f.splice(l,1)}catch{}}),z.after(a.type.prototype,"render",function(u,s){let f=[ft.Messages.BILLING_SETTINGS,ft.Messages.PREMIUM_SETTINGS];try{let l=O(s.props.children,function(p){return p?.children?.[1]?.type===T.FormSection}).children,_=l.findIndex(function(p){return f.includes(p?.props.label)});l.splice(-~_||4,0,React.createElement(we,null))}catch(l){console.error("An error occurred while trying to append Pyoncord's settings section. "+l?.stack)}}),r()})});return function(){t(),e(),z.unpatchAllAndStop()}}var z,Xt=c(()=>{"use strict";g();J();S();N();z=new m("settings-patcher")});var wt={};v(wt,{getCurrentTheme:()=>yt});function yt(){throw new Error("Not implemented")}var xt=c(()=>{"use strict"});async function Zt(){}var bt,qt=c(()=>{"use strict";g();S();xt();bt=new m("theme-patcher")});var vt={};v(vt,{patchChatInput:()=>K,patchExperiments:()=>Z,patchIdle:()=>q,patchSettings:()=>L,patchTheme:()=>Zt});var _t=c(()=>{"use strict";jt();Gt();Yt();Xt();qt()});var Qt={};v(Qt,{Patcher:()=>m,debug:()=>st,default:()=>xe,metro:()=>at,patches:()=>vt,themes:()=>wt,utils:()=>ht});async function xe(){it(),Y();let t=[pt(),Z(),K(),q(),L()];return await Promise.all(t),function(){console.log("Unloading Pyoncord..."),t.forEach(async function(e){return(await e)?.()})}}var te=c(()=>{"use strict";ut();g();_t();X();ut();g();S();_t();xt();N()});g();console.log(`Pyon! (Pyoncord, hash=17b186f, dev=${!0})`);async function be(){try{window.React=E("createElement"),window.ReactNative=E("View"),window.pyoncord={...await Promise.resolve().then(()=>(te(),Qt))},pyoncord.unload=await pyoncord.default(),delete pyoncord.default}catch(t){t=t?.stack??t,alert([`Failed to load Pyoncord.
-`,"Build Hash: 17b186f",`Debug Build: ${!0}`,`Build Number: ${nativeModuleProxy.RTNClientInfoManager?.Build}`,t].join(`
-`)),console.error(t)}}be();})();
+"use strict";
+(() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __esm = (fn, res) => function __init() {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+  };
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+
+  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_class_call_check.js
+  function _class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor))
+      throw new TypeError("Cannot call a class as a function");
+  }
+  var init_class_call_check = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_class_call_check.js"() {
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor)
+        descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+  function _create_class(Constructor, protoProps, staticProps) {
+    if (protoProps)
+      _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps)
+      _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+  var init_create_class = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js"() {
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js
+  function _define_property(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else
+      obj[key] = value;
+    return obj;
+  }
+  var init_define_property = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js"() {
+    }
+  });
+
+  // src/utils/EventEmitter.ts
+  var EventEmitter;
+  var init_EventEmitter = __esm({
+    "src/utils/EventEmitter.ts"() {
+      "use strict";
+      init_class_call_check();
+      init_create_class();
+      init_define_property();
+      EventEmitter = /* @__PURE__ */ function() {
+        "use strict";
+        function EventEmitter2() {
+          _class_call_check(this, EventEmitter2);
+          _define_property(this, "events", /* @__PURE__ */ new Map());
+        }
+        _create_class(EventEmitter2, [
+          {
+            key: "on",
+            value: function on(eventName, listener) {
+              if (!this.events.get(eventName)?.add(listener)) {
+                this.events.set(eventName, /* @__PURE__ */ new Set([
+                  listener
+                ]));
+              }
+            }
+          },
+          {
+            key: "emit",
+            value: function emit(eventName) {
+              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
+              }
+              const listeners = this.events.get(eventName);
+              if (listeners) {
+                listeners.forEach(function(listener) {
+                  listener(...args);
+                });
+              }
+            }
+          },
+          {
+            key: "off",
+            value: function off(eventName, listenerToRemove) {
+              const listeners = this.events.get(eventName);
+              if (!listeners) {
+                return;
+              }
+              listeners.delete(listenerToRemove);
+              if (listeners.size === 0) {
+                this.events.delete(eventName);
+              }
+            }
+          }
+        ]);
+        return EventEmitter2;
+      }();
+    }
+  });
+
+  // src/utils/proxyLazy.ts
+  function proxyLazy(factory) {
+    const dummy = function() {
+      return void 0;
+    };
+    dummy[factorySymbol] = function() {
+      return dummy[cacheSymbol] ??= factory();
+    };
+    return new Proxy(dummy, lazyHandler);
+  }
+  var factorySymbol, cacheSymbol, unconfigurable, isUnconfigurable, lazyHandler;
+  var init_proxyLazy = __esm({
+    "src/utils/proxyLazy.ts"() {
+      "use strict";
+      factorySymbol = Symbol("lazyFactory");
+      cacheSymbol = Symbol("lazyCache");
+      unconfigurable = [
+        "arguments",
+        "caller",
+        "prototype"
+      ];
+      isUnconfigurable = function(key) {
+        return typeof key === "string" && unconfigurable.includes(key);
+      };
+      lazyHandler = {
+        ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(function(fnName) {
+          return [
+            fnName,
+            function(target) {
+              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
+              }
+              return Reflect[fnName](target[factorySymbol](), ...args);
+            }
+          ];
+        })),
+        ownKeys: function(target) {
+          const cacheKeys = Reflect.ownKeys(target[factorySymbol]());
+          unconfigurable.forEach(function(key) {
+            return isUnconfigurable(key) && cacheKeys.push(key);
+          });
+          return cacheKeys;
+        },
+        getOwnPropertyDescriptor: function(target, p) {
+          if (isUnconfigurable(p))
+            return Reflect.getOwnPropertyDescriptor(target, p);
+          const descriptor = Reflect.getOwnPropertyDescriptor(target[factorySymbol](), p);
+          if (descriptor)
+            Object.defineProperty(target, p, descriptor);
+          return descriptor;
+        }
+      };
+    }
+  });
+
+  // node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/shared.js
+  var patchTypes, patchedObjects;
+  var init_shared = __esm({
+    "node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/shared.js"() {
+      patchTypes = [
+        "a",
+        "b",
+        "i"
+      ];
+      patchedObjects = /* @__PURE__ */ new Map();
+    }
+  });
+
+  // node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/hook.js
+  function hook_default(funcName, funcParent, funcArgs, ctxt, isConstruct) {
+    const patch = patchedObjects.get(funcParent)?.[funcName];
+    if (!patch)
+      return isConstruct ? Reflect.construct(funcParent[funcName], funcArgs, ctxt) : funcParent[funcName].apply(ctxt, funcArgs);
+    for (const hook of patch.b.values()) {
+      const maybefuncArgs = hook.call(ctxt, funcArgs);
+      if (Array.isArray(maybefuncArgs))
+        funcArgs = maybefuncArgs;
+    }
+    let insteadPatchedFunc = function() {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+      return isConstruct ? Reflect.construct(patch.o, args, ctxt) : patch.o.apply(ctxt, args);
+    };
+    for (const callback of patch.i.values()) {
+      const oldPatchFunc = insteadPatchedFunc;
+      insteadPatchedFunc = function() {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+        return callback.call(ctxt, args, oldPatchFunc);
+      };
+    }
+    let workingRetVal = insteadPatchedFunc(...funcArgs);
+    for (const hook of patch.a.values())
+      workingRetVal = hook.call(ctxt, funcArgs, workingRetVal) ?? workingRetVal;
+    return workingRetVal;
+  }
+  var init_hook = __esm({
+    "node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/hook.js"() {
+      init_shared();
+    }
+  });
+
+  // node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/unpatch.js
+  function unpatch(funcParent, funcName, hookId, type) {
+    const patchedObject = patchedObjects.get(funcParent);
+    const patch = patchedObject?.[funcName];
+    if (!patch?.[type].has(hookId))
+      return false;
+    patch[type].delete(hookId);
+    if (patchTypes.every(function(t) {
+      return patch[t].size === 0;
+    })) {
+      const success = Reflect.defineProperty(funcParent, funcName, {
+        value: patch.o,
+        writable: true,
+        configurable: true
+      });
+      if (!success)
+        funcParent[funcName] = patch.o;
+      delete patchedObject[funcName];
+    }
+    if (Object.keys(patchedObject).length == 0)
+      patchedObjects.delete(funcParent);
+    return true;
+  }
+  var init_unpatch = __esm({
+    "node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/unpatch.js"() {
+      init_shared();
+    }
+  });
+
+  // node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/getPatchFunc.js
+  function getPatchFunc_default(patchType) {
+    return function(funcName, funcParent, callback) {
+      let oneTime = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : false;
+      if (typeof funcParent[funcName] !== "function")
+        throw new Error(`${funcName} is not a function in ${funcParent.constructor.name}`);
+      if (!patchedObjects.has(funcParent))
+        patchedObjects.set(funcParent, {});
+      const parentInjections = patchedObjects.get(funcParent);
+      if (!parentInjections[funcName]) {
+        const origFunc = funcParent[funcName];
+        parentInjections[funcName] = {
+          o: origFunc,
+          b: /* @__PURE__ */ new Map(),
+          i: /* @__PURE__ */ new Map(),
+          a: /* @__PURE__ */ new Map()
+        };
+        const runHook = function(ctxt, args, construct) {
+          const ret = hook_default(funcName, funcParent, args, ctxt, construct);
+          if (oneTime)
+            unpatchThisPatch();
+          return ret;
+        };
+        const replaceProxy = new Proxy(origFunc, {
+          apply: function(_, ctxt, args) {
+            return runHook(ctxt, args, false);
+          },
+          construct: function(_, args) {
+            return runHook(origFunc, args, true);
+          },
+          get: function(target, prop, receiver) {
+            return prop == "toString" ? origFunc.toString.bind(origFunc) : Reflect.get(target, prop, receiver);
+          }
+        });
+        const success = Reflect.defineProperty(funcParent, funcName, {
+          value: replaceProxy,
+          configurable: true,
+          writable: true
+        });
+        if (!success)
+          funcParent[funcName] = replaceProxy;
+      }
+      const hookId = Symbol();
+      const unpatchThisPatch = function() {
+        return unpatch(funcParent, funcName, hookId, patchType);
+      };
+      parentInjections[funcName][patchType].set(hookId, callback);
+      return unpatchThisPatch;
+    };
+  }
+  var init_getPatchFunc = __esm({
+    "node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/getPatchFunc.js"() {
+      init_hook();
+      init_shared();
+      init_unpatch();
+    }
+  });
+
+  // node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/index.js
+  var before, instead, after;
+  var init_esm = __esm({
+    "node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/index.js"() {
+      init_getPatchFunc();
+      init_unpatch();
+      before = getPatchFunc_default("b");
+      instead = getPatchFunc_default("i");
+      after = getPatchFunc_default("a");
+    }
+  });
+
+  // src/metro/common.ts
+  var common_exports = {};
+  __export(common_exports, {
+    AssetManager: () => AssetManager,
+    Forms: () => Forms,
+    I18n: () => I18n,
+    NavigationNative: () => NavigationNative
+  });
+  var AssetManager, I18n, Forms, NavigationNative;
+  var init_common = __esm({
+    "src/metro/common.ts"() {
+      "use strict";
+      init_metro();
+      AssetManager = findByProps("getAssetByID");
+      I18n = findByPropsLazy("Messages");
+      Forms = findByPropsLazy("FormSection");
+      NavigationNative = findByPropsLazy("NavigationContainer");
+    }
+  });
+
+  // src/metro/index.ts
+  var metro_exports = {};
+  __export(metro_exports, {
+    common: () => common_exports,
+    findByDisplayName: () => findByDisplayName,
+    findByDisplayNameLazy: () => findByDisplayNameLazy,
+    findByName: () => findByName,
+    findByNameLazy: () => findByNameLazy,
+    findByProps: () => findByProps,
+    findByPropsLazy: () => findByPropsLazy,
+    findByStoreName: () => findByStoreName,
+    findByStoreNameLazy: () => findByStoreNameLazy,
+    findInitializedModule: () => findInitializedModule,
+    findLazy: () => findLazy,
+    getInitializedModules: () => getInitializedModules,
+    moduleLoadEvent: () => moduleLoadEvent,
+    patchFactories: () => patchFactories,
+    waitForModule: () => waitForModule
+  });
+  function patchFactories() {
+    for (const id in modules) {
+      const module = modules[id];
+      if (module.factory) {
+        instead("factory", module, function(args, orig) {
+          orig(...args);
+          module.dependencyMap = args[6];
+          moduleLoadEvent.emit("export", args[5]);
+        });
+      }
+    }
+  }
+  function* getInitializedModules() {
+    for (const id in modules) {
+      if (modules[id].isInitialized) {
+        yield modules[id].publicModule;
+      }
+    }
+  }
+  function waitForModule(filter, callback) {
+    const matches = function(exports) {
+      if (exports.default && exports.__esModule && filter(exports.default)) {
+        moduleLoadEvent.off("export", matches);
+        callback(exports.default);
+      }
+      if (filter(exports)) {
+        moduleLoadEvent.off("export", matches);
+        callback(exports);
+      }
+    };
+    moduleLoadEvent.on("export", matches);
+    return function() {
+      return moduleLoadEvent.off("export", matches);
+    };
+  }
+  function findInitializedModule(filter) {
+    let returnDefault = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    for (const { exports } of getInitializedModules()) {
+      if (exports?.default && exports.__esModule && filter(exports.default)) {
+        return returnDefault ? exports.default : exports;
+      }
+      if (filter(exports)) {
+        return exports;
+      }
+    }
+  }
+  function findLazy(filter) {
+    let returnDefault = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    return proxyLazy(function() {
+      return findInitializedModule(filter, returnDefault);
+    });
+  }
+  function findByProps() {
+    for (var _len = arguments.length, props = new Array(_len), _key = 0; _key < _len; _key++) {
+      props[_key] = arguments[_key];
+    }
+    return findInitializedModule(function(m) {
+      return props.every(function(prop) {
+        return m?.[prop];
+      });
+    });
+  }
+  function findByPropsLazy() {
+    for (var _len = arguments.length, props = new Array(_len), _key = 0; _key < _len; _key++) {
+      props[_key] = arguments[_key];
+    }
+    return proxyLazy(function() {
+      return findByProps(...props);
+    });
+  }
+  function findByName(name) {
+    let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    return findInitializedModule(function(m) {
+      return m?.name === name;
+    }, defaultExport);
+  }
+  function findByNameLazy(name) {
+    let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    return proxyLazy(function() {
+      return findByName(name, defaultExport);
+    });
+  }
+  function findByDisplayName(displayName) {
+    let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    return findInitializedModule(function(m) {
+      return m?.displayName === displayName;
+    }, defaultExport);
+  }
+  function findByDisplayNameLazy(displayName) {
+    let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    return proxyLazy(function() {
+      return findByDisplayName(displayName, defaultExport);
+    });
+  }
+  function findByStoreName(storeName) {
+    return findInitializedModule(function(m) {
+      return m?.getName?.() === storeName;
+    });
+  }
+  function findByStoreNameLazy(storeName) {
+    return proxyLazy(function() {
+      return findByStoreName(storeName);
+    });
+  }
+  var moduleLoadEvent;
+  var init_metro = __esm({
+    "src/metro/index.ts"() {
+      "use strict";
+      init_EventEmitter();
+      init_proxyLazy();
+      init_esm();
+      init_common();
+      moduleLoadEvent = new EventEmitter();
+    }
+  });
+
+  // src/patcher.ts
+  var patcher_exports = {};
+  __export(patcher_exports, {
+    default: () => Patcher,
+    patchesInstances: () => patchesInstances
+  });
+  var patchesInstances, Patcher;
+  var init_patcher = __esm({
+    "src/patcher.ts"() {
+      "use strict";
+      init_class_call_check();
+      init_define_property();
+      init_esm();
+      patchesInstances = /* @__PURE__ */ new Map();
+      Patcher = function Patcher2(identifier) {
+        "use strict";
+        var _this = this;
+        _class_call_check(this, Patcher2);
+        _define_property(this, "identifier", void 0);
+        _define_property(this, "patches", []);
+        _define_property(this, "stopped", false);
+        _define_property(this, "before", function(parent, method, patch) {
+          if (_this.stopped)
+            return function() {
+              return false;
+            };
+          const unpatch2 = before(method, parent, patch);
+          _this.patches.push(unpatch2);
+          return unpatch2;
+        });
+        _define_property(this, "after", function(parent, method, patch) {
+          if (_this.stopped)
+            return function() {
+              return false;
+            };
+          const unpatch2 = after(method, parent, patch);
+          _this.patches.push(unpatch2);
+          return unpatch2;
+        });
+        _define_property(this, "instead", function(parent, method, patch) {
+          if (_this.stopped)
+            return function() {
+              return false;
+            };
+          const unpatch2 = instead(method, parent, patch);
+          _this.patches.push(unpatch2);
+          return unpatch2;
+        });
+        _define_property(this, "unpatchAllAndStop", function() {
+          let success = true;
+          _this.stopped = true;
+          for (const unpatch2 of _this.patches) {
+            try {
+              success = unpatch2?.() && success;
+            } catch {
+              success = false;
+            }
+          }
+          patchesInstances.delete(_this.identifier);
+          return success;
+        });
+        _define_property(this, "addUnpatcher", function(callback) {
+          if (typeof callback !== "function") {
+            throw new Error("Unpatcher must be a function");
+          }
+          _this.patches.push(callback);
+        });
+        if (!identifier || typeof identifier !== "string") {
+          throw new Error("Patcher identifier must be a non-empty string");
+        }
+        if (patchesInstances.has(identifier)) {
+          throw new Error(`Patcher with identifier "${identifier}" already exists`);
+        }
+        this.identifier = identifier;
+        patchesInstances.set(identifier, this);
+      };
+    }
+  });
+
+  // src/debug/index.ts
+  var debug_exports = {};
+  __export(debug_exports, {
+    connectToDebugger: () => connectToDebugger
+  });
+  async function connectToDebugger() {
+    if (websocket)
+      return;
+    while (true) {
+      try {
+        websocket = new WebSocket("ws://localhost:9090/");
+        break;
+      } catch {
+        await new Promise(function(resolve) {
+          return setTimeout(resolve, 3e3);
+        });
+      }
+    }
+    websocket.addEventListener("open", function() {
+      return console.log("Connected to debug websocket");
+    });
+    websocket.addEventListener("error", function(e) {
+      return console.error(e.message);
+    });
+    websocket.addEventListener("message", function(message) {
+      try {
+        const toEval = new AsyncFunction(`return (${message.data})`);
+        toEval().then(console.log).catch(console.error);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+    websocket.addEventListener("close", function() {
+      websocket = null;
+      setTimeout(connectToDebugger, 3e3);
+    });
+    before2(globalThis, "nativeLoggingHook", function(param) {
+      let [message, level] = param;
+      if (websocket?.readyState === WebSocket.OPEN) {
+        websocket.send(JSON.stringify({
+          level,
+          message
+        }));
+      }
+    });
+  }
+  var before2, websocket, AsyncFunction;
+  var init_debug = __esm({
+    "src/debug/index.ts"() {
+      "use strict";
+      init_patcher();
+      ({ before: before2 } = new Patcher("debug-ws-patcher"));
+      websocket = null;
+      AsyncFunction = Object.getPrototypeOf(async function() {
+      }).constructor;
+    }
+  });
+
+  // src/patches/chatInput.ts
+  async function patchChatInput() {
+    let hideGiftButton, moduleExports;
+    const unwait = waitForModule(function(m) {
+      return typeof m?.defaultProps?.hideGiftButton === "boolean";
+    }, function(exports) {
+      moduleExports = exports;
+      ({ hideGiftButton } = exports.defaultProps);
+      exports.defaultProps.hideGiftButton = true;
+    });
+    return function() {
+      return hideGiftButton !== void 0 ? moduleExports.defaultProps.hideGiftButton = hideGiftButton : unwait();
+    };
+  }
+  var init_chatInput = __esm({
+    "src/patches/chatInput.ts"() {
+      "use strict";
+      init_metro();
+    }
+  });
+
+  // src/utils/assets.ts
+  var assets_exports = {};
+  __export(assets_exports, {
+    getAssetByID: () => getAssetByID,
+    getAssetByName: () => getAssetByName,
+    getAssetIDByName: () => getAssetIDByName,
+    patchAssets: () => patchAssets,
+    registeredAssets: () => registeredAssets
+  });
+  function patchAssets() {
+    const unpatch2 = after2(AssetManager, "registerAsset", function(param, id2) {
+      let [asset2] = param;
+      registeredAssets[asset2.name] = {
+        ...asset2,
+        id: id2
+      };
+    });
+    let asset, id = 1;
+    while (asset = AssetManager.getAssetByID(id)) {
+      registeredAssets[asset.name] ??= {
+        ...asset,
+        id: id++
+      };
+    }
+    return unpatch2;
+  }
+  var after2, registeredAssets, getAssetByName, getAssetByID, getAssetIDByName;
+  var init_assets = __esm({
+    "src/utils/assets.ts"() {
+      "use strict";
+      init_common();
+      init_patcher();
+      ({ after: after2 } = new Patcher("assets-patcher"));
+      registeredAssets = {};
+      getAssetByName = function(name) {
+        return registeredAssets[name];
+      };
+      getAssetByID = function(id) {
+        return AssetManager.getAssetByID(id);
+      };
+      getAssetIDByName = function(name) {
+        return registeredAssets[name]?.id;
+      };
+    }
+  });
+
+  // src/utils/awaitUntil.ts
+  function awaitUntil(condition) {
+    let timeout = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 100;
+    return new Promise(function(resolve) {
+      const interval = setInterval(function() {
+        if (condition()) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, timeout);
+    });
+  }
+  var init_awaitUntil = __esm({
+    "src/utils/awaitUntil.ts"() {
+      "use strict";
+    }
+  });
+
+  // src/utils/findInReactTree.ts
+  function findInReactTree(tree, filter) {
+    return findInTree(tree, filter, {
+      walkable: [
+        "props",
+        "children",
+        "child",
+        "sibling"
+      ]
+    });
+  }
+  var init_findInReactTree = __esm({
+    "src/utils/findInReactTree.ts"() {
+      "use strict";
+      init_utils();
+    }
+  });
+
+  // src/utils/findInTree.ts
+  function treeSearch(tree, filter, opts, depth) {
+    if (depth > opts.maxDepth)
+      return;
+    if (!tree)
+      return;
+    try {
+      if (filter(tree))
+        return tree;
+    } catch {
+    }
+    if (Array.isArray(tree)) {
+      for (const item of tree) {
+        if (typeof item !== "object" || item === null)
+          continue;
+        try {
+          const found = treeSearch(item, filter, opts, depth + 1);
+          if (found)
+            return found;
+        } catch {
+        }
+      }
+    } else if (typeof tree === "object") {
+      for (const key of Object.keys(tree)) {
+        if (typeof tree[key] !== "object" || tree[key] === null)
+          continue;
+        if (opts.walkable.length && !opts.walkable.includes(key))
+          continue;
+        if (opts.ignore.includes(key))
+          continue;
+        try {
+          const found = treeSearch(tree[key], filter, opts, depth + 1);
+          if (found)
+            return found;
+        } catch {
+        }
+      }
+    }
+  }
+  function findInTree(tree, filter) {
+    let opts = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {};
+    return treeSearch(tree, filter, {
+      walkable: [],
+      ignore: [],
+      maxDepth: 100,
+      ...opts
+    }, 0);
+  }
+  var init_findInTree = __esm({
+    "src/utils/findInTree.ts"() {
+      "use strict";
+    }
+  });
+
+  // src/utils/lazyNavigate.tsx
+  async function lazyNavigate(navigation, renderPromise, screenOptions, props) {
+    const Component = await renderPromise.then(function(m) {
+      return m.default;
+    });
+    if (typeof screenOptions === "string") {
+      screenOptions = {
+        title: screenOptions
+      };
+    }
+    navigation.navigate("PyoncordCustomPage", {
+      ...screenOptions,
+      render: function() {
+        return /* @__PURE__ */ React.createElement(Component, props);
+      }
+    });
+  }
+  var init_lazyNavigate = __esm({
+    "src/utils/lazyNavigate.tsx"() {
+      "use strict";
+    }
+  });
+
+  // src/utils/index.ts
+  var utils_exports = {};
+  __export(utils_exports, {
+    EventEmitter: () => EventEmitter,
+    assets: () => assets_exports,
+    awaitUntil: () => awaitUntil,
+    findInReactTree: () => findInReactTree,
+    findInTree: () => findInTree,
+    lazyNavigate: () => lazyNavigate,
+    proxyLazy: () => proxyLazy
+  });
+  var init_utils = __esm({
+    "src/utils/index.ts"() {
+      "use strict";
+      init_assets();
+      init_awaitUntil();
+      init_EventEmitter();
+      init_findInReactTree();
+      init_findInTree();
+      init_lazyNavigate();
+      init_proxyLazy();
+    }
+  });
+
+  // src/patches/experiments.ts
+  async function patchExperiments() {
+    try {
+      await awaitUntil(function() {
+        return UserStore.getCurrentUser?.();
+      });
+      UserStore.getCurrentUser().flags |= 1;
+      UserStore._dispatcher._actionHandlers._computeOrderedActionHandlers("OVERLAY_INITIALIZE").forEach(function(param) {
+        let { name, actionHandler } = param;
+        name.includes?.("Experiment") && actionHandler?.({
+          serializedExperimentStore: ExperimentStore.getSerializedState(),
+          user: {
+            flags: 1
+          }
+        });
+      });
+    } catch (err) {
+      console.error("An error occurred while patching experiments", err);
+    }
+  }
+  var UserStore, ExperimentStore;
+  var init_experiments = __esm({
+    "src/patches/experiments.ts"() {
+      "use strict";
+      init_metro();
+      init_utils();
+      UserStore = findByStoreNameLazy("UserStore");
+      ExperimentStore = findByStoreNameLazy("ExperimentStore");
+    }
+  });
+
+  // src/patches/idle.ts
+  function patchIdle() {
+    const unwait = waitForModule(function(m) {
+      return m?.dispatch && m._actionHandlers?._orderedActionHandlers;
+    }, function(exports) {
+      patcher.before(exports, "dispatch", function(args) {
+        if (args[0].type === "IDLE") {
+          return [
+            {
+              type: "THIS_TYPE_DOES_NOT_EXIST"
+            }
+          ];
+        }
+      });
+    });
+    return function() {
+      return unwait(), patcher.unpatchAllAndStop();
+    };
+  }
+  var patcher;
+  var init_idle = __esm({
+    "src/patches/idle.ts"() {
+      "use strict";
+      init_metro();
+      init_patcher();
+      patcher = new Patcher("idle-patcher");
+    }
+  });
+
+  // src/ui/screens/General.tsx
+  var General_exports = {};
+  __export(General_exports, {
+    default: () => General
+  });
+  function General() {
+    return /* @__PURE__ */ React.createElement(ScrollView, {
+      style: {
+        flex: 1
+      },
+      contentContainerStyle: {
+        paddingBottom: 38
+      }
+    }, /* @__PURE__ */ React.createElement(FormSection, {
+      title: "Settings",
+      titleStyleType: "no_border"
+    }, /* @__PURE__ */ React.createElement(FormSwitchRow, {
+      label: "Trigger Discord's experiments menu",
+      subLabel: "Enables the experiments menu in Discord's settings, which only staff has access to.",
+      leading: /* @__PURE__ */ React.createElement(FormRow.Icon, {
+        source: getAssetIDByName("ic_badge_staff")
+      }),
+      value: true,
+      onValueChange: function() {
+        return void 0;
+      }
+    })));
+  }
+  var ScrollView, FormSection, FormRow, FormSwitchRow;
+  var init_General = __esm({
+    "src/ui/screens/General.tsx"() {
+      "use strict";
+      init_common();
+      init_assets();
+      ({ ScrollView } = ReactNative);
+      ({ FormSection, FormRow, FormSwitchRow } = Forms);
+    }
+  });
+
+  // src/patches/settings.tsx
+  function SettingsSection() {
+    const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
+    const navigation = NavigationNative.useNavigation();
+    const title = `Pyoncord (${"6f71802"}) ${true ? "(DEV)" : ""}`.trimEnd();
+    return /* @__PURE__ */ React.createElement(FormSection2, {
+      key: "Pyoncord",
+      title
+    }, /* @__PURE__ */ React.createElement(FormRow2, {
+      label: "General",
+      leading: /* @__PURE__ */ React.createElement(FormIcon, {
+        source: assets_exports.getAssetIDByName("settings")
+      }),
+      trailing: FormRow2.Arrow,
+      onPress: function() {
+        return lazyNavigate(navigation, Promise.resolve().then(() => (init_General(), General_exports)), "Pyoncord");
+      }
+    }));
+  }
+  function patchSettings() {
+    const unwaitScreens = waitForModule(function(m) {
+      return m.default?.name === "getScreens";
+    }, function(exports) {
+      patcher2.after(exports, "default", function(args, screens) {
+        return Object.assign(screens, {
+          PyoncordCustomPage: {
+            title: "Pyoncord",
+            render: function(param) {
+              let { render: PageComponent, ...args2 } = param;
+              const navigation = NavigationNative.useNavigation();
+              React.useEffect(function() {
+                navigation.setOptions({
+                  ...args2
+                });
+              }, []);
+              return /* @__PURE__ */ React.createElement(PageComponent, null);
+            }
+          }
+        });
+      });
+    });
+    const unwaitWrapper = waitForModule(function(m) {
+      return m.default?.name === "UserSettingsOverviewWrapper";
+    }, function(exports) {
+      const unpatch2 = patcher2.after(exports, "default", function(_args, ret) {
+        const UserSettingsOverview = findInReactTree(ret.props.children, function(n) {
+          return n.type?.name === "UserSettingsOverview";
+        });
+        patcher2.after(UserSettingsOverview.type.prototype, "renderSupportAndAcknowledgements", function(_args2, param) {
+          let { props: { children } } = param;
+          try {
+            const index = children.findIndex(function(c) {
+              return c?.type?.name === "UploadLogsButton";
+            });
+            if (index !== -1)
+              children.splice(index, 1);
+          } catch {
+          }
+        });
+        patcher2.after(UserSettingsOverview.type.prototype, "render", function(_args2, res) {
+          const titles = [
+            I18n.Messages.BILLING_SETTINGS,
+            I18n.Messages.PREMIUM_SETTINGS
+          ];
+          try {
+            const sections = findInReactTree(res.props.children, function(n) {
+              return n?.children?.[1]?.type === Forms.FormSection;
+            }).children;
+            const index = sections.findIndex(function(c) {
+              return titles.includes(c?.props.label);
+            });
+            sections.splice(-~index || 4, 0, /* @__PURE__ */ React.createElement(SettingsSection, null));
+          } catch (e) {
+            console.error("An error occurred while trying to append Pyoncord's settings section. " + e?.stack);
+          }
+        });
+        unpatch2();
+      });
+    });
+    return function() {
+      unwaitScreens();
+      unwaitWrapper();
+      patcher2.unpatchAllAndStop();
+    };
+  }
+  var patcher2;
+  var init_settings = __esm({
+    "src/patches/settings.tsx"() {
+      "use strict";
+      init_metro();
+      init_common();
+      init_patcher();
+      init_utils();
+      patcher2 = new Patcher("settings-patcher");
+    }
+  });
+
+  // src/themes.ts
+  var themes_exports = {};
+  __export(themes_exports, {
+    getCurrentTheme: () => getCurrentTheme
+  });
+  function getCurrentTheme() {
+    throw new Error("Not implemented");
+  }
+  var init_themes = __esm({
+    "src/themes.ts"() {
+      "use strict";
+    }
+  });
+
+  // src/patches/theme.ts
+  async function patchTheme() {
+    return;
+    const currentTheme = getCurrentTheme();
+    waitForModule(function(m) {
+      return m?.unsafe_rawColors && m.meta;
+    }, function(ColorModule) {
+      let semanticColorsSymbol;
+      const orig_rawColors = ColorModule.unsafe_rawColors;
+      ColorModule.unsafe_rawColors = {
+        ...ColorModule.unsafe_rawColors,
+        ...currentTheme.data.rawColors
+      };
+      patcher3.addUnpatcher(function() {
+        ColorModule.unsafe_rawColors = orig_rawColors;
+      });
+      patcher3.instead(ColorModule.meta, "resolveSemanticColor", function(param, orig) {
+        let [theme, key] = param;
+        const realKey = key[semanticColorsSymbol ??= Object.getOwnPropertySymbols(key)[0]];
+        const themeIndex = theme === "dark" ? 0 : theme === "light" ? 1 : 2;
+        if (currentTheme.data.semanticColors[realKey]?.[themeIndex]) {
+          return currentTheme.data.semanticColors[realKey][themeIndex];
+        }
+        return orig(theme, key);
+      });
+    });
+    return function() {
+      return patcher3.unpatchAllAndStop();
+    };
+  }
+  var patcher3;
+  var init_theme = __esm({
+    "src/patches/theme.ts"() {
+      "use strict";
+      init_metro();
+      init_patcher();
+      init_themes();
+      patcher3 = new Patcher("theme-patcher");
+    }
+  });
+
+  // src/patches/index.ts
+  var patches_exports = {};
+  __export(patches_exports, {
+    patchChatInput: () => patchChatInput,
+    patchExperiments: () => patchExperiments,
+    patchIdle: () => patchIdle,
+    patchSettings: () => patchSettings,
+    patchTheme: () => patchTheme
+  });
+  var init_patches = __esm({
+    "src/patches/index.ts"() {
+      "use strict";
+      init_chatInput();
+      init_experiments();
+      init_idle();
+      init_settings();
+      init_theme();
+    }
+  });
+
+  // src/index.ts
+  var src_exports = {};
+  __export(src_exports, {
+    debug: () => debug_exports,
+    default: () => src_default,
+    metro: () => metro_exports,
+    patcher: () => patcher_exports,
+    patches: () => patches_exports,
+    themes: () => themes_exports,
+    utils: () => utils_exports
+  });
+  async function src_default() {
+    patchFactories();
+    connectToDebugger();
+    const patches = [
+      patchAssets(),
+      patchExperiments(),
+      patchChatInput(),
+      patchIdle(),
+      patchSettings()
+    ];
+    await Promise.all(patches);
+    return function() {
+      console.log("Unloading Pyoncord...");
+      patches.forEach(async function(p) {
+        return (await p)?.();
+      });
+    };
+  }
+  var init_src = __esm({
+    "src/index.ts"() {
+      "use strict";
+      init_debug();
+      init_metro();
+      init_patches();
+      init_assets();
+      init_debug();
+      init_metro();
+      init_patcher();
+      init_patches();
+      init_themes();
+      init_utils();
+    }
+  });
+
+  // entry.js
+  init_metro();
+  console.log(`Pyon! (Pyoncord, hash=${"6f71802"}, dev=${true})`);
+  async function init() {
+    try {
+      window.React = findByProps("createElement");
+      window.ReactNative = findByProps("View");
+      window.pyoncord = {
+        ...await Promise.resolve().then(() => (init_src(), src_exports))
+      };
+      pyoncord.unload = await pyoncord.default();
+      delete pyoncord.default;
+    } catch (error) {
+      error = error?.stack ?? error;
+      alert([
+        "Failed to load Pyoncord.\n",
+        `Build Hash: ${"6f71802"}`,
+        `Debug Build: ${true}`,
+        `Build Number: ${nativeModuleProxy.RTNClientInfoManager?.Build}`,
+        error
+      ].join("\n"));
+      console.error(error);
+    }
+  }
+  init();
+})();
 //# sourceURL=pyoncord

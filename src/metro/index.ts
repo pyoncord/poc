@@ -3,6 +3,8 @@ import EventEmitter from "@utils/EventEmitter";
 import proxyLazy from "@utils/proxyLazy";
 import { instead } from "spitroast";
 
+export * as common from "@metro/common";
+
 declare const modules: Record<string | number, any>;
 export const moduleLoadEvent = new EventEmitter();
 

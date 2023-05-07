@@ -5,7 +5,7 @@ import { patchAssets } from "@utils/assets";
 
 export * as debug from "@debug";
 export * as metro from "@metro";
-export { default as Patcher } from "@patcher";
+export * as patcher from "@patcher";
 export * as patches from "@patches";
 export * as themes from "@themes";
 export * as utils from "@utils";

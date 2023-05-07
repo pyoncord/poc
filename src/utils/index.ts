@@ -1,18 +1,7 @@
-/* eslint-disable path-alias/no-relative */
-import * as assets from "./assets";
-import awaitUntil from "./awaitUntil";
-import EventEmitter from "./EventEmitter";
-import findInReactTree from "./findInReactTree";
-import findInTree from "./findInTree";
-import lazyNavigate from "./lazyNavigate";
-import proxyLazy from "./proxyLazy";
-
-export {
-    assets,
-    awaitUntil,
-    EventEmitter,
-    findInReactTree,
-    findInTree,
-    lazyNavigate,
-    proxyLazy
-};
+export * as assets from "./assets";
+export { default as awaitUntil } from "./awaitUntil";
+export { default as EventEmitter } from "./EventEmitter";
+export { default as findInReactTree } from "./findInReactTree";
+export { default as findInTree } from "./findInTree";
+export { default as lazyNavigate } from "./lazyNavigate";
+export { default as proxyLazy } from "./proxyLazy";
