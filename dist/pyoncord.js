@@ -1,3 +1,4 @@
+"use strict";
 (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -8,6 +9,170 @@
     for (var name in all)
       __defProp(target, name, { get: all[name], enumerable: true });
   };
+
+  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_class_call_check.js
+  function _class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor))
+      throw new TypeError("Cannot call a class as a function");
+  }
+  var init_class_call_check = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_class_call_check.js"() {
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor)
+        descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+  function _create_class(Constructor, protoProps, staticProps) {
+    if (protoProps)
+      _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps)
+      _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+  var init_create_class = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js"() {
+    }
+  });
+
+  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js
+  function _define_property(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else
+      obj[key] = value;
+    return obj;
+  }
+  var init_define_property = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js"() {
+    }
+  });
+
+  // src/EventEmitter.ts
+  var EventEmitter;
+  var init_EventEmitter = __esm({
+    "src/EventEmitter.ts"() {
+      "use strict";
+      init_class_call_check();
+      init_create_class();
+      init_define_property();
+      EventEmitter = /* @__PURE__ */ function() {
+        "use strict";
+        function EventEmitter2() {
+          _class_call_check(this, EventEmitter2);
+          _define_property(this, "events", /* @__PURE__ */ new Map());
+        }
+        _create_class(EventEmitter2, [
+          {
+            key: "on",
+            value: function on(eventName, listener) {
+              if (!this.events.get(eventName)?.add(listener)) {
+                this.events.set(eventName, /* @__PURE__ */ new Set([
+                  listener
+                ]));
+              }
+            }
+          },
+          {
+            key: "emit",
+            value: function emit(eventName) {
+              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
+              }
+              const listeners = this.events.get(eventName);
+              if (listeners) {
+                listeners.forEach(function(listener) {
+                  listener(...args);
+                });
+              }
+            }
+          },
+          {
+            key: "off",
+            value: function off(eventName, listenerToRemove) {
+              const listeners = this.events.get(eventName);
+              if (!listeners) {
+                return;
+              }
+              listeners.delete(listenerToRemove);
+              if (listeners.size === 0) {
+                this.events.delete(eventName);
+              }
+            }
+          }
+        ]);
+        return EventEmitter2;
+      }();
+    }
+  });
+
+  // src/utils/proxyLazy.ts
+  function proxyLazy(factory) {
+    const dummy = function() {
+      return void 0;
+    };
+    dummy[factorySymbol] = function() {
+      return dummy[cacheSymbol] ??= factory();
+    };
+    return new Proxy(dummy, lazyHandler);
+  }
+  var factorySymbol, cacheSymbol, unconfigurable, isUnconfigurable, lazyHandler;
+  var init_proxyLazy = __esm({
+    "src/utils/proxyLazy.ts"() {
+      "use strict";
+      factorySymbol = Symbol("lazyFactory");
+      cacheSymbol = Symbol("lazyCache");
+      unconfigurable = [
+        "arguments",
+        "caller",
+        "prototype"
+      ];
+      isUnconfigurable = function(key) {
+        return typeof key === "string" && unconfigurable.includes(key);
+      };
+      lazyHandler = {
+        ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(function(fnName) {
+          return [
+            fnName,
+            function(target) {
+              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
+              }
+              return Reflect[fnName](target[factorySymbol](), ...args);
+            }
+          ];
+        })),
+        ownKeys: function(target) {
+          const cacheKeys = Reflect.ownKeys(target[factorySymbol]());
+          unconfigurable.forEach(function(key) {
+            return isUnconfigurable(key) && cacheKeys.push(key);
+          });
+          return cacheKeys;
+        },
+        getOwnPropertyDescriptor: function(target, p) {
+          if (isUnconfigurable(p))
+            return Reflect.getOwnPropertyDescriptor(target, p);
+          const descriptor = Reflect.getOwnPropertyDescriptor(target[factorySymbol](), p);
+          if (descriptor)
+            Object.defineProperty(target, p, descriptor);
+          return descriptor;
+        }
+      };
+    }
+  });
 
   // node_modules/.pnpm/spitroast@1.4.2/node_modules/spitroast/dist/esm/shared.js
   var patchTypes, patchedObjects;
@@ -157,287 +322,6 @@
     }
   });
 
-  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_class_call_check.js
-  function _class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor))
-      throw new TypeError("Cannot call a class as a function");
-  }
-  var init_class_call_check = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_class_call_check.js"() {
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js
-  function _defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor)
-        descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-  function _create_class(Constructor, protoProps, staticProps) {
-    if (protoProps)
-      _defineProperties(Constructor.prototype, protoProps);
-    if (staticProps)
-      _defineProperties(Constructor, staticProps);
-    return Constructor;
-  }
-  var init_create_class = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js"() {
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js
-  function _define_property(obj, key, value) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else
-      obj[key] = value;
-    return obj;
-  }
-  var init_define_property = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js"() {
-    }
-  });
-
-  // src/EventEmitter.ts
-  var EventEmitter;
-  var init_EventEmitter = __esm({
-    "src/EventEmitter.ts"() {
-      init_class_call_check();
-      init_create_class();
-      init_define_property();
-      EventEmitter = /* @__PURE__ */ function() {
-        "use strict";
-        function EventEmitter2() {
-          _class_call_check(this, EventEmitter2);
-          _define_property(this, "events", /* @__PURE__ */ new Map());
-        }
-        _create_class(EventEmitter2, [
-          {
-            key: "on",
-            value: function on(eventName, listener) {
-              if (!this.events.get(eventName)?.add(listener)) {
-                this.events.set(eventName, /* @__PURE__ */ new Set([
-                  listener
-                ]));
-              }
-            }
-          },
-          {
-            key: "emit",
-            value: function emit(eventName) {
-              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                args[_key - 1] = arguments[_key];
-              }
-              const listeners = this.events.get(eventName);
-              if (listeners) {
-                listeners.forEach(function(listener) {
-                  listener(...args);
-                });
-              }
-            }
-          },
-          {
-            key: "off",
-            value: function off(eventName, listenerToRemove) {
-              const listeners = this.events.get(eventName);
-              if (!listeners) {
-                return;
-              }
-              listeners.delete(listenerToRemove);
-              if (listeners.size === 0) {
-                this.events.delete(eventName);
-              }
-            }
-          }
-        ]);
-        return EventEmitter2;
-      }();
-    }
-  });
-
-  // src/utils/awaitUntil.ts
-  function awaitUntil(condition) {
-    let timeout = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 100;
-    return new Promise(function(resolve) {
-      const interval = setInterval(function() {
-        if (condition()) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, timeout);
-    });
-  }
-  var init_awaitUntil = __esm({
-    "src/utils/awaitUntil.ts"() {
-    }
-  });
-
-  // src/utils/findInReactTree.ts
-  function findInReactTree(tree, filter) {
-    return findInTree(tree, filter, {
-      walkable: [
-        "props",
-        "children",
-        "child",
-        "sibling"
-      ]
-    });
-  }
-  var init_findInReactTree = __esm({
-    "src/utils/findInReactTree.ts"() {
-      init_utils();
-    }
-  });
-
-  // src/utils/findInTree.ts
-  function treeSearch(tree, filter, opts, depth) {
-    if (depth > opts.maxDepth)
-      return;
-    if (!tree)
-      return;
-    try {
-      if (filter(tree))
-        return tree;
-    } catch {
-    }
-    if (Array.isArray(tree)) {
-      for (const item of tree) {
-        if (typeof item !== "object" || item === null)
-          continue;
-        try {
-          const found = treeSearch(item, filter, opts, depth + 1);
-          if (found)
-            return found;
-        } catch {
-        }
-      }
-    } else if (typeof tree === "object") {
-      for (const key of Object.keys(tree)) {
-        if (typeof tree[key] !== "object" || tree[key] === null)
-          continue;
-        if (opts.walkable.length && !opts.walkable.includes(key))
-          continue;
-        if (opts.ignore.includes(key))
-          continue;
-        try {
-          const found = treeSearch(tree[key], filter, opts, depth + 1);
-          if (found)
-            return found;
-        } catch {
-        }
-      }
-    }
-  }
-  function findInTree(tree, filter) {
-    let opts = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {};
-    return treeSearch(tree, filter, {
-      walkable: [],
-      ignore: [],
-      maxDepth: 100,
-      ...opts
-    }, 0);
-  }
-  var init_findInTree = __esm({
-    "src/utils/findInTree.ts"() {
-    }
-  });
-
-  // src/utils/lazyNavigate.tsx
-  async function lazyNavigate(navigation, renderPromise, screenOptions, props) {
-    const Component = await renderPromise.then(function(m) {
-      return m.default;
-    });
-    if (typeof screenOptions === "string") {
-      screenOptions = {
-        title: screenOptions
-      };
-    }
-    navigation.navigate("PyoncordCustomPage", {
-      ...screenOptions,
-      render: function() {
-        return /* @__PURE__ */ React.createElement(Component, props);
-      }
-    });
-  }
-  var init_lazyNavigate = __esm({
-    "src/utils/lazyNavigate.tsx"() {
-    }
-  });
-
-  // src/utils/proxyLazy.ts
-  function proxyLazy(factory) {
-    const dummy = function() {
-    };
-    dummy[factorySymbol] = function() {
-      return dummy[cacheSymbol] ??= factory();
-    };
-    return new Proxy(dummy, lazyHandler);
-  }
-  var factorySymbol, cacheSymbol, unconfigurable, isUnconfigurable, lazyHandler;
-  var init_proxyLazy = __esm({
-    "src/utils/proxyLazy.ts"() {
-      factorySymbol = Symbol("lazyFactory");
-      cacheSymbol = Symbol("lazyCache");
-      unconfigurable = [
-        "arguments",
-        "caller",
-        "prototype"
-      ];
-      isUnconfigurable = function(key) {
-        return typeof key === "string" && unconfigurable.includes(key);
-      };
-      lazyHandler = {
-        ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(function(fnName) {
-          return [
-            fnName,
-            function(target) {
-              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                args[_key - 1] = arguments[_key];
-              }
-              return Reflect[fnName](target[factorySymbol](), ...args);
-            }
-          ];
-        })),
-        ownKeys: function(target) {
-          const cacheKeys = Reflect.ownKeys(target[factorySymbol]());
-          unconfigurable.forEach(function(key) {
-            return isUnconfigurable(key) && cacheKeys.push(key);
-          });
-          return cacheKeys;
-        },
-        getOwnPropertyDescriptor: function(target, p) {
-          if (isUnconfigurable(p))
-            return Reflect.getOwnPropertyDescriptor(target, p);
-          const descriptor = Reflect.getOwnPropertyDescriptor(target[factorySymbol](), p);
-          if (descriptor)
-            Object.defineProperty(target, p, descriptor);
-          return descriptor;
-        }
-      };
-    }
-  });
-
-  // src/utils/index.ts
-  var init_utils = __esm({
-    "src/utils/index.ts"() {
-      init_awaitUntil();
-      init_findInReactTree();
-      init_findInTree();
-      init_lazyNavigate();
-      init_proxyLazy();
-    }
-  });
-
   // src/metro/index.ts
   function patchFactories() {
     for (const id in modules) {
@@ -516,40 +400,11 @@
   var moduleLoadEvent;
   var init_metro = __esm({
     "src/metro/index.ts"() {
-      init_esm();
+      "use strict";
       init_EventEmitter();
-      init_utils();
+      init_proxyLazy();
+      init_esm();
       moduleLoadEvent = new EventEmitter();
-    }
-  });
-
-  // src/patches/experiments.ts
-  async function experiments_default() {
-    try {
-      await awaitUntil(function() {
-        return UserStore.getCurrentUser?.();
-      });
-      UserStore.getCurrentUser().flags |= 1;
-      UserStore._dispatcher._actionHandlers._computeOrderedActionHandlers("OVERLAY_INITIALIZE").forEach(function(param) {
-        let { name, actionHandler } = param;
-        name.includes?.("Experiment") && actionHandler?.({
-          serializedExperimentStore: ExperimentStore.getSerializedState(),
-          user: {
-            flags: 1
-          }
-        });
-      });
-    } catch (err) {
-      console.error("An error occurred while patching experiments", err);
-    }
-  }
-  var UserStore, ExperimentStore;
-  var init_experiments = __esm({
-    "src/patches/experiments.ts"() {
-      init_metro();
-      init_utils();
-      UserStore = findByStoreNameLazy("UserStore");
-      ExperimentStore = findByStoreNameLazy("ExperimentStore");
     }
   });
 
@@ -560,7 +415,7 @@
       return typeof m?.defaultProps?.hideGiftButton === "boolean";
     }, function(exports) {
       moduleExports = exports;
-      hideGiftButton = exports.defaultProps.hideGiftButton;
+      ({ hideGiftButton } = exports.defaultProps.hideGiftButton);
       exports.defaultProps.hideGiftButton = true;
     });
     return function() {
@@ -569,13 +424,21 @@
   }
   var init_chatInput = __esm({
     "src/patches/chatInput.ts"() {
+      "use strict";
       init_metro();
     }
   });
 
-  // src/themes.ts
-  var init_themes = __esm({
-    "src/themes.ts"() {
+  // src/metro/common.ts
+  var AssetManager, I18n, Forms, NavigationNative;
+  var init_common = __esm({
+    "src/metro/common.ts"() {
+      "use strict";
+      init_metro();
+      AssetManager = findByProps("getAssetByID");
+      I18n = findByPropsLazy("Messages");
+      Forms = findByPropsLazy("FormSection");
+      NavigationNative = findByPropsLazy("NavigationContainer");
     }
   });
 
@@ -583,6 +446,7 @@
   var patchesInstances, Patcher;
   var init_patcher = __esm({
     "src/patcher.ts"() {
+      "use strict";
       init_class_call_check();
       init_define_property();
       init_esm();
@@ -652,58 +516,15 @@
     }
   });
 
-  // src/patches/theme.ts
-  var patcher;
-  var init_theme = __esm({
-    "src/patches/theme.ts"() {
-      init_metro();
-      init_themes();
-      init_patcher();
-      patcher = new Patcher("theme-patcher");
-    }
-  });
-
-  // src/patches/idle.ts
-  function idle_default() {
-    const unwait = waitForModule(function(m) {
-      return m?.dispatch && m._actionHandlers?._orderedActionHandlers;
-    }, function(exports) {
-      patcher2.before(exports, "dispatch", function(args) {
-        if (args[0].type === "IDLE") {
-          return [
-            {
-              type: "THIS_TYPE_DOES_NOT_EXIST"
-            }
-          ];
-        }
-      });
-    });
-    return function() {
-      return unwait(), patcher2.unpatchAllAndStop();
-    };
-  }
-  var patcher2;
-  var init_idle = __esm({
-    "src/patches/idle.ts"() {
-      init_metro();
-      init_patcher();
-      patcher2 = new Patcher("idle-patcher");
-    }
-  });
-
-  // src/metro/common.ts
-  var I18n, Forms, AssetManager, NavigationNative;
-  var init_common = __esm({
-    "src/metro/common.ts"() {
-      init_metro();
-      I18n = findByPropsLazy("Messages");
-      Forms = findByPropsLazy("FormSection");
-      AssetManager = findByPropsLazy("registerAsset");
-      NavigationNative = findByPropsLazy("NavigationContainer");
-    }
-  });
-
   // src/utils/assets.ts
+  var assets_exports = {};
+  __export(assets_exports, {
+    getAssetByID: () => getAssetByID,
+    getAssetByName: () => getAssetByName,
+    getAssetIDByName: () => getAssetIDByName,
+    patchAssets: () => patchAssets,
+    registeredAssets: () => registeredAssets
+  });
   function patchAssets() {
     const unpatch2 = after2(AssetManager, "registerAsset", function(param, id2) {
       let [asset2] = param;
@@ -721,16 +542,209 @@
     }
     return unpatch2;
   }
-  var after2, registeredAssets, getAssetIDByName;
+  var after2, registeredAssets, getAssetByName, getAssetByID, getAssetIDByName;
   var init_assets = __esm({
     "src/utils/assets.ts"() {
+      "use strict";
       init_common();
       init_patcher();
       ({ after: after2 } = new Patcher("assets-patcher"));
       registeredAssets = {};
+      getAssetByName = function(name) {
+        return registeredAssets[name];
+      };
+      getAssetByID = function(id) {
+        return AssetManager.getAssetByID(id);
+      };
       getAssetIDByName = function(name) {
         return registeredAssets[name]?.id;
       };
+    }
+  });
+
+  // src/utils/awaitUntil.ts
+  function awaitUntil(condition) {
+    let timeout = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 100;
+    return new Promise(function(resolve) {
+      const interval = setInterval(function() {
+        if (condition()) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, timeout);
+    });
+  }
+  var init_awaitUntil = __esm({
+    "src/utils/awaitUntil.ts"() {
+      "use strict";
+    }
+  });
+
+  // src/utils/findInReactTree.ts
+  function findInReactTree(tree, filter) {
+    return findInTree(tree, filter, {
+      walkable: [
+        "props",
+        "children",
+        "child",
+        "sibling"
+      ]
+    });
+  }
+  var init_findInReactTree = __esm({
+    "src/utils/findInReactTree.ts"() {
+      "use strict";
+      init_utils();
+    }
+  });
+
+  // src/utils/findInTree.ts
+  function treeSearch(tree, filter, opts, depth) {
+    if (depth > opts.maxDepth)
+      return;
+    if (!tree)
+      return;
+    try {
+      if (filter(tree))
+        return tree;
+    } catch {
+    }
+    if (Array.isArray(tree)) {
+      for (const item of tree) {
+        if (typeof item !== "object" || item === null)
+          continue;
+        try {
+          const found = treeSearch(item, filter, opts, depth + 1);
+          if (found)
+            return found;
+        } catch {
+        }
+      }
+    } else if (typeof tree === "object") {
+      for (const key of Object.keys(tree)) {
+        if (typeof tree[key] !== "object" || tree[key] === null)
+          continue;
+        if (opts.walkable.length && !opts.walkable.includes(key))
+          continue;
+        if (opts.ignore.includes(key))
+          continue;
+        try {
+          const found = treeSearch(tree[key], filter, opts, depth + 1);
+          if (found)
+            return found;
+        } catch {
+        }
+      }
+    }
+  }
+  function findInTree(tree, filter) {
+    let opts = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {};
+    return treeSearch(tree, filter, {
+      walkable: [],
+      ignore: [],
+      maxDepth: 100,
+      ...opts
+    }, 0);
+  }
+  var init_findInTree = __esm({
+    "src/utils/findInTree.ts"() {
+      "use strict";
+    }
+  });
+
+  // src/utils/lazyNavigate.tsx
+  async function lazyNavigate(navigation, renderPromise, screenOptions, props) {
+    const Component = await renderPromise.then(function(m) {
+      return m.default;
+    });
+    if (typeof screenOptions === "string") {
+      screenOptions = {
+        title: screenOptions
+      };
+    }
+    navigation.navigate("PyoncordCustomPage", {
+      ...screenOptions,
+      render: function() {
+        return /* @__PURE__ */ React.createElement(Component, props);
+      }
+    });
+  }
+  var init_lazyNavigate = __esm({
+    "src/utils/lazyNavigate.tsx"() {
+      "use strict";
+    }
+  });
+
+  // src/utils/index.ts
+  var init_utils = __esm({
+    "src/utils/index.ts"() {
+      "use strict";
+      init_assets();
+      init_awaitUntil();
+      init_findInReactTree();
+      init_findInTree();
+      init_lazyNavigate();
+      init_proxyLazy();
+    }
+  });
+
+  // src/patches/experiments.ts
+  async function experiments_default() {
+    try {
+      await awaitUntil(function() {
+        return UserStore.getCurrentUser?.();
+      });
+      UserStore.getCurrentUser().flags |= 1;
+      UserStore._dispatcher._actionHandlers._computeOrderedActionHandlers("OVERLAY_INITIALIZE").forEach(function(param) {
+        let { name, actionHandler } = param;
+        name.includes?.("Experiment") && actionHandler?.({
+          serializedExperimentStore: ExperimentStore.getSerializedState(),
+          user: {
+            flags: 1
+          }
+        });
+      });
+    } catch (err) {
+      console.error("An error occurred while patching experiments", err);
+    }
+  }
+  var UserStore, ExperimentStore;
+  var init_experiments = __esm({
+    "src/patches/experiments.ts"() {
+      "use strict";
+      init_metro();
+      init_utils();
+      UserStore = findByStoreNameLazy("UserStore");
+      ExperimentStore = findByStoreNameLazy("ExperimentStore");
+    }
+  });
+
+  // src/patches/idle.ts
+  function idle_default() {
+    const unwait = waitForModule(function(m) {
+      return m?.dispatch && m._actionHandlers?._orderedActionHandlers;
+    }, function(exports) {
+      patcher.before(exports, "dispatch", function(args) {
+        if (args[0].type === "IDLE") {
+          return [
+            {
+              type: "THIS_TYPE_DOES_NOT_EXIST"
+            }
+          ];
+        }
+      });
+    });
+    return function() {
+      return unwait(), patcher.unpatchAllAndStop();
+    };
+  }
+  var patcher;
+  var init_idle = __esm({
+    "src/patches/idle.ts"() {
+      "use strict";
+      init_metro();
+      init_patcher();
+      patcher = new Patcher("idle-patcher");
     }
   });
 
@@ -765,6 +779,7 @@
   var ScrollView, FormSection, FormRow, FormSwitchRow;
   var init_General = __esm({
     "src/ui/screens/General.tsx"() {
+      "use strict";
       init_common();
       init_assets();
       ({ ScrollView } = ReactNative);
@@ -776,14 +791,14 @@
   function SettingsSection() {
     const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
     const navigation = NavigationNative.useNavigation();
-    const title = `Pyoncord (${"345a8e2"}) ${true ? "(DEV)" : ""}`.trimEnd();
+    const title = `Pyoncord (${"e11d6ed"}) ${true ? "(DEV)" : ""}`.trimEnd();
     return /* @__PURE__ */ React.createElement(FormSection2, {
       key: "Pyoncord",
       title
     }, /* @__PURE__ */ React.createElement(FormRow2, {
       label: "General",
       leading: /* @__PURE__ */ React.createElement(FormIcon, {
-        source: getAssetIDByName("settings")
+        source: assets_exports.getAssetIDByName("settings")
       }),
       trailing: FormRow2.Arrow,
       onPress: function() {
@@ -795,7 +810,7 @@
     const unwaitScreens = waitForModule(function(m) {
       return m.default?.name === "getScreens";
     }, function(exports) {
-      patcher3.after(exports, "default", function(args, screens) {
+      patcher2.after(exports, "default", function(args, screens) {
         return Object.assign(screens, {
           PyoncordCustomPage: {
             title: "Pyoncord",
@@ -816,11 +831,11 @@
     const unwaitWrapper = waitForModule(function(m) {
       return m.default?.name === "UserSettingsOverviewWrapper";
     }, function(exports) {
-      const unpatch2 = patcher3.after(exports, "default", function(_args, ret) {
+      const unpatch2 = patcher2.after(exports, "default", function(_args, ret) {
         const UserSettingsOverview = findInReactTree(ret.props.children, function(n) {
           return n.type?.name === "UserSettingsOverview";
         });
-        patcher3.after(UserSettingsOverview.type.prototype, "renderSupportAndAcknowledgements", function(_args2, param) {
+        patcher2.after(UserSettingsOverview.type.prototype, "renderSupportAndAcknowledgements", function(_args2, param) {
           let { props: { children } } = param;
           try {
             const index = children.findIndex(function(c) {
@@ -831,10 +846,10 @@
           } catch {
           }
         });
-        patcher3.after(UserSettingsOverview.type.prototype, "render", function(_args2, res) {
+        patcher2.after(UserSettingsOverview.type.prototype, "render", function(_args2, res) {
           const titles = [
-            I18n.Messages["BILLING_SETTINGS"],
-            I18n.Messages["PREMIUM_SETTINGS"]
+            I18n.Messages.BILLING_SETTINGS,
+            I18n.Messages.PREMIUM_SETTINGS
           ];
           try {
             const sections = findInReactTree(res.props.children, function(n) {
@@ -854,29 +869,49 @@
     return function() {
       unwaitScreens();
       unwaitWrapper();
-      patcher3.unpatchAllAndStop();
+      patcher2.unpatchAllAndStop();
     };
   }
-  var patcher3;
+  var patcher2;
   var init_settings = __esm({
     "src/patches/settings.tsx"() {
+      "use strict";
       init_metro();
       init_common();
-      init_utils();
-      init_assets();
       init_patcher();
-      patcher3 = new Patcher("settings-patcher");
+      init_utils();
+      patcher2 = new Patcher("settings-patcher");
+    }
+  });
+
+  // src/themes.ts
+  var init_themes = __esm({
+    "src/themes.ts"() {
+      "use strict";
+    }
+  });
+
+  // src/patches/theme.ts
+  var patcher3;
+  var init_theme = __esm({
+    "src/patches/theme.ts"() {
+      "use strict";
+      init_metro();
+      init_patcher();
+      init_themes();
+      patcher3 = new Patcher("theme-patcher");
     }
   });
 
   // src/patches/index.ts
   var init_patches = __esm({
     "src/patches/index.ts"() {
-      init_experiments();
+      "use strict";
       init_chatInput();
-      init_theme();
+      init_experiments();
       init_idle();
       init_settings();
+      init_theme();
     }
   });
 
@@ -886,10 +921,10 @@
     default: () => src_default
   });
   async function src_default() {
-    console.log("Initalizing pyoncord...");
+    console.log("Initializing Pyoncord...");
     patchFactories();
     const patches = [
-      patchAssets(),
+      assets_exports.patchAssets(),
       experiments_default(),
       chatInput_default(),
       // patchTheme(),
@@ -897,7 +932,7 @@
       patchSettings()
     ];
     return async function() {
-      console.log("Unloading pyoncord...");
+      console.log("Unloading Pyoncord...");
       for (const patch of patches) {
         (await patch)?.();
       }
@@ -905,14 +940,16 @@
   }
   var init_src = __esm({
     "src/index.ts"() {
+      "use strict";
       init_metro();
       init_patches();
-      init_assets();
+      init_utils();
     }
   });
 
   // entry.js
   init_metro();
+  console.log("Hello from Pyoncord!");
   async function init() {
     try {
       globalThis.React = findByProps("createElement");

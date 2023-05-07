@@ -1,9 +1,7 @@
-import { waitForModule } from "../metro"
-import { Forms, I18n, NavigationNative } from "../metro/common";
-import { findInReactTree, lazyNavigate } from "../utils";
-import { getAssetIDByName } from "../utils/assets";
-
-import Patcher from "../patcher"
+import { waitForModule } from "@metro";
+import { Forms, I18n, NavigationNative } from "@metro/common";
+import Patcher from "@patcher";
+import { assets, findInReactTree, lazyNavigate } from "@utils";
 
 const patcher = new Patcher("settings-patcher");
 
@@ -18,43 +16,43 @@ function SettingsSection() {
         <FormSection key="Pyoncord" title={title}>
             <FormRow
                 label="General"
-                leading={<FormIcon source={getAssetIDByName("settings")} />}
+                leading={<FormIcon source={assets.getAssetIDByName("settings")} />}
                 trailing={FormRow.Arrow}
-                onPress={() => lazyNavigate(navigation, import("../ui/screens/General"), "Pyoncord")}
+                onPress={() => lazyNavigate(navigation, import("@ui/screens/General"), "Pyoncord")}
             />
         </FormSection>
-    )
+    );
 }
 
 export default function patchSettings() {
     const unwaitScreens = waitForModule(
-        (m) => m.default?.name === "getScreens",
-        (exports) => {
+        m => m.default?.name === "getScreens",
+        exports => {
             patcher.after(exports, "default", (args, screens) => {
                 return Object.assign(screens, {
                     PyoncordCustomPage: {
                         title: "Pyoncord",
-                        render: ({ render: PageComponent, ...args }) => {
+                        render: ({ render: PageComponent, ...args }: any) => {
                             const navigation = NavigationNative.useNavigation();
 
                             React.useEffect(() => {
                                 navigation.setOptions({ ...args });
                             }, []);
 
-                            return <PageComponent />
+                            return <PageComponent />;
                         },
                     }
-                })
-            })
+                });
+            });
         }
     );
 
     // https://github.com/vendetta-mod/Vendetta/blob/f66e62d13b4ed7b272d87e8f4519c0ca3a6e34b1/src/ui/settings/index.tsx#
     const unwaitWrapper = waitForModule(
-        (m) => m.default?.name === "UserSettingsOverviewWrapper",
-        (exports) => {
+        m => m.default?.name === "UserSettingsOverviewWrapper",
+        exports => {
             const unpatch = patcher.after(exports, "default", (_args, ret) => {
-                const UserSettingsOverview = findInReactTree(ret.props.children, (n) => n.type?.name === "UserSettingsOverview");
+                const UserSettingsOverview = findInReactTree(ret.props.children, n => n.type?.name === "UserSettingsOverview");
 
                 patcher.after(UserSettingsOverview.type.prototype, "renderSupportAndAcknowledgements", (_args, { props: { children } }) => {
                     try {
@@ -66,17 +64,17 @@ export default function patchSettings() {
                 });
 
                 patcher.after(UserSettingsOverview.type.prototype, "render", (_args, res) => {
-                    const titles = [I18n.Messages["BILLING_SETTINGS"], I18n.Messages["PREMIUM_SETTINGS"]];
+                    const titles = [I18n.Messages.BILLING_SETTINGS, I18n.Messages.PREMIUM_SETTINGS];
 
                     try {
                         const sections = findInReactTree(
                             res.props.children,
-                            (n) => n?.children?.[1]?.type === Forms.FormSection
+                            n => n?.children?.[1]?.type === Forms.FormSection
                         ).children;
 
                         const index = sections.findIndex((c: any) => titles.includes(c?.props.label));
                         sections.splice(-~index || 4, 0, <SettingsSection />);
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error(
                             "An error occurred while trying to append Pyoncord's settings section. " +
                             e?.stack ?? e
@@ -93,5 +91,5 @@ export default function patchSettings() {
         unwaitScreens();
         unwaitWrapper();
         patcher.unpatchAllAndStop();
-    }
+    };
 }

@@ -1,13 +1,14 @@
-import patchExperiments from "./experiments";
+/* eslint-disable path-alias/no-relative */
 import patchChatInput from "./chatInput";
-import patchTheme from "./theme";
+import patchExperiments from "./experiments";
 import patchIdle from "./idle";
 import patchSettings from "./settings";
+import patchTheme from "./theme";
 
 export {
-    patchExperiments,
     patchChatInput,
-    patchTheme,
+    patchExperiments,
     patchIdle,
-    patchSettings
+    patchSettings,
+    patchTheme
 };

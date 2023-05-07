@@ -1,7 +1,6 @@
-import { waitForModule } from "../metro";
-import { getCurrentTheme } from "../themes";
-
-import Patcher from "../patcher";
+import { waitForModule } from "@metro";
+import Patcher from "@patcher";
+import { getCurrentTheme } from "@themes";
 
 const patcher = new Patcher("theme-patcher");
 
@@ -12,8 +11,8 @@ export default async () => {
     const currentTheme = getCurrentTheme() as any;
 
     waitForModule(
-        (m) => m?.unsafe_rawColors && m.meta,
-        (ColorModule) => {
+        m => m?.unsafe_rawColors && m.meta,
+        ColorModule => {
             let semanticColorsSymbol;
             const orig_rawColors = ColorModule.unsafe_rawColors;
 
@@ -35,9 +34,9 @@ export default async () => {
                 }
 
                 return orig(theme, key);
-            })
+            });
         }
     );
 
     return () => patcher.unpatchAllAndStop();
-}
+};

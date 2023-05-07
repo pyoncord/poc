@@ -1,14 +1,14 @@
-import { patchFactories } from "./metro";
-import { patchExperiments, patchChatInput, patchTheme, patchIdle, patchSettings } from "./patches";
-import { patchAssets } from "./utils/assets";
+import { patchFactories } from "@metro";
+import { patchChatInput, patchExperiments, patchIdle, patchSettings } from "@patches";
+import { assets } from "@utils";
 
 export default async () => {
-    console.log("Initalizing pyoncord...");
+    console.log("Initializing Pyoncord...");
 
     patchFactories();
 
     const patches = [
-        patchAssets(),
+        assets.patchAssets(),
         patchExperiments(),
         patchChatInput(),
         // patchTheme(),
@@ -17,10 +17,10 @@ export default async () => {
     ];
 
     return async () => {
-        console.log("Unloading pyoncord...");
+        console.log("Unloading Pyoncord...");
 
         for (const patch of patches) {
             (await patch)?.();
         }
-    }
-}
+    };
+};

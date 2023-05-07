@@ -1,6 +1,6 @@
+import EventEmitter from "@EventEmitter";
+import proxyLazy from "@utils/proxyLazy";
 import { instead } from "spitroast";
-import EventEmitter from "../EventEmitter";
-import { proxyLazy } from "../utils";
 
 declare const modules: Record<string | number, any>;
 export const moduleLoadEvent = new EventEmitter();
@@ -24,7 +24,7 @@ export function patchFactories() {
              * 4: the exports object
              * 5: the module/return object
              * 6: the module dependencies ids (array)
-             * 
+             *
              * - It doesn't return any value, but it modifies the module/return object.
              * - Everything is done synchronously.
             */
@@ -53,11 +53,11 @@ export function* getInitializedModules(): IterableIterator<any> {
 
 /**
  * Wait for a module to be loaded, then call a callback with the module exports.
- * @param {(m) => boolean} filter 
- * @param {(exports) => void} callback 
+ * @param {(m) => boolean} filter
+ * @param {(exports) => void} callback
 */
 export function waitForModule(filter: (m: any) => boolean, callback: (exports: any) => void) {
-    const matches = (exports) => {
+    const matches = (exports: any) => {
         if (exports.default && exports.__esModule && filter(exports.default)) {
             moduleLoadEvent.off("export", matches);
             callback(exports.default);
@@ -67,7 +67,7 @@ export function waitForModule(filter: (m: any) => boolean, callback: (exports: a
             moduleLoadEvent.off("export", matches);
             callback(exports);
         }
-    }
+    };
 
     moduleLoadEvent.on("export", matches);
     return () => moduleLoadEvent.off("export", matches);
@@ -106,7 +106,7 @@ export function findLazy(filter: (m: any) => boolean, returnDefault = true): any
  * @returns The module's export
  */
 export function findByProps(...props: string[]) {
-    return findInitializedModule((m) => props.every((prop) => m?.[prop]));
+    return findInitializedModule(m => props.every(prop => m?.[prop]));
 }
 
 /**
@@ -123,7 +123,7 @@ export function findByPropsLazy(...props: string[]) {
  * @returns The function's exports
  */
 export function findByName(name: string, defaultExport: boolean = true) {
-    return findInitializedModule((m) => m?.name === name, defaultExport);
+    return findInitializedModule(m => m?.name === name, defaultExport);
 }
 
 /**
@@ -140,7 +140,7 @@ export function findByNameLazy(name: string, defaultExport: boolean = true) {
  * @returns The component's exports
 */
 export function findByDisplayName(displayName: string, defaultExport: boolean = true) {
-    return findInitializedModule((m) => m?.displayName === displayName, defaultExport);
+    return findInitializedModule(m => m?.displayName === displayName, defaultExport);
 }
 
 /**
@@ -157,7 +157,7 @@ export function findByDisplayNameLazy(displayName: string, defaultExport = true)
  * @returns The Flux store
 */
 export function findByStoreName(storeName: string) {
-    return findInitializedModule((m) => m?.getName?.() === storeName);
+    return findInitializedModule(m => m?.getName?.() === storeName);
 }
 
 /**

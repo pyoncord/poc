@@ -1,6 +1,6 @@
 // https://github.com/vendetta-mod/Vendetta/blob/rewrite/src/ui/assets.ts
-import { AssetManager } from "../metro/common";
-import Patcher from "../patcher";
+import { AssetManager } from "@metro/common";
+import Patcher from "@patcher";
 
 const { after } = new Patcher("assets-patcher");
 
@@ -14,6 +14,7 @@ export function patchAssets() {
     });
 
     let asset: Asset, id = 1;
+    // eslint-disable-next-line no-cond-assign
     while (asset = AssetManager.getAssetByID(id)) {
         registeredAssets[asset.name] ??= { ...asset, id: id++ };
     }

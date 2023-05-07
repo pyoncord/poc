@@ -1,17 +1,39 @@
 // Derived from Vendetta's build script
-import esbuild from "esbuild";
 import swc from "@swc/core";
-
 import { execSync } from "child_process";
+import esbuild from "esbuild";
+import alias from "esbuild-plugin-alias";
 import { argv } from "process";
 
-const flags = argv.slice(2).filter((arg) => arg.startsWith("--")).map((arg) => arg.slice(2));
+const flags = argv.slice(2).filter(arg => arg.startsWith("--")).map(arg => arg.slice(2));
 const isMainstream = flags.includes("mainstream");
 
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 console.log(`Building with commit hash ${commitHash}, isMainstream=${isMainstream}`);
 
 const buildOutput = "dist/pyoncord.js";
+
+const swcPlugin = {
+    name: "swc",
+    setup(build) {
+        build.onLoad({ filter: /\.[jt]sx?/ }, async args => {
+            const result = await swc.transformFile(args.path, {
+                jsc: {
+                    target: "esnext",
+                    externalHelpers: true,
+                },
+                env: {
+                    targets: "defaults",
+                    include: [
+                        "transform-classes",
+                        "transform-arrow-functions",
+                    ],
+                },
+            });
+            return { contents: result.code };
+        });
+    }
+};
 
 await esbuild.build({
     entryPoints: ["entry.js"],
@@ -28,27 +50,10 @@ await esbuild.build({
         "__PYONCORD_DEV__": JSON.stringify(!isMainstream),
     },
     legalComments: "none",
-    plugins: [{
-        name: "swc",
-        setup(build) {
-            build.onLoad({ filter: /\.[jt]sx?/ }, async (args) => {
-                const result = await swc.transformFile(args.path, {
-                    jsc: {
-                        target: "esnext",
-                        externalHelpers: true,
-                    },
-                    env: {
-                        targets: "defaults",
-                        include: [
-                            "transform-classes",
-                            "transform-arrow-functions",
-                        ],
-                    },
-                });
-                return { contents: result.code };
-            });
-        }
-    }]
+    plugins: [
+        swcPlugin,
+        alias({ "@*": "./src/*" })
+    ]
 });
 
 console.log("Build complete!");

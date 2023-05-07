@@ -1,5 +1,5 @@
-import { Forms } from "../../metro/common";
-import { getAssetIDByName } from "../../utils/assets";
+import { Forms } from "@metro/common";
+import { getAssetIDByName } from "@utils/assets";
 
 const { ScrollView } = ReactNative;
 const { FormSection, FormRow, FormSwitchRow } = Forms;
@@ -17,5 +17,5 @@ export default function General() {
                 />
             </FormSection>
         </ScrollView>
-    )
+    );
 }

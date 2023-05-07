@@ -1,4 +1,4 @@
-import { before, after, instead } from "spitroast";
+import { after, before, instead } from "spitroast";
 
 type Unpatcher = ReturnType<typeof before> | ReturnType<typeof after> | ReturnType<typeof instead>;
 
@@ -32,7 +32,7 @@ export default class Patcher {
         const unpatch = before(method, parent, patch);
         this.patches.push(unpatch);
         return unpatch;
-    }
+    };
 
     after = (parent: any, method: string, patch: AfterCallback) => {
         if (this.stopped) return () => false;
@@ -40,7 +40,7 @@ export default class Patcher {
         const unpatch = after(method, parent, patch);
         this.patches.push(unpatch);
         return unpatch;
-    }
+    };
 
     instead = (parent: any, method: string, patch: InsteadCallback) => {
         if (this.stopped) return () => false;
@@ -48,7 +48,7 @@ export default class Patcher {
         const unpatch = instead(method, parent, patch);
         this.patches.push(unpatch);
         return unpatch;
-    }
+    };
 
     unpatchAllAndStop = () => {
         let success = true;
@@ -64,7 +64,7 @@ export default class Patcher {
 
         patchesInstances.delete(this.identifier);
         return success;
-    }
+    };
 
     addUnpatcher = (callback: () => void) => {
         if (typeof callback !== "function") {
@@ -72,5 +72,5 @@ export default class Patcher {
         }
 
         this.patches.push(callback as () => boolean);
-    }
+    };
 }

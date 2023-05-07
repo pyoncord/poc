@@ -1,13 +1,16 @@
-import awaitUntil from "./awaitUntil"
-import findInReactTree from "./findInReactTree"
-import findInTree from "./findInTree"
-import lazyNavigate from "./lazyNavigate"
-import proxyLazy from "./proxyLazy"
+/* eslint-disable path-alias/no-relative */
+import * as assets from "./assets";
+import awaitUntil from "./awaitUntil";
+import findInReactTree from "./findInReactTree";
+import findInTree from "./findInTree";
+import lazyNavigate from "./lazyNavigate";
+import proxyLazy from "./proxyLazy";
 
 export {
+    assets,
     awaitUntil,
-    proxyLazy,
-    findInTree,
     findInReactTree,
-    lazyNavigate
-}
+    findInTree,
+    lazyNavigate,
+    proxyLazy
+};
