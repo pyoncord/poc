@@ -12,12 +12,13 @@ function SettingsSection() {
     const { FormSection, FormRow, FormIcon } = Forms;
 
     const navigation = NavigationNative.useNavigation();
+    const title = `Pyoncord (${__PYONCORD_COMMIT_HASH__}) ${__PYONCORD_DEV__ ? "(DEV)" : ""}`.trimEnd();
 
     return (
-        <FormSection key="Pyoncord" title="Pyoncord">
+        <FormSection key="Pyoncord" title={title}>
             <FormRow
                 label="General"
-                leading={<FormIcon source={getAssetIDByName("ic_settings")} />}
+                leading={<FormIcon source={getAssetIDByName("settings")} />}
                 trailing={FormRow.Arrow}
                 onPress={() => lazyNavigate(navigation, import("../ui/screens/General"), "Pyoncord")}
             />

@@ -790,13 +790,14 @@
   function SettingsSection() {
     const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
     const navigation = NavigationNative.useNavigation();
+    const title = `Pyoncord (${"6a08052"}) ${true ? "(DEV)" : ""}`.trimEnd();
     return /* @__PURE__ */ React2.createElement(FormSection2, {
       key: "Pyoncord",
-      title: "Pyoncord"
+      title
     }, /* @__PURE__ */ React2.createElement(FormRow2, {
       label: "General",
       leading: /* @__PURE__ */ React2.createElement(FormIcon, {
-        source: getAssetIDByName("ic_settings")
+        source: getAssetIDByName("settings")
       }),
       trailing: FormRow2.Arrow,
       onPress: function() {
