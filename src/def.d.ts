@@ -6,7 +6,7 @@ export interface FindInTreeOptions {
     maxDepth?: number;
 }
 
-type PyoncordObject = typeof import(".") & {
+type PyoncordObject = Omit<typeof import("."), "default"> & {
     unload: () => void;
 };
 

@@ -6,10 +6,10 @@ import globalsPlugin from "esbuild-plugin-globals";
 import { argv } from "process";
 
 const flags = argv.slice(2).filter(arg => arg.startsWith("--")).map(arg => arg.slice(2));
-const isMainstream = flags.includes("mainstream");
+const isDev = !flags.includes("release");
 
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
-console.log(`Building with commit hash ${commitHash}, isMainstream=${isMainstream}`);
+console.log(`Building with commit hash ${commitHash}, isDev=${isDev}`);
 
 const buildOutput = "dist/pyoncord.js";
 
@@ -39,7 +39,7 @@ const swcPlugin = {
 await esbuild.build({
     entryPoints: ["entry.js"],
     bundle: true,
-    minify: isMainstream,
+    minify: isDev,
     format: "iife",
     target: "esnext",
     outfile: buildOutput,
@@ -48,7 +48,7 @@ await esbuild.build({
     },
     define: {
         __PYONCORD_COMMIT_HASH__: JSON.stringify(commitHash),
-        __PYONCORD_DEV__: JSON.stringify(!isMainstream),
+        __PYONCORD_DEV__: JSON.stringify(isDev),
     },
     legalComments: "none",
     alias: {

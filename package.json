@@ -2,7 +2,7 @@
   "name": "pyoncord",
   "description": "A Discord React Native client mod",
   "scripts": {
-    "build": "node build.mjs",
+    "build": "node build.mjs --release",
     "deploy:root": "node build.mjs --deploy-root",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-pattern src/*"
   },

@@ -25,8 +25,6 @@ async function init() {
 
         console.error(error);
     }
-
-    console.log(globalThis.pyoncord);
 }
 
 init();
