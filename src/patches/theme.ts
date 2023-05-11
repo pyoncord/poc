@@ -1,5 +1,5 @@
+import Patcher from "@api/Patcher";
 import { waitForModule } from "@metro";
-import Patcher from "@patcher";
 import { getCurrentTheme } from "@themes";
 
 const patcher = new Patcher("theme-patcher");

@@ -1,10 +1,10 @@
 // https://github.com/vendetta-mod/Vendetta/blob/rewrite/src/ui/assets.ts
+import Patcher from "@api/Patcher";
 import { AssetManager } from "@metro/common";
-import Patcher from "@patcher";
 
 const { after } = new Patcher("assets-patcher");
 
-type Asset = Record<string, any> & { id: number };
+type Asset = Record<string, any> & { id: number; };
 
 export const registeredAssets: Record<string, Asset> = {};
 

@@ -1,5 +1,5 @@
+import Patcher from "@api/Patcher";
 import { waitForModule } from "@metro";
-import Patcher from "@patcher";
 
 const patcher = new Patcher("idle-patcher");
 

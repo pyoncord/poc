@@ -1,6 +1,6 @@
+import Patcher from "@api/Patcher";
 import { waitForModule } from "@metro";
 import { Forms, I18n, NavigationNative } from "@metro/common";
-import Patcher from "@patcher";
 import { assets, findInReactTree, lazyNavigate } from "@utils";
 
 const patcher = new Patcher("settings-patcher");

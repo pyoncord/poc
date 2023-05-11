@@ -1,4 +1,4 @@
-import Patcher from "@patcher";
+import Patcher from "@api/Patcher";
 
 const { before } = new Patcher("debug-ws-patcher");
 let websocket: WebSocket | null = null;
