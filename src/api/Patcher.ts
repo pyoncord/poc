@@ -27,17 +27,9 @@ export default class Patcher {
         patchesInstances.set(identifier, this);
     }
 
-    before = <T>(parent: NonPrimitive<T>, method: string, patch: BeforeCallback) => {
-        return this.addUnpatcher(before(method, parent, patch));
-    };
-
-    after = <T>(parent: NonPrimitive<T>, method: string, patch: AfterCallback) => {
-        return this.addUnpatcher(after(method, parent, patch));
-    };
-
-    instead = <T>(parent: NonPrimitive<T>, method: string, patch: InsteadCallback) => {
-        return this.addUnpatcher(instead(method, parent, patch));
-    };
+    before = <T>(parent: NonPrimitive<T>, method: string, patch: BeforeCallback) => this.addUnpatcher(before(method, parent, patch));
+    after = <T>(parent: NonPrimitive<T>, method: string, patch: AfterCallback) => this.addUnpatcher(after(method, parent, patch));
+    instead = <T>(parent: NonPrimitive<T>, method: string, patch: InsteadCallback) => this.addUnpatcher(instead(method, parent, patch));
 
     addUnpatcher = (callback: Unpatcher) => {
         if (this.stopped) return () => false;
@@ -45,7 +37,7 @@ export default class Patcher {
             throw new Error("Unpatcher must be a function");
         }
 
-        this.patches.push(callback as () => boolean);
+        this.patches.push(callback);
         return callback;
     };
 

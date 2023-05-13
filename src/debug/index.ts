@@ -12,14 +12,7 @@ const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 export async function connectToDebugger(): Promise<void> {
     if (websocket) return;
 
-    while (true) {
-        try {
-            websocket = new WebSocket("ws://localhost:9090/");
-            break;
-        } catch {
-            await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-    }
+    websocket = new WebSocket("ws://localhost:9090/");
 
     websocket.addEventListener("open", () => console.log("Connected to debug websocket"));
     websocket.addEventListener("error", (e: any) => console.error(e.message));
@@ -32,15 +25,17 @@ export async function connectToDebugger(): Promise<void> {
         }
     });
 
+    const unpatch = before(globalThis, "nativeLoggingHook", ([message, level]) => {
+        if (websocket?.readyState === WebSocket.OPEN) {
+            websocket.send(JSON.stringify({ level, message }));
+        }
+    });
+
     websocket.addEventListener("close", () => {
+        unpatch();
         websocket = null;
         // ALways attempt to reconnect every 3 seconds
         setTimeout(connectToDebugger, 3000);
     });
 
-    before(globalThis, "nativeLoggingHook", ([message, level]) => {
-        if (websocket?.readyState === WebSocket.OPEN) {
-            websocket.send(JSON.stringify({ level, message }));
-        }
-    });
 }
