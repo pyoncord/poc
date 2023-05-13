@@ -1,12 +1,32 @@
 // NOTE: This file is import-sensitive, circular dependencies might crash the app!
 import EventEmitter from "@utils/EventEmitter";
 import proxyLazy from "@utils/proxyLazy";
-import { instead } from "spitroast";
+import { after, instead } from "spitroast";
 
 export * as common from "@metro/common";
 
-declare const modules: Record<string | number, any>;
-export const moduleLoadEvent = new EventEmitter();
+declare const modules: Record<number, any>;
+export const factoryCallbacks = new Set<(exports: any) => void>();
+
+function isInvalidExport(exports: any) {
+    return (
+        exports == null
+        || exports === globalThis
+        || typeof exports === "boolean"
+        || typeof exports === "number"
+        || typeof exports === "string"
+        || exports["whar???"] === null
+    );
+}
+
+function blacklist(id: number) {
+    Object.defineProperty(modules, id, {
+        value: modules[id],
+        enumerable: false,
+        configurable: true,
+        writable: true
+    });
+}
 
 /**
  * @private
@@ -32,11 +52,10 @@ export function patchFactories() {
              * - Everything is done synchronously.
             */
 
-            instead("factory", module, function (args, orig) {
-                orig(...args);
-                module.dependencyMap = args[6];
-                moduleLoadEvent.emit("export", args[5]);
-            });
+            after("factory", module, ({ 5: exports }) => {
+                if (isInvalidExport(exports)) return;
+                factoryCallbacks.forEach(cb => cb(exports));
+            }, true);
         }
     }
 }
@@ -49,6 +68,11 @@ export function patchFactories() {
 export function* getInitializedModules(): IterableIterator<any> {
     for (const id in modules) {
         if (modules[id].isInitialized) {
+            if (isInvalidExport(modules[id].publicModule.exports)) {
+                blacklist(id as unknown as number);
+                continue;
+            }
+
             yield modules[id].publicModule;
         }
     }
@@ -62,18 +86,18 @@ export function* getInitializedModules(): IterableIterator<any> {
 export function waitForModule(filter: (m: any) => boolean, callback: (exports: any) => void) {
     const matches = (exports: any) => {
         if (exports.default && exports.__esModule && filter(exports.default)) {
-            moduleLoadEvent.off("export", matches);
+            factoryCallbacks.delete(matches);
             callback(exports.default);
         }
 
         if (filter(exports)) {
-            moduleLoadEvent.off("export", matches);
+            factoryCallbacks.delete(matches);
             callback(exports);
         }
     };
 
-    moduleLoadEvent.on("export", matches);
-    return () => moduleLoadEvent.off("export", matches);
+    factoryCallbacks.add(matches);
+    return () => factoryCallbacks.delete(matches);
 }
 
 /**
