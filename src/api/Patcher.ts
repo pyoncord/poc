@@ -1,12 +1,11 @@
 import { after, before, instead } from "spitroast";
 
 type Unpatcher = () => (void | boolean);
+type NonPrimitive<T> = Exclude<T, boolean | number | bigint | string | symbol>;
 
 type BeforeCallback = Parameters<typeof before>[2];
 type AfterCallback = Parameters<typeof after>[2];
 type InsteadCallback = Parameters<typeof instead>[2];
-
-type NotPrimitive<T> = Exclude<T, boolean | number | bigint | string | symbol>;
 
 export const patchesInstances = new Map<string, Patcher>();
 
@@ -28,32 +27,16 @@ export default class Patcher {
         patchesInstances.set(identifier, this);
     }
 
-    before<T>(parent: NotPrimitive<T>, method: string, patch: BeforeCallback) {
+    before = <T>(parent: NonPrimitive<T>, method: string, patch: BeforeCallback) => {
         return this.addUnpatcher(before(method, parent, patch));
-    }
+    };
 
-    after<T>(parent: NotPrimitive<T>, method: string, patch: AfterCallback) {
+    after = <T>(parent: NonPrimitive<T>, method: string, patch: AfterCallback) => {
         return this.addUnpatcher(after(method, parent, patch));
-    }
+    };
 
-    instead<T>(parent: NotPrimitive<T>, method: string, patch: InsteadCallback) {
+    instead = <T>(parent: NonPrimitive<T>, method: string, patch: InsteadCallback) => {
         return this.addUnpatcher(instead(method, parent, patch));
-    }
-
-    unpatchAllAndStop = () => {
-        let success = true;
-        this.stopped = true;
-
-        for (const unpatch of this.patches) {
-            try {
-                if (!unpatch?.()) throw void 0;
-            } catch {
-                success = false;
-            }
-        }
-
-        patchesInstances.delete(this.identifier);
-        return success;
     };
 
     addUnpatcher = (callback: Unpatcher) => {
@@ -65,4 +48,20 @@ export default class Patcher {
         this.patches.push(callback as () => boolean);
         return callback;
     };
+
+    unpatchAllAndStop() {
+        let success = true;
+        this.stopped = true;
+
+        for (const unpatch of this.patches) {
+            try {
+                if (unpatch?.() === false) throw void 0;
+            } catch {
+                success = false;
+            }
+        }
+
+        patchesInstances.delete(this.identifier);
+        return success;
+    }
 }

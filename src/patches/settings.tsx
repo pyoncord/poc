@@ -15,10 +15,16 @@ function SettingsSection() {
     return (
         <FormSection key="Pyoncord" title={title}>
             <FormRow
-                label="General"
-                leading={<FormIcon source={assets.getAssetIDByName("settings")} />}
+                label="Pyoncord"
+                leading={<FormIcon source={assets.getAssetIDByName("Discord")} />}
                 trailing={FormRow.Arrow}
                 onPress={() => lazyNavigate(navigation, import("@ui/screens/General"), "Pyoncord")}
+            />
+            <FormRow
+                label="Plugins"
+                leading={<FormIcon source={assets.getAssetIDByName("Discord")} />}
+                trailing={FormRow.Arrow}
+                onPress={() => lazyNavigate(navigation, import("@ui/screens/Plugins"), "Plugins")}
             />
         </FormSection>
     );
@@ -64,9 +70,9 @@ export default function patchSettings() {
                 });
 
                 patcher.after(UserSettingsOverview.type.prototype, "render", (_args, res) => {
-                    const titles = [I18n.Messages.BILLING_SETTINGS, I18n.Messages.PREMIUM_SETTINGS];
-
                     try {
+                        const titles = [I18n.Messages.BILLING_SETTINGS, I18n.Messages.PREMIUM_SETTINGS];
+
                         const sections = findInReactTree(
                             res.props.children,
                             n => n?.children?.[1]?.type === Forms.FormSection
