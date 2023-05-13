@@ -1,10 +1,12 @@
 import { after, before, instead } from "spitroast";
 
-type Unpatcher = ReturnType<typeof before> | ReturnType<typeof after> | ReturnType<typeof instead>;
+type Unpatcher = () => (void | boolean);
 
 type BeforeCallback = Parameters<typeof before>[2];
 type AfterCallback = Parameters<typeof after>[2];
 type InsteadCallback = Parameters<typeof instead>[2];
+
+type NotPrimitive<T> = Exclude<T, boolean | number | bigint | string | symbol>;
 
 export const patchesInstances = new Map<string, Patcher>();
 
@@ -26,29 +28,17 @@ export default class Patcher {
         patchesInstances.set(identifier, this);
     }
 
-    before = (parent: any, method: string, patch: BeforeCallback) => {
-        if (this.stopped) return () => false;
+    before<T>(parent: NotPrimitive<T>, method: string, patch: BeforeCallback) {
+        return this.addUnpatcher(before(method, parent, patch));
+    }
 
-        const unpatch = before(method, parent, patch);
-        this.patches.push(unpatch);
-        return unpatch;
-    };
+    after<T>(parent: NotPrimitive<T>, method: string, patch: AfterCallback) {
+        return this.addUnpatcher(after(method, parent, patch));
+    }
 
-    after = (parent: any, method: string, patch: AfterCallback) => {
-        if (this.stopped) return () => false;
-
-        const unpatch = after(method, parent, patch);
-        this.patches.push(unpatch);
-        return unpatch;
-    };
-
-    instead = (parent: any, method: string, patch: InsteadCallback) => {
-        if (this.stopped) return () => false;
-
-        const unpatch = instead(method, parent, patch);
-        this.patches.push(unpatch);
-        return unpatch;
-    };
+    instead<T>(parent: NotPrimitive<T>, method: string, patch: InsteadCallback) {
+        return this.addUnpatcher(instead(method, parent, patch));
+    }
 
     unpatchAllAndStop = () => {
         let success = true;
@@ -56,7 +46,7 @@ export default class Patcher {
 
         for (const unpatch of this.patches) {
             try {
-                success = unpatch?.() && success;
+                if (!unpatch?.()) throw void 0;
             } catch {
                 success = false;
             }
@@ -66,11 +56,13 @@ export default class Patcher {
         return success;
     };
 
-    addUnpatcher = (callback: () => void) => {
+    addUnpatcher = (callback: Unpatcher) => {
+        if (this.stopped) return () => false;
         if (typeof callback !== "function") {
             throw new Error("Unpatcher must be a function");
         }
 
         this.patches.push(callback as () => boolean);
+        return callback;
     };
 }
