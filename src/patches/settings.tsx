@@ -22,7 +22,7 @@ function SettingsSection() {
             />
             <FormRow
                 label="Plugins"
-                leading={<FormIcon source={assets.getAssetIDByName("Discord")} />}
+                leading={<FormIcon source={assets.getAssetIDByName("ic_progress_wrench_24px")} />}
                 trailing={FormRow.Arrow}
                 onPress={() => lazyNavigate(navigation, import("@ui/screens/Plugins"), "Plugins")}
             />

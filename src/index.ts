@@ -1,5 +1,5 @@
 import { connectToDebugger } from "@debug";
-import { patchFactories } from "@metro";
+import { initMetro } from "@metro";
 import { patchChatInput, patchExperiments, patchIdle, patchSettings } from "@patches";
 import { patchAssets } from "@utils/assets";
 
@@ -11,7 +11,7 @@ export * as themes from "@themes";
 export * as utils from "@utils";
 
 export default async () => {
-    patchFactories();
+    initMetro();
     connectToDebugger();
 
     const patches = [

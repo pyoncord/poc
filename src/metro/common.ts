@@ -9,3 +9,4 @@ export const NavigationNative = findByPropsLazy("NavigationContainer");
 export const Styles = findByPropsLazy("createThemedStyleSheet");
 export const Colors = findByPropsLazy("unsafe_rawColors");
 export const Constants = findByPropsLazy("NODE_SIZE");
+export const FluxDispatcher = findByPropsLazy("dispatch", "subscribe");

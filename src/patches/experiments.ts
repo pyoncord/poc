@@ -1,13 +1,11 @@
-import { findByStoreNameLazy } from "@metro";
-import { awaitUntil } from "@utils";
+import { findByStoreNameLazy, ready } from "@metro";
 
 const UserStore = findByStoreNameLazy("UserStore");
 const ExperimentStore = findByStoreNameLazy("ExperimentStore");
 
 export default async function patchExperiments() {
     try {
-        // Wait for UserStore to be initialized and user to be logged in
-        await awaitUntil(() => UserStore.getCurrentUser?.());
+        await ready;
 
         UserStore.getCurrentUser().flags |= 1;
         UserStore._dispatcher._actionHandlers

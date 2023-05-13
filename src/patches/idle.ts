@@ -1,19 +1,17 @@
 import Patcher from "@api/Patcher";
-import { waitForModule } from "@metro";
+import { ready } from "@metro";
+import { FluxDispatcher } from "@metro/common";
 
 const patcher = new Patcher("idle-patcher");
 
-export default function patchIdle() {
-    const unwait = waitForModule(
-        m => m?.dispatch && m._actionHandlers?._orderedActionHandlers,
-        exports => {
-            patcher.before(exports, "dispatch", args => {
-                if (args[0].type === "IDLE") {
-                    return [{ type: "THIS_TYPE_DOES_NOT_EXIST" }];
-                }
-            });
-        }
-    );
+export default async function patchIdle() {
+    await ready;
 
-    return () => (unwait(), patcher.unpatchAllAndStop());
+    patcher.before(FluxDispatcher, "dispatch", args => {
+        if (args[0].type === "IDLE") {
+            return [{ type: "THIS_TYPE_DOES_NOT_EXIST" }];
+        }
+    });
+
+    return patcher.unpatchAllAndStop;
 }

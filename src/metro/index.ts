@@ -8,6 +8,10 @@ export * as common from "@metro/common";
 declare const modules: Record<number, any>;
 export const factoryCallbacks = new Set<(exports: any) => void>();
 
+let _isReady = false;
+let _resolveReady: () => void;
+export const ready = new Promise<void>(resolve => _resolveReady = resolve);
+
 function isInvalidExport(exports: any) {
     return (
         exports == null
@@ -33,7 +37,7 @@ function blacklist(id: number) {
  * Called during the initialization of a module.
  * Patches the module factory to emit an event when the module is loaded.
  */
-export function patchFactories() {
+export function initMetro() {
     for (const id in modules) {
         const module = modules[id];
 
@@ -58,6 +62,18 @@ export function patchFactories() {
             }, true);
         }
     }
+
+    waitForModule(
+        m => m?.dispatch && m._actionHandlers?._orderedActionHandlers,
+        FluxDispatcher => {
+            FluxDispatcher.subscribe("CONNECTION_OPEN", () => {
+                if (!_isReady) {
+                    _resolveReady();
+                    _isReady = true;
+                }
+            });
+        }
+    );
 }
 
 /**
