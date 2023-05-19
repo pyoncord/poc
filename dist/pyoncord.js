@@ -1004,6 +1004,18 @@
               return _this.callbacks.delete(callback);
             };
           });
+          _define_property(this, "useStorage", function() {
+            const forceUpdate = React.useReducer(function(n) {
+              return ~n;
+            }, 0)[1];
+            React.useEffect(function() {
+              const unsub = _this.subscribe(forceUpdate);
+              return function() {
+                return void unsub();
+              };
+            }, []);
+            return _this.getProxy();
+          });
           _define_property(this, "getProxy", function() {
             return _this._cachedProxy ??= import_observable_slim.default.create(_this.snapshot, true, function(changes) {
               changes.forEach(async function() {
@@ -1031,22 +1043,6 @@
             value: async function begin() {
               const data = await readFile(this.path, "{}");
               Object.assign(this.snapshot, JSON.parse(data));
-            }
-          },
-          {
-            key: "useStorage",
-            value: function useStorage() {
-              var _this = this;
-              const forceUpdate = React.useReducer(function(n) {
-                return ~n;
-              }, 0)[1];
-              React.useEffect(function() {
-                const unsub = _this.subscribe(forceUpdate);
-                return function() {
-                  return void unsub();
-                };
-              }, []);
-              return this.getProxy();
             }
           }
         ]);
@@ -1514,18 +1510,38 @@
       title: "Settings",
       titleStyleType: "no_border"
     }, /* @__PURE__ */ React.createElement(FormSwitchRow, {
-      label: "Trigger Discord's experiments menu",
+      label: "Enable Discord's experiments menu",
       subLabel: "Enables the experiments menu in Discord's settings, which only staff has access to.",
       leading: /* @__PURE__ */ React.createElement(FormRow.Icon, {
         source: getAssetIDByName("ic_badge_staff")
       }),
-      value: settings2.experiments,
+      value: settings2.experiments !== false,
       onValueChange: function(v) {
         return settings2.experiments = v;
       }
+    }), /* @__PURE__ */ React.createElement(FormSwitchRow, {
+      label: "Hide gift button on chat input",
+      subLabel: "Hides the gift button on the chat input.",
+      leading: /* @__PURE__ */ React.createElement(FormRow.Icon, {
+        source: getAssetIDByName("ic_gift_24px")
+      }),
+      value: settings2.hideGiftButton !== false,
+      onValueChange: function(v) {
+        return settings2.hideGiftButton = v;
+      }
+    }), /* @__PURE__ */ React.createElement(FormSwitchRow, {
+      label: "Hide idle status",
+      subLabel: "Hides the idling status when app is backgrounded.",
+      leading: /* @__PURE__ */ React.createElement(FormRow.Icon, {
+        source: getAssetIDByName("StatusIdle")
+      }),
+      value: settings2.hideIdling !== false,
+      onValueChange: function(v) {
+        return settings2.hideIdling = v;
+      }
     })));
   }
-  var ScrollView, FormSection, FormRow, FormSwitchRow;
+  var ScrollView, FormSection, FormRow, FormSwitchRow, FormText;
   var init_General = __esm({
     "src/ui/screens/General.tsx"() {
       "use strict";
@@ -1533,7 +1549,7 @@
       init_common();
       init_assets();
       ({ ScrollView } = ReactNative);
-      ({ FormSection, FormRow, FormSwitchRow } = Forms);
+      ({ FormSection, FormRow, FormSwitchRow, FormText } = Forms);
     }
   });
 
@@ -1678,7 +1694,7 @@
   function SettingsSection() {
     const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
     const navigation = NavigationNative.useNavigation();
-    const title = `Pyoncord (${"c6d7d20"}) ${true ? "(DEV)" : ""}`.trimEnd();
+    const title = `Pyoncord (${"04ecbfa"}) ${true ? "(DEV)" : ""}`.trimEnd();
     return /* @__PURE__ */ React.createElement(FormSection2, {
       key: "Pyoncord",
       title
@@ -1888,8 +1904,8 @@
     const patches = [
       patchAssets(),
       settingsProxy.experiments !== false && patchExperiments(),
-      patchChatInput(),
-      patchIdle(),
+      settingsProxy.hideGiftButton !== false && patchChatInput(),
+      settingsProxy.hideIdling !== false && patchIdle(),
       patchSettings()
     ];
     await Promise.all(patches);
@@ -1921,7 +1937,7 @@
 
   // entry.js
   init_metro();
-  console.log(`Pyon! (Pyoncord, hash=${"c6d7d20"}, dev=${true})`);
+  console.log(`Pyon! (Pyoncord, hash=${"04ecbfa"}, dev=${true})`);
   async function init() {
     try {
       window.React = findByProps("createElement");
@@ -1935,7 +1951,7 @@
       error = error?.stack ?? error;
       alert([
         "Failed to load Pyoncord.\n",
-        `Build Hash: ${"c6d7d20"}`,
+        `Build Hash: ${"04ecbfa"}`,
         `Debug Build: ${true}`,
         `Build Number: ${nativeModuleProxy.RTNClientInfoManager?.Build}`,
         error

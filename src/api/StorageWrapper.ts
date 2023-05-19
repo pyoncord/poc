@@ -59,7 +59,7 @@ export default class StorageWrapper<T extends JSONSerializable = Record<string, 
         return () => this.callbacks.delete(callback);
     };
 
-    useStorage() {
+    useStorage = () => {
         const forceUpdate = React.useReducer(n => ~n, 0)[1];
 
         React.useEffect(() => {
@@ -68,7 +68,7 @@ export default class StorageWrapper<T extends JSONSerializable = Record<string, 
         }, []);
 
         return this.getProxy();
-    }
+    };
 
     getProxy = () => this._cachedProxy ??= ObservableSlim.create(this.snapshot, true, changes => {
         changes.forEach(async () => {

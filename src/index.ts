@@ -22,8 +22,8 @@ export default async () => {
     const patches = [
         patchAssets(),
         settingsProxy.experiments !== false && patchExperiments(),
-        patchChatInput(),
-        patchIdle(),
+        settingsProxy.hideGiftButton !== false && patchChatInput(),
+        settingsProxy.hideIdling !== false && patchIdle(),
         patchSettings()
     ];
 
