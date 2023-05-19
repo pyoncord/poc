@@ -1,0 +1,51 @@
+# https://github.com/Aliucord/AliucordRN/blob/main/.github/workflows/build.yml
+name: Pyoncord CI
+
+on:
+  push: 
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@master
+      
+    - name: Checkout builds branch
+      uses: actions/checkout@master
+      with:
+        ref: builds
+        path: builds
+        
+    - uses: pnpm/action-setup@v2 # Install pnpm using packageManager key in package.json
+    
+    - name: Use Node.js 17
+      uses: actions/setup-node@v2
+      with:
+        node-version: 17
+        cache: 'pnpm'
+        
+    - name: Install dependencies
+      run: pnpm install
+      
+    - name: Build pyoncord.js bundle
+      run: pnpm lint && pnpm build  
+        
+    - name: Upload dist folder to builds branch  
+      if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)  # Only runs if this CI was triggered by the default branch
+      run: |
+        cd builds
+        cp ../dist/* .
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git pull
+        git add -A
+        git commit -m "Build $GITHUB_SHA" || true
+        git push
