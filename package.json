@@ -4,7 +4,7 @@
   "scripts": {
     "build": "node build.mjs --release",
     "deploy:root": "node build.mjs --deploy-root",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-pattern src/*"
+    "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx --ignore-pattern src/*"
   },
   "keywords": [
     "discord",
