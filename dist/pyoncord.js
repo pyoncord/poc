@@ -441,6 +441,29 @@
     }
   });
 
+  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor)
+        descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+  function _create_class(Constructor, protoProps, staticProps) {
+    if (protoProps)
+      _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps)
+      _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+  var init_create_class = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js"() {
+    }
+  });
+
   // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js
   function _define_property(obj, key, value) {
     if (key in obj) {
@@ -933,72 +956,102 @@
   });
 
   // src/api/StorageWrapper.ts
+  var StorageWrapper_exports = {};
+  __export(StorageWrapper_exports, {
+    ObservableSlim: () => import_observable_slim.default,
+    _globalAwaiter: () => _globalAwaiter,
+    default: () => StorageWrapper,
+    readFile: () => readFile,
+    writeFile: () => writeFile
+  });
   async function writeFile(path, data) {
     if (ReactNative.Platform.OS === "ios" && !RTNFileManager.saveFileToGallery)
       path = `Documents/${path}`;
     return void await RTNFileManager.writeFile("documents", path, data, "utf8");
   }
   async function readFile(path, fallback) {
-    if (!await RTNFileManager.fileExists(path)) {
+    const readPath = `${RTNFileManager.getConstants().DocumentsDirPath}/${path}`;
+    try {
+      return await RTNFileManager.readFile(readPath, "utf8");
+    } catch {
       writeFile(path, fallback);
       return fallback;
     }
-    return await RTNFileManager.readFile(path, "utf8");
   }
-  var import_observable_slim, RTNFileManager, StorageWrapper;
+  var import_observable_slim, RTNFileManager, _globalAwaiter, StorageWrapper;
   var init_StorageWrapper = __esm({
     "src/api/StorageWrapper.ts"() {
       "use strict";
       init_class_call_check();
+      init_create_class();
       init_define_property();
       import_observable_slim = __toESM(require_observable_slim());
       ({ RTNFileManager } = nativeModuleProxy);
-      StorageWrapper = function StorageWrapper2(path) {
+      _globalAwaiter = Promise.resolve();
+      StorageWrapper = /* @__PURE__ */ function() {
         "use strict";
-        var _this = this;
-        _class_call_check(this, StorageWrapper2);
-        _define_property(this, "path", void 0);
-        _define_property(this, "snapshot", {});
-        _define_property(this, "_initAwaiter", void 0);
-        _define_property(this, "begin", async function() {
-          const data = await readFile(_this.path, "{}");
-          Object.assign(_this.snapshot, JSON.parse(data));
-        });
-        _define_property(this, "createProxy", function() {
-          return import_observable_slim.default.create(_this.snapshot, true, function(changes) {
-            changes.forEach(async function(change) {
-              await _this._initAwaiter;
-              Object.assign(_this.snapshot, change.target);
-              writeFile(_this.path, JSON.stringify(_this.snapshot));
+        function StorageWrapper2(path) {
+          var _this = this;
+          _class_call_check(this, StorageWrapper2);
+          _define_property(this, "_cachedProxy", null);
+          _define_property(this, "_initAwaiter", void 0);
+          _define_property(this, "callbacks", /* @__PURE__ */ new Set());
+          _define_property(this, "path", void 0);
+          _define_property(this, "snapshot", {});
+          _define_property(this, "subscribe", function(callback) {
+            _this.callbacks.add(callback);
+            return function() {
+              return _this.callbacks.delete(callback);
+            };
+          });
+          _define_property(this, "getProxy", function() {
+            return _this._cachedProxy ??= import_observable_slim.default.create(_this.snapshot, true, function(changes) {
+              changes.forEach(async function() {
+                await _this._initAwaiter;
+                _this.callbacks.forEach(function(cb) {
+                  return cb(_this.snapshot);
+                });
+                const task = writeFile(_this.path, JSON.stringify(_this.snapshot));
+                _globalAwaiter = _globalAwaiter.then(function() {
+                  return task;
+                });
+              });
             });
           });
-        });
-        this.path = `pyoncord/${path}`;
-        this._initAwaiter = this.begin();
-      };
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js
-  function _defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor)
-        descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-  function _create_class(Constructor, protoProps, staticProps) {
-    if (protoProps)
-      _defineProperties(Constructor.prototype, protoProps);
-    if (staticProps)
-      _defineProperties(Constructor, staticProps);
-    return Constructor;
-  }
-  var init_create_class = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js"() {
+          _define_property(this, "awaitAndGetProxy", async function() {
+            await _this._initAwaiter;
+            return _this.getProxy();
+          });
+          this.path = `pyoncord/${path}`;
+          this._initAwaiter = this.begin();
+        }
+        _create_class(StorageWrapper2, [
+          {
+            key: "begin",
+            value: async function begin() {
+              const data = await readFile(this.path, "{}");
+              Object.assign(this.snapshot, JSON.parse(data));
+            }
+          },
+          {
+            key: "useStorage",
+            value: function useStorage() {
+              var _this = this;
+              const forceUpdate = React.useReducer(function(n) {
+                return ~n;
+              }, 0)[1];
+              React.useEffect(function() {
+                const unsub = _this.subscribe(forceUpdate);
+                return function() {
+                  return void unsub();
+                };
+              }, []);
+              return this.getProxy();
+            }
+          }
+        ]);
+        return StorageWrapper2;
+      }();
     }
   });
 
@@ -1449,6 +1502,7 @@
     default: () => General
   });
   function General() {
+    const settings2 = settings.useStorage();
     return /* @__PURE__ */ React.createElement(ScrollView, {
       style: {
         flex: 1
@@ -1465,9 +1519,9 @@
       leading: /* @__PURE__ */ React.createElement(FormRow.Icon, {
         source: getAssetIDByName("ic_badge_staff")
       }),
-      value: true,
-      onValueChange: function() {
-        return void 0;
+      value: settings2.experiments,
+      onValueChange: function(v) {
+        return settings2.experiments = v;
       }
     })));
   }
@@ -1475,6 +1529,7 @@
   var init_General = __esm({
     "src/ui/screens/General.tsx"() {
       "use strict";
+      init_src();
       init_common();
       init_assets();
       ({ ScrollView } = ReactNative);
@@ -1623,7 +1678,7 @@
   function SettingsSection() {
     const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
     const navigation = NavigationNative.useNavigation();
-    const title = `Pyoncord (${"19712e6"}) ${true ? "(DEV)" : ""}`.trimEnd();
+    const title = `Pyoncord (${"c6d7d20"}) ${true ? "(DEV)" : ""}`.trimEnd();
     return /* @__PURE__ */ React.createElement(FormSection2, {
       key: "Pyoncord",
       title
@@ -1803,12 +1858,14 @@
   // src/api/index.ts
   var api_exports = {};
   __export(api_exports, {
-    Patcher: () => Patcher_exports
+    Patcher: () => Patcher_exports,
+    StorageWrapper: () => StorageWrapper_exports
   });
   var init_api = __esm({
     "src/api/index.ts"() {
       "use strict";
       init_Patcher();
+      init_StorageWrapper();
     }
   });
 
@@ -1820,17 +1877,17 @@
     default: () => src_default,
     metro: () => metro_exports,
     patches: () => patches_exports,
+    settings: () => settings,
     themes: () => themes_exports,
     utils: () => utils_exports
   });
   async function src_default() {
-    const storage = new StorageWrapper("settings.json");
-    storage.createProxy().balls = 9;
+    const settingsProxy = await settings.awaitAndGetProxy();
     initMetro();
     connectToDebugger();
     const patches = [
       patchAssets(),
-      patchExperiments(),
+      settingsProxy.experiments !== false && patchExperiments(),
       patchChatInput(),
       patchIdle(),
       patchSettings()
@@ -1839,10 +1896,11 @@
     return function() {
       console.log("Unloading Pyoncord...");
       patches.forEach(async function(p) {
-        return (await p)?.();
+        return p && (await p)?.();
       });
     };
   }
+  var settings;
   var init_src = __esm({
     "src/index.ts"() {
       "use strict";
@@ -1857,12 +1915,13 @@
       init_patches();
       init_themes();
       init_utils();
+      settings = new StorageWrapper("settings.json");
     }
   });
 
   // entry.js
   init_metro();
-  console.log(`Pyon! (Pyoncord, hash=${"19712e6"}, dev=${true})`);
+  console.log(`Pyon! (Pyoncord, hash=${"c6d7d20"}, dev=${true})`);
   async function init() {
     try {
       window.React = findByProps("createElement");
@@ -1876,7 +1935,7 @@
       error = error?.stack ?? error;
       alert([
         "Failed to load Pyoncord.\n",
-        `Build Hash: ${"19712e6"}`,
+        `Build Hash: ${"c6d7d20"}`,
         `Debug Build: ${true}`,
         `Build Number: ${nativeModuleProxy.RTNClientInfoManager?.Build}`,
         error

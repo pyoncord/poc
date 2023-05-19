@@ -25,38 +25,65 @@ export async function writeFile(path: string, data: string): Promise<void> {
  * @param fallback Fallback data to return if the file doesn't exist, and will be written to the file
  */
 export async function readFile(path: string, fallback: string): Promise<string> {
-    if (!await RTNFileManager.fileExists(path)) {
+    const readPath = `${RTNFileManager.getConstants().DocumentsDirPath}/${path}`;
+
+    try {
+        return await RTNFileManager.readFile(readPath, "utf8");
+    } catch {
         writeFile(path, fallback);
         return fallback;
     }
-
-    return await RTNFileManager.readFile(path, "utf8");
 }
 
+// TODO: Make faster
 export default class StorageWrapper<T extends JSONSerializable = Record<string, any>> {
+    private _cachedProxy: T | null = null;
+    private readonly _initAwaiter;
+    private readonly callbacks = new Set<(snapshot: T) => void>();
+
     readonly path: string;
     readonly snapshot = {} as T;
-    readonly _initAwaiter;
 
     constructor(path: string) {
         this.path = `pyoncord/${path}`;
         this._initAwaiter = this.begin();
     }
 
-    private begin = async () => {
+    private async begin() {
         const data = await readFile(this.path, "{}");
         Object.assign(this.snapshot, JSON.parse(data));
+    }
+
+    subscribe = (callback: (snapshot: T) => void) => {
+        this.callbacks.add(callback);
+        return () => this.callbacks.delete(callback);
     };
 
-    getProxy = () => <T><unknown>ObservableSlim.create(this.snapshot, true, changes => {
-        changes.forEach(async change => {
-            Object.assign(this.snapshot, change.target);
+    useStorage() {
+        const forceUpdate = React.useReducer(n => ~n, 0)[1];
 
+        React.useEffect(() => {
+            const unsub = this.subscribe(forceUpdate);
+            return () => void unsub();
+        }, []);
+
+        return this.getProxy();
+    }
+
+    getProxy = () => this._cachedProxy ??= ObservableSlim.create(this.snapshot, true, changes => {
+        changes.forEach(async () => {
             await this._initAwaiter;
+            this.callbacks.forEach(cb => cb(this.snapshot));
+
             const task = writeFile(this.path, JSON.stringify(this.snapshot));
             _globalAwaiter = _globalAwaiter.then(() => task);
         });
-    });
+    }) as unknown as T;
+
+    awaitAndGetProxy = async () => {
+        await this._initAwaiter;
+        return this.getProxy();
+    };
 }
 
 export { ObservableSlim };
