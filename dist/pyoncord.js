@@ -1,14 +1,37 @@
 "use strict";
 (() => {
+  var __create = Object.create;
   var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
   var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getProtoOf = Object.getPrototypeOf;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
   var __esm = (fn, res) => function __init() {
     return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+  };
+  var __commonJS = (cb, mod) => function __require() {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
   var __export = (target, all) => {
     for (var name in all)
       __defProp(target, name, { get: all[name], enumerable: true });
   };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+    // If the importer is in node compatibility mode or this is not an ESM
+    // file that has been converted to a CommonJS file using a Babel-
+    // compatible transform (i.e. "__esModule" has not been set), then set
+    // "default" to the CommonJS "module.exports" for node compatibility.
+    isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+    mod
+  ));
 
   // src/utils/proxyLazy.ts
   function proxyLazy(factory) {
@@ -418,6 +441,544 @@
     }
   });
 
+  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js
+  function _define_property(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else
+      obj[key] = value;
+    return obj;
+  }
+  var init_define_property = __esm({
+    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js"() {
+    }
+  });
+
+  // node_modules/.pnpm/observable-slim@0.1.6/node_modules/observable-slim/observable-slim.js
+  var require_observable_slim = __commonJS({
+    "node_modules/.pnpm/observable-slim@0.1.6/node_modules/observable-slim/observable-slim.js"(exports, module) {
+      var ObservableSlim2 = function() {
+        var paths = [];
+        var observables = [];
+        var targets = [];
+        var targetsProxy = [];
+        var dupProxy = null;
+        var _getProperty = function(obj, path) {
+          return path.split(".").reduce(function(prev, curr) {
+            return prev ? prev[curr] : void 0;
+          }, obj || self);
+        };
+        var _create = function(target, domDelay, originalObservable, originalPath) {
+          var observable = originalObservable || null;
+          var path = originalPath || [
+            {
+              "target": target,
+              "property": ""
+            }
+          ];
+          paths.push(path);
+          if (target instanceof Array) {
+            if (!target.hasOwnProperty("__length"))
+              Object.defineProperty(target, "__length", {
+                enumerable: false,
+                value: target.length,
+                writable: true
+              });
+            else
+              target.__length = target.length;
+          }
+          var changes = [];
+          var _getPath = function(target2, property, jsonPointer) {
+            var fullPath = "";
+            var lastTarget = null;
+            for (var i = 0; i < path.length; i++) {
+              if (lastTarget instanceof Array && !isNaN(path[i].property)) {
+                path[i].property = lastTarget.indexOf(path[i].target);
+              }
+              fullPath = fullPath + "." + path[i].property;
+              lastTarget = path[i].target;
+            }
+            fullPath = fullPath + "." + property;
+            fullPath = fullPath.substring(2);
+            if (jsonPointer === true)
+              fullPath = "/" + fullPath.replace(/\./g, "/");
+            return fullPath;
+          };
+          var _notifyObservers = function(numChanges) {
+            if (observable.paused === true)
+              return;
+            var domDelayIsNumber = typeof domDelay === "number";
+            if (domDelayIsNumber || domDelay === true) {
+              setTimeout(function() {
+                if (numChanges === changes.length) {
+                  var changesCopy2 = changes.slice(0);
+                  changes = [];
+                  for (var i2 = 0; i2 < observable.observers.length; i2++)
+                    observable.observers[i2](changesCopy2);
+                }
+              }, domDelayIsNumber && domDelay > 0 ? domDelay : 10);
+            } else {
+              var changesCopy = changes.slice(0);
+              changes = [];
+              for (var i = 0; i < observable.observers.length; i++)
+                observable.observers[i](changesCopy);
+            }
+          };
+          var handler = {
+            get: function(target2, property) {
+              if (property === "__getTarget") {
+                return target2;
+              } else if (property === "__isProxy") {
+                return true;
+              } else if (property === "__getParent") {
+                return function(i2) {
+                  if (typeof i2 === "undefined")
+                    var i2 = 1;
+                  var parentPath2 = _getPath(target2, "__getParent").split(".");
+                  parentPath2.splice(-(i2 + 1), i2 + 1);
+                  return _getProperty(observable.parentProxy, parentPath2.join("."));
+                };
+              } else if (property === "__getPath") {
+                var parentPath = _getPath(target2, "__getParent");
+                return parentPath.slice(0, -12);
+              }
+              var targetProp = target2[property];
+              if (target2 instanceof Date && targetProp instanceof Function && targetProp !== null) {
+                return targetProp.bind(target2);
+              }
+              if (targetProp instanceof Object && targetProp !== null && target2.hasOwnProperty(property)) {
+                if (targetProp.__isProxy === true)
+                  targetProp = targetProp.__getTarget;
+                if (targetProp.__targetPosition > -1 && targets[targetProp.__targetPosition] !== null) {
+                  var ttp = targetsProxy[targetProp.__targetPosition];
+                  for (var i = 0, l = ttp.length; i < l; i++) {
+                    if (observable === ttp[i].observable) {
+                      return ttp[i].proxy;
+                    }
+                  }
+                }
+                var newPath = path.slice(0);
+                newPath.push({
+                  "target": targetProp,
+                  "property": property
+                });
+                return _create(targetProp, domDelay, observable, newPath);
+              } else {
+                return targetProp;
+              }
+            },
+            deleteProperty: function(target2, property) {
+              var originalChange = true;
+              if (dupProxy === proxy) {
+                originalChange = false;
+                dupProxy = null;
+              }
+              var previousValue = Object.assign({}, target2);
+              changes.push({
+                "type": "delete",
+                "target": target2,
+                "property": property,
+                "newValue": null,
+                "previousValue": previousValue[property],
+                "currentPath": _getPath(target2, property),
+                "jsonPointer": _getPath(target2, property, true),
+                "proxy": proxy
+              });
+              if (originalChange === true) {
+                if (!observable.changesPaused)
+                  delete target2[property];
+                for (var a = 0, l = targets.length; a < l; a++)
+                  if (target2 === targets[a])
+                    break;
+                var currentTargetProxy = targetsProxy[a] || [];
+                var b = currentTargetProxy.length;
+                while (b--) {
+                  if (currentTargetProxy[b].proxy !== proxy) {
+                    dupProxy = currentTargetProxy[b].proxy;
+                    delete currentTargetProxy[b].proxy[property];
+                  }
+                }
+              }
+              _notifyObservers(changes.length);
+              return true;
+            },
+            set: function(target2, property, value, receiver) {
+              if (value && value.__isProxy)
+                value = value.__getTarget;
+              var originalChange = true;
+              if (dupProxy === proxy) {
+                originalChange = false;
+                dupProxy = null;
+              }
+              var targetProp = target2[property];
+              if (targetProp !== value || originalChange === false || property === "length" && target2 instanceof Array && target2.__length !== value) {
+                var foundObservable = true;
+                var typeOfTargetProp = typeof targetProp;
+                var type = "update";
+                if (typeOfTargetProp === "undefined")
+                  type = "add";
+                changes.push({
+                  "type": type,
+                  "target": target2,
+                  "property": property,
+                  "newValue": value,
+                  "previousValue": receiver[property],
+                  "currentPath": _getPath(target2, property),
+                  "jsonPointer": _getPath(target2, property, true),
+                  "proxy": proxy
+                });
+                if (property === "length" && target2 instanceof Array && target2.__length !== value) {
+                  changes[changes.length - 1].previousValue = target2.__length;
+                  target2.__length = value;
+                }
+                if (originalChange === true) {
+                  if (!observable.changesPaused)
+                    target2[property] = value;
+                  foundObservable = false;
+                  var targetPosition = target2.__targetPosition;
+                  var z = targetsProxy[targetPosition].length;
+                  while (z--) {
+                    if (observable === targetsProxy[targetPosition][z].observable) {
+                      if (targets[targetsProxy[targetPosition][z].observable.parentTarget.__targetPosition] !== null) {
+                        foundObservable = true;
+                        break;
+                      }
+                    }
+                  }
+                  if (foundObservable) {
+                    var currentTargetProxy = targetsProxy[targetPosition];
+                    for (var b = 0, l = currentTargetProxy.length; b < l; b++) {
+                      if (currentTargetProxy[b].proxy !== proxy) {
+                        dupProxy = currentTargetProxy[b].proxy;
+                        currentTargetProxy[b].proxy[property] = value;
+                      }
+                    }
+                    setTimeout(function() {
+                      if (typeOfTargetProp === "object" && targetProp !== null) {
+                        var keys = Object.keys(target2);
+                        for (var i = 0, l2 = keys.length; i < l2; i++) {
+                          if (target2[keys[i]] === targetProp)
+                            return;
+                        }
+                        var stillExists = false;
+                        (function iterate(target3) {
+                          var keys2 = Object.keys(target3);
+                          for (var i2 = 0, l3 = keys2.length; i2 < l3; i2++) {
+                            var property2 = keys2[i2];
+                            var nestedTarget = target3[property2];
+                            if (nestedTarget instanceof Object && nestedTarget !== null)
+                              iterate(nestedTarget);
+                            if (nestedTarget === targetProp) {
+                              stillExists = true;
+                              return;
+                            }
+                          }
+                          ;
+                        })(target2);
+                        if (stillExists === true)
+                          return;
+                        (function iterate(obj) {
+                          var keys2 = Object.keys(obj);
+                          for (var i2 = 0, l3 = keys2.length; i2 < l3; i2++) {
+                            var objProp = obj[keys2[i2]];
+                            if (objProp instanceof Object && objProp !== null)
+                              iterate(objProp);
+                          }
+                          var c = -1;
+                          for (var i2 = 0, l3 = targets.length; i2 < l3; i2++) {
+                            if (obj === targets[i2]) {
+                              c = i2;
+                              break;
+                            }
+                          }
+                          if (c > -1) {
+                            var currentTargetProxy2 = targetsProxy[c];
+                            var d = currentTargetProxy2.length;
+                            while (d--) {
+                              if (observable === currentTargetProxy2[d].observable) {
+                                currentTargetProxy2.splice(d, 1);
+                                break;
+                              }
+                            }
+                            if (currentTargetProxy2.length == 0) {
+                              targets[c] = null;
+                            }
+                          }
+                        })(targetProp);
+                      }
+                    }, 1e4);
+                  }
+                }
+                ;
+                if (foundObservable) {
+                  _notifyObservers(changes.length);
+                }
+              }
+              return true;
+            }
+          };
+          var __targetPosition = target.__targetPosition;
+          if (!(__targetPosition > -1)) {
+            Object.defineProperty(target, "__targetPosition", {
+              value: targets.length,
+              writable: false,
+              enumerable: false,
+              configurable: false
+            });
+          }
+          var proxy = new Proxy(target, handler);
+          if (observable === null) {
+            observable = {
+              "parentTarget": target,
+              "domDelay": domDelay,
+              "parentProxy": proxy,
+              "observers": [],
+              "paused": false,
+              "path": path,
+              "changesPaused": false
+            };
+            observables.push(observable);
+          }
+          var proxyItem = {
+            "target": target,
+            "proxy": proxy,
+            "observable": observable
+          };
+          if (__targetPosition > -1) {
+            if (targets[__targetPosition] === null) {
+              targets[__targetPosition] = target;
+            }
+            targetsProxy[__targetPosition].push(proxyItem);
+          } else {
+            targets.push(target);
+            targetsProxy.push([
+              proxyItem
+            ]);
+          }
+          return proxy;
+        };
+        return {
+          /**
+          * Create a new ES6 `Proxy` whose changes we can observe through the `observe()` method.
+          * @param {object} target Plain object that we want to observe for changes.
+          * @param {boolean|number} domDelay If `true`, then the observed changes to `target` will be batched up on a 10ms delay (via `setTimeout()`).
+          * If `false`, then the `observer` function will be immediately invoked after each individual change made to `target`. It is helpful to set
+          * `domDelay` to `true` when your `observer` function makes DOM manipulations (fewer DOM redraws means better performance). If a number greater
+          * than zero, then it defines the DOM delay in milliseconds.
+          * @param {function(ObservableSlimChange[])} [observer] Function that will be invoked when a change is made to the proxy of `target`.
+          * When invoked, this function is passed a single argument: an array of `ObservableSlimChange` detailing each change that has been made.
+          * @returns {ProxyConstructor} Proxy of the target object.
+          */
+          create: function(target, domDelay, observer) {
+            if (target.__isProxy === true) {
+              var target = target.__getTarget;
+            }
+            var proxy = _create(target, domDelay);
+            if (typeof observer === "function")
+              this.observe(proxy, observer);
+            (function iterate(proxy2) {
+              var target2 = proxy2.__getTarget;
+              var keys = Object.keys(target2);
+              for (var i = 0, l = keys.length; i < l; i++) {
+                var property = keys[i];
+                if (target2[property] instanceof Object && target2[property] !== null)
+                  iterate(proxy2[property]);
+              }
+            })(proxy);
+            return proxy;
+          },
+          /**
+          * Add a new observer function to an existing proxy.
+          * @param {ProxyConstructor} proxy An ES6 `Proxy` created by the `create()` method.
+          * @param {function(ObservableSlimChange[])} observer Function that will be invoked when a change is made to the proxy of `target`.
+          * When invoked, this function is passed a single argument: an array of `ObservableSlimChange` detailing each change that has been made.
+          * @returns {void} Does not return any value.
+          */
+          observe: function(proxy, observer) {
+            var i = observables.length;
+            while (i--) {
+              if (observables[i].parentProxy === proxy) {
+                observables[i].observers.push(observer);
+                break;
+              }
+            }
+            ;
+          },
+          /**
+          * Prevent any observer functions from being invoked when a change occurs to a proxy.
+          * @param {ProxyConstructor} proxy An ES6 `Proxy` created by the `create()` method.
+          * @returns {void} Does not return any value.
+          */
+          pause: function(proxy) {
+            var i = observables.length;
+            var foundMatch = false;
+            while (i--) {
+              if (observables[i].parentProxy === proxy) {
+                observables[i].paused = true;
+                foundMatch = true;
+                break;
+              }
+            }
+            ;
+            if (foundMatch == false)
+              throw new Error("ObseravableSlim could not pause observable -- matching proxy not found.");
+          },
+          /**
+          * Resume execution of any observer functions when a change is made to a proxy.
+          * @param {ProxyConstructor} proxy An ES6 `Proxy` created by the `create()` method.
+          * @returns {void} Does not return any value.
+          */
+          resume: function(proxy) {
+            var i = observables.length;
+            var foundMatch = false;
+            while (i--) {
+              if (observables[i].parentProxy === proxy) {
+                observables[i].paused = false;
+                foundMatch = true;
+                break;
+              }
+            }
+            ;
+            if (foundMatch == false)
+              throw new Error("ObseravableSlim could not resume observable -- matching proxy not found.");
+          },
+          /**
+          * Prevent any changes (i.e., `set`, and `deleteProperty`) from being written to the target object.
+          * However, the observer functions will still be invoked to let you know what changes **WOULD** have been made.
+          * This can be useful if the changes need to be approved by an external source before the changes take effect.
+          * @param {ProxyConstructor} proxy An ES6 `Proxy` created by the `create()` method.
+          * @returns {void} Does not return any value.
+          */
+          pauseChanges: function(proxy) {
+            var i = observables.length;
+            var foundMatch = false;
+            while (i--) {
+              if (observables[i].parentProxy === proxy) {
+                observables[i].changesPaused = true;
+                foundMatch = true;
+                break;
+              }
+            }
+            ;
+            if (foundMatch == false)
+              throw new Error("ObseravableSlim could not pause changes on observable -- matching proxy not found.");
+          },
+          /**
+          * Resume the changes that were taking place prior to the call to `pauseChanges()` method.
+          * @param {ProxyConstructor} proxy An ES6 `Proxy` created by the `create()` method.
+          * @returns {void} Does not return any value.
+          */
+          resumeChanges: function(proxy) {
+            var i = observables.length;
+            var foundMatch = false;
+            while (i--) {
+              if (observables[i].parentProxy === proxy) {
+                observables[i].changesPaused = false;
+                foundMatch = true;
+                break;
+              }
+            }
+            ;
+            if (foundMatch == false)
+              throw new Error("ObseravableSlim could not resume changes on observable -- matching proxy not found.");
+          },
+          /**
+          * Remove the observable and proxy thereby preventing any further callback observers for changes occurring to the target object.
+          * @param {ProxyConstructor} proxy An ES6 `Proxy` created by the `create()` method.
+          * @returns {void} Does not return any value.
+          */
+          remove: function(proxy) {
+            var matchedObservable = null;
+            var foundMatch = false;
+            var c = observables.length;
+            while (c--) {
+              if (observables[c].parentProxy === proxy) {
+                matchedObservable = observables[c];
+                foundMatch = true;
+                break;
+              }
+            }
+            ;
+            var a = targetsProxy.length;
+            while (a--) {
+              var b = targetsProxy[a].length;
+              while (b--) {
+                if (targetsProxy[a][b].observable === matchedObservable) {
+                  targetsProxy[a].splice(b, 1);
+                  if (targetsProxy[a].length === 0) {
+                    targets[a] = null;
+                  }
+                  ;
+                }
+              }
+              ;
+            }
+            ;
+            if (foundMatch === true) {
+              observables.splice(c, 1);
+            }
+          }
+        };
+      }();
+      try {
+        module.exports = ObservableSlim2;
+      } catch (err) {
+      }
+    }
+  });
+
+  // src/api/StorageWrapper.ts
+  async function writeFile(path, data) {
+    if (ReactNative.Platform.OS === "ios" && !RTNFileManager.saveFileToGallery)
+      path = `Documents/${path}`;
+    return void await RTNFileManager.writeFile("documents", path, data, "utf8");
+  }
+  async function readFile(path, fallback) {
+    if (!await RTNFileManager.fileExists(path)) {
+      writeFile(path, fallback);
+      return fallback;
+    }
+    return await RTNFileManager.readFile(path, "utf8");
+  }
+  var import_observable_slim, RTNFileManager, StorageWrapper;
+  var init_StorageWrapper = __esm({
+    "src/api/StorageWrapper.ts"() {
+      "use strict";
+      init_class_call_check();
+      init_define_property();
+      import_observable_slim = __toESM(require_observable_slim());
+      ({ RTNFileManager } = nativeModuleProxy);
+      StorageWrapper = function StorageWrapper2(path) {
+        "use strict";
+        var _this = this;
+        _class_call_check(this, StorageWrapper2);
+        _define_property(this, "path", void 0);
+        _define_property(this, "snapshot", {});
+        _define_property(this, "_initAwaiter", void 0);
+        _define_property(this, "begin", async function() {
+          const data = await readFile(_this.path, "{}");
+          Object.assign(_this.snapshot, JSON.parse(data));
+        });
+        _define_property(this, "createProxy", function() {
+          return import_observable_slim.default.create(_this.snapshot, true, function(changes) {
+            changes.forEach(async function(change) {
+              await _this._initAwaiter;
+              Object.assign(_this.snapshot, change.target);
+              writeFile(_this.path, JSON.stringify(_this.snapshot));
+            });
+          });
+        });
+        this.path = `pyoncord/${path}`;
+        this._initAwaiter = this.begin();
+      };
+    }
+  });
+
   // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js
   function _defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
@@ -438,24 +999,6 @@
   }
   var init_create_class = __esm({
     "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_create_class.js"() {
-    }
-  });
-
-  // node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js
-  function _define_property(obj, key, value) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else
-      obj[key] = value;
-    return obj;
-  }
-  var init_define_property = __esm({
-    "node_modules/.pnpm/@swc+helpers@0.5.1/node_modules/@swc/helpers/esm/_define_property.js"() {
     }
   });
 
@@ -1080,7 +1623,7 @@
   function SettingsSection() {
     const { FormSection: FormSection2, FormRow: FormRow2, FormIcon } = Forms;
     const navigation = NavigationNative.useNavigation();
-    const title = `Pyoncord (${"e43b736"}) ${true ? "(DEV)" : ""}`.trimEnd();
+    const title = `Pyoncord (${"19712e6"}) ${true ? "(DEV)" : ""}`.trimEnd();
     return /* @__PURE__ */ React.createElement(FormSection2, {
       key: "Pyoncord",
       title
@@ -1281,6 +1824,8 @@
     utils: () => utils_exports
   });
   async function src_default() {
+    const storage = new StorageWrapper("settings.json");
+    storage.createProxy().balls = 9;
     initMetro();
     connectToDebugger();
     const patches = [
@@ -1301,6 +1846,7 @@
   var init_src = __esm({
     "src/index.ts"() {
       "use strict";
+      init_StorageWrapper();
       init_debug();
       init_metro();
       init_patches();
@@ -1316,7 +1862,7 @@
 
   // entry.js
   init_metro();
-  console.log(`Pyon! (Pyoncord, hash=${"e43b736"}, dev=${true})`);
+  console.log(`Pyon! (Pyoncord, hash=${"19712e6"}, dev=${true})`);
   async function init() {
     try {
       window.React = findByProps("createElement");
@@ -1330,7 +1876,7 @@
       error = error?.stack ?? error;
       alert([
         "Failed to load Pyoncord.\n",
-        `Build Hash: ${"e43b736"}`,
+        `Build Hash: ${"19712e6"}`,
         `Debug Build: ${true}`,
         `Build Number: ${nativeModuleProxy.RTNClientInfoManager?.Build}`,
         error

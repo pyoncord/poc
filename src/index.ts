@@ -1,3 +1,4 @@
+import StorageWrapper from "@api/StorageWrapper";
 import { connectToDebugger } from "@debug";
 import { initMetro } from "@metro";
 import { patchChatInput, patchExperiments, patchIdle, patchSettings } from "@patches";

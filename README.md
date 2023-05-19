@@ -15,4 +15,4 @@ Due to how Pyoncord fetches Discord modules, modules may be required before they
 This limitation is why this mod exists in the first place, as rearchitecturing is needed to implement this approach in an existing mod. This also makes addons compatibility for other mods nearly impossible.
 
 ### How can I try/contribute to this?
-Pyoncord supports loading from Vendetta's loader, you can load Pyoncord by overriding the loader url to load Pyoncord instead. Be familiar with Vendetta development environment: [Vendetta#installing](https://github.com/vendetta-mod/Vendetta#i]nstalling) and [Vendetta#contributing](https://github.com/vendetta-mod/Vendetta#contributing).
+Pyoncord supports loading from Vendetta's loader, you can load Pyoncord by overriding the loader url to load Pyoncord instead. Be familiar with Vendetta development environment: [Vendetta#installing](https://github.com/vendetta-mod/Vendetta#installing) and [Vendetta#contributing](https://github.com/vendetta-mod/Vendetta#contributing).
