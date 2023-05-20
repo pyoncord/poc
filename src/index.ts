@@ -1,4 +1,4 @@
-import StorageWrapper from "@api/StorageWrapper";
+import SettingsAPI from "@api/SettingsAPI";
 import { connectToDebugger } from "@debug";
 import { initMetro } from "@metro";
 import { patchChatInput, patchExperiments, patchIdle, patchSettings } from "@patches";
@@ -11,19 +11,23 @@ export * as patches from "@patches";
 export * as themes from "@themes";
 export * as utils from "@utils";
 
-export const settings = new StorageWrapper("settings.json");
+export const settings = new SettingsAPI("settings.json", {
+    experiments: true,
+    hideGiftButton: true,
+    hideIdling: true
+});
 
 export default async () => {
-    const settingsProxy = await settings.awaitAndGetProxy();
-
     initMetro();
     connectToDebugger();
 
+    const settingsProxy = (await settings.init()).proxy;
+
     const patches = [
         patchAssets(),
-        settingsProxy.experiments !== false && patchExperiments(),
-        settingsProxy.hideGiftButton !== false && patchChatInput(),
-        settingsProxy.hideIdling !== false && patchIdle(),
+        settingsProxy.experiments && patchExperiments(),
+        settingsProxy.hideGiftButton && patchChatInput(),
+        settingsProxy.hideIdling && patchIdle(),
         patchSettings()
     ];
 
