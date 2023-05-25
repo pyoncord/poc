@@ -1,11 +1,11 @@
 import Patcher from "@api/Patcher";
-import { ready } from "@metro";
+import { onceReady } from "@metro";
 import { FluxDispatcher } from "@metro/common";
 
 const patcher = new Patcher("idle-patcher");
 
 export default async function patchIdle() {
-    await ready;
+    await onceReady;
 
     patcher.before(FluxDispatcher, "dispatch", args => {
         if (args[0].type === "IDLE") {

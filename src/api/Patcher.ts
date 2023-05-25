@@ -38,12 +38,13 @@ export default class Patcher {
         method: string,
         patch: Parameters<typeof Patcher.prototype[typeof patchType]>[2],
     ) {
+        let unpatch: Unpatcher;
         const unwaiter = waitForModule(filter, module => {
             if (this.stopped) return false;
-            this[patchType](module, method, <any>patch);
+            unpatch = this[patchType](module, method, <any>patch);
         });
 
-        return this.addUnpatcher(unwaiter);
+        return () => (this.addUnpatcher(unwaiter), unpatch());
     }
 
     addUnpatcher = (callback: Unpatcher) => {

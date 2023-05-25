@@ -7,9 +7,8 @@ export * as common from "@metro/common";
 declare const modules: Record<number, any>;
 export const factoryCallbacks = new Set<(exports: any) => void>();
 
-let _isReady = false;
 let _resolveReady: () => void;
-export const ready = new Promise<void>(resolve => _resolveReady = resolve);
+export const onceReady = new Promise<void>(resolve => _resolveReady = resolve);
 
 export type FilterFn = (mod: any) => boolean;
 
@@ -72,14 +71,9 @@ export function initMetro() {
     }
 
     waitForModule(
-        m => m?.dispatch && m._actionHandlers?._orderedActionHandlers,
+        ["dispatch", "_actionHandlers"],
         FluxDispatcher => {
-            FluxDispatcher.subscribe("CONNECTION_OPEN", () => {
-                if (!_isReady) {
-                    _resolveReady();
-                    _isReady = true;
-                }
-            });
+            FluxDispatcher.subscribe("CONNECTION_OPEN", () => void _resolveReady());
         }
     );
 }
@@ -107,14 +101,18 @@ export function* getInitializedModules(): IterableIterator<any> {
  * @param {(m) => boolean} filter
  * @param {(exports) => void} callback
 */
-export function waitForModule(filter: FilterFn, callback: (exports: any) => void) {
+export function waitForModule(filter: string | string[] | FilterFn, callback: (exports: any) => void) {
+    if (typeof filter !== "function") {
+        filter = Array.isArray(filter) ? filters.byProps(...filter) : filters.byProps(filter);
+    }
+
     const matches = (exports: any) => {
-        if (exports.default && exports.__esModule && filter(exports.default)) {
+        if (exports.default && exports.__esModule && (filter as FilterFn)(exports.default)) {
             factoryCallbacks.delete(matches);
             callback(exports.default);
         }
 
-        if (filter(exports)) {
+        if ((filter as FilterFn)(exports)) {
             factoryCallbacks.delete(matches);
             callback(exports);
         }

@@ -1,5 +1,5 @@
 import Patcher from "@api/Patcher";
-import { filters, waitForModule } from "@metro";
+import { filters } from "@metro";
 import { Forms, I18n, NavigationNative } from "@metro/common";
 import { assets, findInReactTree, lazyNavigate } from "@utils";
 
