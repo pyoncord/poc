@@ -7,8 +7,8 @@ export * as common from "@metro/common";
 declare const modules: Record<number, any>;
 export const factoryCallbacks = new Set<(exports: any) => void>();
 
-let _resolveReady: () => void;
-export const onceReady = new Promise<void>(resolve => _resolveReady = resolve);
+export let _resolveReady: () => void;
+export const onceReady = new Promise(resolve => _resolveReady = <any>resolve);
 
 export type FilterFn = (mod: any) => boolean;
 
@@ -34,9 +34,9 @@ function blacklist(id: number) {
 
 export const filters = {
     byProps: (...props: string[]) => (exp: any) => props.length === 1 ? exp[props[0]] != null : props.every(prop => exp?.[prop] != null),
-    byName: (name: string, deExp = false) => (exp: any) => (deExp ? exp.name : exp.default?.name) === name,
-    byDisplayName: (displayName: string, deExp = false) => (exp: any) => (deExp ? exp.displayName : exp.default?.displayName) === displayName,
-    byStoreName: (storeName: string, deExp = false) => (exp: any) => exp._dispatcher && (deExp ? exp : exp.default)?.getName?.() === storeName,
+    byName: (name: string, deExp = true) => (exp: any) => (deExp ? exp.name : exp.default?.name) === name,
+    byDisplayName: (displayName: string, deExp = true) => (exp: any) => (deExp ? exp.displayName : exp.default?.displayName) === displayName,
+    byStoreName: (storeName: string, deExp = true) => (exp: any) => exp._dispatcher && (deExp ? exp : exp.default)?.getName?.() === storeName,
 };
 
 /**
@@ -73,7 +73,11 @@ export function initMetro() {
     waitForModule(
         ["dispatch", "_actionHandlers"],
         FluxDispatcher => {
-            FluxDispatcher.subscribe("CONNECTION_OPEN", () => void _resolveReady());
+            const cb = () => {
+                _resolveReady();
+                FluxDispatcher.unsubscribe("CONNECTION_OPEN", cb);
+            };
+            FluxDispatcher.subscribe("CONNECTION_OPEN", cb);
         }
     );
 }
@@ -206,7 +210,7 @@ export function findByDisplayNameLazy(displayName: string, defaultExport = true)
  * @returns The Flux store
 */
 export function findByStoreName(storeName: string) {
-    return findInitializedModule(filters.byStoreName(storeName), false);
+    return findInitializedModule(filters.byStoreName(storeName));
 }
 
 /**
