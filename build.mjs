@@ -65,12 +65,12 @@ if (flags.includes("deploy-root")) {
     console.log("Deploying to device with root...");
 
     // Hardcode stuff because I'm lazy :trollface:
-    const packageName = "com.pyoncord";
+    const packageName = "com.discord";
 
     // Make sure to configure the loader to load from an invalid URL so it uses the cache
     // This is still an issue because the cache is cleared intervally so we need to make our own loader
     execSync("adb wait-for-device root");
     execSync(`adb shell am force-stop ${packageName}`);
-    execSync(`adb push ${buildOutput} /data/data/${packageName}/cache/vendetta.js`);
+    execSync(`adb push ${buildOutput} /data/data/${packageName}/files/pyoncord/pyoncord.js`);
     execSync(`adb shell am start ${packageName}/com.discord.main.MainActivity`);
 }

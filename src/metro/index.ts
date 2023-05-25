@@ -1,7 +1,6 @@
 // NOTE: This file is import-sensitive, circular dependencies might crash the app!
-import EventEmitter from "@utils/EventEmitter";
 import proxyLazy from "@utils/proxyLazy";
-import { after, instead } from "spitroast";
+import { after } from "spitroast";
 
 export * as common from "@metro/common";
 
@@ -11,6 +10,8 @@ export const factoryCallbacks = new Set<(exports: any) => void>();
 let _isReady = false;
 let _resolveReady: () => void;
 export const ready = new Promise<void>(resolve => _resolveReady = resolve);
+
+export type FilterFn = (mod: any) => boolean;
 
 function isInvalidExport(exports: any) {
     return (
@@ -31,6 +32,13 @@ function blacklist(id: number) {
         writable: true
     });
 }
+
+export const filters = {
+    byProps: (...props: string[]) => (exp: any) => props.length === 1 ? exp[props[0]] != null : props.every(prop => exp?.[prop] != null),
+    byName: (name: string, deExp = false) => (exp: any) => (deExp ? exp.name : exp.default?.name) === name,
+    byDisplayName: (displayName: string, deExp = false) => (exp: any) => (deExp ? exp.displayName : exp.default?.displayName) === displayName,
+    byStoreName: (storeName: string, deExp = false) => (exp: any) => exp._dispatcher && (deExp ? exp : exp.default)?.getName?.() === storeName,
+};
 
 /**
  * @private
@@ -99,7 +107,7 @@ export function* getInitializedModules(): IterableIterator<any> {
  * @param {(m) => boolean} filter
  * @param {(exports) => void} callback
 */
-export function waitForModule(filter: (m: any) => boolean, callback: (exports: any) => void) {
+export function waitForModule(filter: FilterFn, callback: (exports: any) => void) {
     const matches = (exports: any) => {
         if (exports.default && exports.__esModule && filter(exports.default)) {
             factoryCallbacks.delete(matches);
@@ -149,7 +157,7 @@ export function findLazy(filter: (m: any) => boolean, returnDefault = true): any
  * @returns The module's export
  */
 export function findByProps(...props: string[]) {
-    return findInitializedModule(m => props.every(prop => m?.[prop]));
+    return findInitializedModule(filters.byProps(...props));
 }
 
 /**
@@ -166,7 +174,7 @@ export function findByPropsLazy(...props: string[]) {
  * @returns The function's exports
  */
 export function findByName(name: string, defaultExport: boolean = true) {
-    return findInitializedModule(m => m?.name === name, defaultExport);
+    return findInitializedModule(filters.byName(name), defaultExport);
 }
 
 /**
@@ -183,7 +191,7 @@ export function findByNameLazy(name: string, defaultExport: boolean = true) {
  * @returns The component's exports
 */
 export function findByDisplayName(displayName: string, defaultExport: boolean = true) {
-    return findInitializedModule(m => m?.displayName === displayName, defaultExport);
+    return findInitializedModule(filters.byDisplayName(displayName), defaultExport);
 }
 
 /**
@@ -200,7 +208,7 @@ export function findByDisplayNameLazy(displayName: string, defaultExport = true)
  * @returns The Flux store
 */
 export function findByStoreName(storeName: string) {
-    return findInitializedModule(m => m?.getName?.() === storeName);
+    return findInitializedModule(filters.byStoreName(storeName), false);
 }
 
 /**

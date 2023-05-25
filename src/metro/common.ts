@@ -1,8 +1,7 @@
-import { findByProps, findByPropsLazy } from "@metro";
+import { findByPropsLazy } from "@metro";
 
-export const AssetManager = findByProps("getAssetByID");
-
-// NOTE: Modules that are lazy loaded (not initialized early) has to be lazy
+// To prevent from getting top-level side effects, always load modules lazily.
+export const AssetManager = findByPropsLazy("getAssetByID");
 export const I18n = findByPropsLazy("Messages");
 export const Forms = findByPropsLazy("FormSection");
 export const NavigationNative = findByPropsLazy("NavigationContainer");
