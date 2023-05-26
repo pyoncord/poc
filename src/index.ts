@@ -7,6 +7,7 @@ import { patchAssets } from "@utils/assets";
 export * as api from "@api";
 export * as debug from "@debug";
 export * as metro from "@metro";
+export * as native from "@native";
 export * as patches from "@patches";
 export * as themes from "@themes";
 export * as utils from "@utils";

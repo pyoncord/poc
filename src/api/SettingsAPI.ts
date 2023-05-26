@@ -1,6 +1,5 @@
+import { readFile, writeFile } from "@native";
 import { observeObject } from "@utils";
-
-const { RTNFileManager } = nativeModuleProxy;
 
 type JSONSerializable = string | number | boolean | JSONSerializable[] | { [key: string]: JSONSerializable; };
 
@@ -8,7 +7,7 @@ type CastDown<T> =
     T extends number ? number :
     T extends string ? string :
     T extends boolean ? boolean :
-    T extends object ? Record<string, any> :
+    T extends object ? CastDownObject<T> :
     T;
 
 type CastDownObject<T> = {
@@ -19,30 +18,6 @@ type CastDownObject<T> = {
  * Awaits all current tasks
  */
 export let _globalAwaiter = Promise.resolve();
-
-/**
- * A wrapper to write to a file to the documents directory
- * @param path Path to the file
- * @param data String data to write to the file
- */
-export async function writeFile(path: string, data: string, prefix = "pyoncord/"): Promise<void> {
-    path = `${prefix}${path}`;
-    return void await RTNFileManager.writeFile("documents", path, data, "utf8");
-}
-
-/**
- * A wrapper to read a file from the documents directory
- * @param path Path to the file
- * @param fallback Fallback data to return if the file doesn't exist, and will be written to the file
- */
-export async function readFile(path: string, fallback: string, prefix = "pyoncord/"): Promise<string> {
-    try {
-        return await RTNFileManager.readFile(`${RTNFileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
-    } catch {
-        writeFile(path, fallback);
-        return fallback;
-    }
-}
 
 // TODO: Make faster
 export default class SettingsAPI<T extends JSONSerializable = JSONSerializable> {
@@ -55,7 +30,6 @@ export default class SettingsAPI<T extends JSONSerializable = JSONSerializable> 
         public readonly path: string,
         public readonly defaultData: CastDownObject<T> = {}
     ) {
-        !path.endsWith(".json") && (path += ".json");
         this._readAwaiter = this.init();
     }
 
