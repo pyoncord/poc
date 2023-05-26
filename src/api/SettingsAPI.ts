@@ -1,4 +1,4 @@
-import ObservableSlim from "observable-slim";
+import { observeObject } from "@utils";
 
 const { RTNFileManager } = nativeModuleProxy;
 
@@ -85,16 +85,11 @@ export default class SettingsAPI<T extends JSONSerializable = JSONSerializable> 
     get proxy() {
         if (!this.snapshot) throw new Error("StorageWrapper not initialized");
 
-        return this._cachedProxy ??= ObservableSlim.create(this.snapshot, true, changes => {
-            changes.forEach(async () => {
-                await this._readAwaiter;
-                this.callbacks.forEach(cb => cb(this.snapshot));
+        return this._cachedProxy ??= observeObject(this.snapshot, async obj => {
+            this.callbacks.forEach(cb => cb(this.snapshot));
 
-                const task = writeFile(this.path, JSON.stringify(this.snapshot));
-                _globalAwaiter = _globalAwaiter.then(() => task);
-            });
-        }) as unknown as T;
+            const writeTask = writeFile(this.path, JSON.stringify(obj));
+            _globalAwaiter = _globalAwaiter.then(() => writeTask);
+        });
     }
 }
-
-export { ObservableSlim };

@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "@swc/helpers": "^0.5.1",
-    "observable-slim": "^0.1.6",
     "spitroast": "^1.4.2"
   },
   "pnpm": {
