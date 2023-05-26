@@ -1,4 +1,4 @@
-import { FilterFn, waitForModule } from "@metro";
+import { FilterFn, filters, waitForModule } from "@metro";
 import { after, before, instead } from "spitroast";
 
 type Unpatcher = () => (void | boolean);
@@ -32,7 +32,7 @@ export default class Patcher {
     after = <T>(parent: NonPrimitive<T>, method: string, patch: AfterCallback) => this.addUnpatcher(after(method, parent, patch));
     instead = <T>(parent: NonPrimitive<T>, method: string, patch: InsteadCallback) => this.addUnpatcher(instead(method, parent, patch));
 
-    waitAndPatch<P extends "before" | "after" | "instead">(
+    private waitAndPatch<P extends "before" | "after" | "instead">(
         patchType: P,
         filter: FilterFn,
         method: string,
@@ -46,6 +46,12 @@ export default class Patcher {
 
         return () => (this.addUnpatcher(unwaiter), unpatch());
     }
+
+    patch = (filter: FilterFn) => ({
+        before: (method: string, patch: BeforeCallback) => this.waitAndPatch("before", filter, method, patch),
+        after: (method: string, patch: AfterCallback) => this.waitAndPatch("after", filter, method, patch),
+        instead: (method: string, patch: InsteadCallback) => this.waitAndPatch("instead", filter, method, patch),
+    });
 
     addUnpatcher = (callback: Unpatcher) => {
         if (this.stopped) return () => false;

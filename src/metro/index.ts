@@ -110,6 +110,9 @@ export function waitForModule(filter: string | string[] | FilterFn, callback: (e
         filter = Array.isArray(filter) ? filters.byProps(...filter) : filters.byProps(filter);
     }
 
+    const find = findInitializedModule(filter as FilterFn);
+    if (find) return (callback(find), () => { });
+
     const matches = (exports: any) => {
         if (exports.default && exports.__esModule && (filter as FilterFn)(exports.default)) {
             factoryCallbacks.delete(matches);

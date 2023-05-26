@@ -31,7 +31,7 @@ function SettingsSection() {
 }
 
 export default function patchSettings() {
-    patcher.waitAndPatch("after", filters.byName("getScreens", false), "default", (_args, screens) => {
+    patcher.patch(filters.byName("getScreens", false)).after("default", (_args, screens) => {
         return Object.assign(screens, {
             PyoncordCustomPage: {
                 title: "Pyoncord",
@@ -48,7 +48,7 @@ export default function patchSettings() {
         });
     });
 
-    const unpatch = patcher.waitAndPatch("after", filters.byName("UserSettingsOverviewWrapper", false), "default", (_args, ret) => {
+    const unpatch = patcher.patch(filters.byName("UserSettingsOverviewWrapper", false)).after("default", (_args, ret) => {
         const UserSettingsOverview = findInReactTree(ret.props.children, n => n.type?.name === "UserSettingsOverview");
 
         patcher.after(UserSettingsOverview.type.prototype, "renderSupportAndAcknowledgements", (_args, { props: { children } }) => {
