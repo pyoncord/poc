@@ -1,0 +1,34 @@
+# https://github.com/Aliucord/AliucordRN/blob/main/.github/workflows/build.yml
+name: Types Publish CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: Package version
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout master branch
+      uses: actions/checkout@master
+
+    - uses: pnpm/action-setup@v2 # Install pnpm using packageManager key in package.json
+
+    - name: Use Node.js 19
+      uses: actions/setup-node@v3
+      with:
+        registry-url: 'https://registry.npmjs.org'
+        node-version: 19
+
+    - name: Publish types to NPM  
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # NPM_TOKEN is set in the repo secrets
+      run: |
+        pnpm install
+        npm pkg set version=${{ inputs.version }}
+        pnpm publish --no-git-checks

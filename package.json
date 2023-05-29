@@ -1,6 +1,5 @@
 {
   "name": "pyoncord",
-  "version": "0.1.1",
   "license": "BSD-3-Clause",
   "description": "A Discord React Native client mod",
   "publishConfig": {
@@ -11,7 +10,7 @@
     "build": "node build.mjs --release",
     "deploy:root": "node build.mjs --deploy-root",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx --ignore-pattern src/*",
-    "prepublishOnly": "rm -rf lib && tsc && tsc-alias && cp {package.json,README.md,LICENSE} lib/"
+    "prepublishOnly": "if [ -d lib ]; then rm -r lib; fi && tsc && cp package.json lib && cp LICENSE lib && cp README.md lib"
   },
   "repository": {
     "type": "git",
