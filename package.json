@@ -1,6 +1,12 @@
 {
   "name": "pyoncord",
+  "version": "0.1.0",
+  "license": "BSD-3-Clause",
   "description": "A Discord React Native client mod",
+  "publishConfig": {
+    "directory": "lib",
+    "typings": "index.d.ts"
+  },
   "scripts": {
     "build": "node build.mjs --release",
     "deploy:root": "node build.mjs --deploy-root",
@@ -20,7 +26,6 @@
     "react-native"
   ],
   "author": "amsyarasyiq",
-  "license": "BSD-3-Clause",
   "devDependencies": {
     "@swc/core": "^1.3.59",
     "@types/react": "^18.2.6",
