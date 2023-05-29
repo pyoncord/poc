@@ -5,7 +5,13 @@
  * Original code: https://github.com/vendetta-mod/Vendetta/blob/rewrite/src/lib/utils/findInReactTree.ts
  */
 
-import { FindInTreeOptions, SearchFilter, SearchTree } from "@def";
+export type SearchTree = Record<string, any>;
+export type SearchFilter = (tree: SearchTree) => boolean;
+export interface FindInTreeOptions {
+    walkable?: string[];
+    ignore?: string[];
+    maxDepth?: number;
+}
 
 function treeSearch(tree: SearchTree, filter: SearchFilter, opts: Required<FindInTreeOptions>, depth: number): any {
     if (depth > opts.maxDepth) return;

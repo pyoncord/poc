@@ -7,7 +7,6 @@ const isUnconfigurable = (key: PropertyKey) => typeof key === "string" && unconf
 const lazyHandler: ProxyHandler<any> = {
     ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(fnName => {
         return [fnName, (target: any, ...args: any[]) => {
-            // @ts-expect-error
             return Reflect[fnName](target[factorySymbol](), ...args);
         }];
     })),

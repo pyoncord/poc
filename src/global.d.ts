@@ -1,11 +1,3 @@
-export type SearchTree = Record<string, any>;
-export type SearchFilter = (tree: SearchTree) => boolean;
-export interface FindInTreeOptions {
-    walkable?: string[];
-    ignore?: string[];
-    maxDepth?: number;
-}
-
 type PyoncordObject = Omit<typeof import("."), "default"> & {
     unload: () => void;
 };
@@ -16,9 +8,11 @@ declare global {
 
     const nativeModuleProxy: any;
 
-    // Set by the mod from entry.ts!
+    // These are set by the mod
     const React: typeof import("react");
     const ReactNative: typeof import("react-native");
 
     const pyoncord: PyoncordObject;
 }
+
+export { };
