@@ -1,6 +1,8 @@
 import Patcher from "@api/Patcher";
 
 const { before } = new Patcher("debug-ws-patcher");
+const patcher = new Patcher("ws-patcher");
+
 let websocket: WebSocket | null = null;
 
 const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
@@ -16,7 +18,7 @@ export function connectToDebugger() {
     const toExpose = {
         ...pyoncord.metro,
         ...pyoncord.utils,
-        patcher: new Patcher("ws-patcher")
+        patcher
     };
 
     const [exposeKeys, exposeValues] = [Object.keys(toExpose), Object.values(toExpose)];
