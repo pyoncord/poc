@@ -71,7 +71,7 @@ if (flags.includes("deploy-root")) {
     // This is still an issue because the cache is cleared intervally so we need to make our own loader
     execSync("adb wait-for-device root");
     execSync(`adb shell am force-stop ${packageName}`);
-    execSync(`adb push ${buildOutput} sdcard/Documents/pyoncord/pyoncord/cache/pyoncord.js`);
-    // execSync(`adb push ${buildOutput} /data/data/${packageName}/files/pyoncord/pyoncord.js`);
+    // execSync(`adb push ${buildOutput} sdcard/Documents/pyoncord/pyoncord/cache/pyoncord.js`);
+    execSync(`adb push ${buildOutput} /data/data/${packageName}/files/pyoncord/cache/pyoncord.js`);
     execSync(`adb shell am start ${packageName}/com.discord.main.MainActivity`);
 }

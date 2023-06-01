@@ -1,2 +1,2 @@
-export * as Patcher from "./Patcher";
-export * as SettingsAPI from "./SettingsAPI";
+export { default as Patcher } from "./Patcher";
+export { default as SettingsAPI } from "./SettingsAPI";

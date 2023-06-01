@@ -1,5 +1,6 @@
-import SettingsAPI from "@api/SettingsAPI";
+import { SettingsAPI } from "@api";
 import { connectToDebugger } from "@debug";
+import { loadPlugins } from "@managers/plugins";
 import { initMetro } from "@metro";
 import { patchChatInput, patchExperiments, patchIdle, patchSettings } from "@patches";
 import { patchAssets } from "@utils/assets";
@@ -31,6 +32,8 @@ export default async () => {
         settingsProxy.hideIdling && patchIdle(),
         patchSettings()
     ];
+
+    loadPlugins();
 
     await Promise.all(patches);
 

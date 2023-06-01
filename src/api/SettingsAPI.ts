@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "@native";
 import { observeObject } from "@utils";
 
-type JSONSerializable = string | number | boolean | JSONSerializable[] | { [key: string]: JSONSerializable; };
+type JSONSerializable = number | string | boolean | object | JSONSerializable[];
 
 type CastDown<T> =
     T extends number ? number :
