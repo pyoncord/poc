@@ -19,7 +19,6 @@ const swcPlugin = {
         build.onLoad({ filter: /\.[jt]sx?/ }, async args => {
             const result = await swc.transformFile(args.path, {
                 jsc: {
-                    target: "esnext",
                     externalHelpers: true,
                 },
                 env: {
