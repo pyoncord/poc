@@ -1,9 +1,22 @@
 import Patcher from "@api/Patcher";
-import { filters } from "@metro";
-import { Forms, I18n, NavigationNative } from "@metro/common";
+import { filters, findByPropsLazy, waitForModule } from "@metro";
+import { Forms, I18n, NavigationNative, TabsNavigationRef } from "@metro/common";
 import { assets, findInReactTree, lazyNavigate } from "@utils";
 
 const patcher = new Patcher("settings-patcher");
+
+const CustomPageRenderer = React.memo(() => {
+    const navigation = NavigationNative.useNavigation();
+    const route = NavigationNative.useRoute();
+
+    const { render: PageComponent, ...args } = route.params;
+
+    React.useEffect(() => {
+        navigation.setOptions({ ...args });
+    }, []);
+
+    return <PageComponent />;
+});
 
 function SettingsSection() {
     // This has to be destructured here, otherwise it will throw
@@ -30,20 +43,12 @@ function SettingsSection() {
     );
 }
 
-export default function patchSettings() {
+function patchPanelUI() {
     patcher.patch(filters.byName("getScreens", false)).after("default", (_args, screens) => {
         return Object.assign(screens, {
             PyoncordCustomPage: {
                 title: "Pyoncord",
-                render: ({ render: PageComponent, ...args }: any) => {
-                    const navigation = NavigationNative.useNavigation();
-
-                    React.useEffect(() => {
-                        navigation.setOptions({ ...args });
-                    }, []);
-
-                    return <PageComponent />;
-                },
+                render: () => <CustomPageRenderer />
             }
         });
     });
@@ -81,6 +86,62 @@ export default function patchSettings() {
 
         unpatch();
     });
+}
+
+function patchTabsUI() {
+    const pyonSection = [
+        ["PYONCORD", "Pyoncord", () => import("@ui/screens/General"), "Discord"],
+        ["PYONCORD_PLUGINS", "Plugins", () => import("@ui/screens/Plugins"), "ic_progress_wrench_24px"]
+    ] as [key: string, title: string, getRender: () => Promise<any>, icon: string][];
+
+    waitForModule("SETTING_RENDERER_CONFIGS", (module) => {
+        module.SETTING_RENDERER_CONFIGS.PYONCORD_CUSTOM_PAGE = {
+            type: "route",
+            screen: {
+                route: "PyoncordCustomPage",
+                getComponent: () => CustomPageRenderer
+            }
+        };
+
+        pyonSection.forEach(([key, title, getRender, icon]) => {
+            module.SETTING_RELATIONSHIPS[key] = null;
+            module.PRESSABLE_SETTINGS_WITH_TRAILING_ARROW?.add(key);
+
+            module.SETTING_RENDERER_CONFIGS[key] = {
+                type: "pressable",
+                get icon() {
+                    return typeof icon === "string"
+                        ? assets.getAssetIDByName(icon)
+                        : icon;
+                },
+                onPress: () => {
+                    const ref = TabsNavigationRef.getRootNavigationRef();
+                    lazyNavigate(ref, getRender(), title);
+                }
+            };
+        });
+
+        patcher.after(module, "getSettingTitleConfig", (args, res) => {
+            pyonSection.forEach(([key, title]) => res[key] = title);
+            res.PYONCORD_CUSTOM_PAGE = "Pyon!";
+        });
+    });
+
+    waitForModule("useOverviewSettings", (module) => {
+        patcher.after(module, "useOverviewSettings", (args, res) => {
+            if (!(res instanceof Array) || res.find(sect => sect.title === "Pyoncord")) return;
+
+            res.unshift({
+                title: "Pyoncord",
+                settings: pyonSection.map(a => a[0])
+            });
+        });
+    });
+}
+
+export default function patchSettings() {
+    patchPanelUI();
+    patchTabsUI();
 
     return () => patcher.unpatchAllAndStop();
 }

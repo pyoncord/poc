@@ -2,7 +2,6 @@
 import swc from "@swc/core";
 import { execSync } from "child_process";
 import esbuild from "esbuild";
-import globalsPlugin from "esbuild-plugin-globals";
 import { argv } from "process";
 
 const flags = argv.slice(2).filter(arg => arg.startsWith("--")).map(arg => arg.slice(2));
