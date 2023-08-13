@@ -94,7 +94,7 @@ function patchTabsUI() {
         ["PYONCORD_PLUGINS", "Plugins", () => import("@ui/screens/Plugins"), "ic_progress_wrench_24px"]
     ] as [key: string, title: string, getRender: () => Promise<any>, icon: string][];
 
-    waitForModule("SETTING_RENDERER_CONFIGS", (module) => {
+    waitForModule("SETTING_RENDERER_CONFIGS", module => {
         module.SETTING_RENDERER_CONFIGS.PYONCORD_CUSTOM_PAGE = {
             type: "route",
             screen: {
@@ -127,7 +127,7 @@ function patchTabsUI() {
         });
     });
 
-    waitForModule("useOverviewSettings", (module) => {
+    waitForModule("useOverviewSettings", module => {
         patcher.after(module, "useOverviewSettings", (args, res) => {
             if (!(res instanceof Array) || res.find(sect => sect.title === "Pyoncord")) return;
 
