@@ -2,15 +2,23 @@
 import Patcher from "@api/Patcher";
 import { AssetManager } from "@metro/common";
 
-const { after } = new Patcher("assets-patcher");
+const patcher = new Patcher("assets-patcher");
 
 type Asset = Record<string, any> & { id: number; };
 
 export const registeredAssets: Record<string, Asset> = {};
 
 export function patchAssets() {
-    const unpatch = after(AssetManager, "registerAsset", ([asset], id: number) => {
-        registeredAssets[asset.name] = { ...asset, id: id };
+    patcher.instead(AssetManager, "registerAsset", (args, orig) => {
+        const [asset] = args;
+
+        if (registeredAssets[asset.name]) {
+            Object.assign(registeredAssets[asset.name], asset);
+            return registeredAssets[asset.name].id;
+        }
+
+        registeredAssets[asset.name] = { ...asset, id: orig(...args) };
+        return registeredAssets[asset.name].id;
     });
 
     let asset: Asset, id = 1;
@@ -19,9 +27,35 @@ export function patchAssets() {
         registeredAssets[asset.name] ??= { ...asset, id: id++ };
     }
 
-    return unpatch;
+    return () => patcher.unpatchAllAndStop();
 }
 
 export const getAssetByName = (name: string): Asset => registeredAssets[name];
 export const getAssetByID = (id: number): Asset => AssetManager.getAssetByID(id);
 export const getAssetIDByName = (name: string) => registeredAssets[name]?.id;
+
+export function resolveAsset(asset): number {
+    const { path } = asset;
+    delete asset.path;
+
+    return AssetManager.registerAsset({
+        __packager_asset: true,
+        httpServerLocation: path,
+        hash: Math.random().toString(),
+        type: "png",
+        height: 64,
+        width: 64,
+        scales: [1],
+        ...asset
+    });
+}
+
+export function resolveAssets<T>(assets: T) {
+    const assetMap = {} as { [Property in keyof T]: number };
+
+    for (const key in assets) {
+        assetMap[key] = resolveAsset(assets[key]);
+    }
+
+    return assetMap;
+}

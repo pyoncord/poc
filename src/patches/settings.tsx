@@ -3,17 +3,29 @@ import Patcher from "@api/Patcher";
 import { filters, waitForModule } from "@metro";
 import { Forms, I18n, NavigationNative, TabsNavigationRef } from "@metro/common";
 import { assets, findInReactTree, lazyNavigate } from "@utils";
+import { resolveAssets } from "@utils/assets";
 
 const patcher = new Patcher("settings-patcher");
+
+const icons = resolveAssets({
+    Discord: {
+        path: "/assets/images/native/main_tabs",
+        name: "Discord"
+    },
+    Wrench: {
+        path: "/assets/images/native/icons/settings",
+        name: "ic_progress_wrench_24px"
+    }
+});
 
 // @ts-expect-error
 export const sections = window.__pyoncord_sections_patch = {
     [`Pyoncord (${__PYONCORD_COMMIT_HASH__}) ${__PYONCORD_DEV__ ? "(DEV)" : ""}`.trimEnd()]: [
-        ["PYONCORD", "Pyoncord", () => import("@ui/screens/General"), "Discord"],
-        ["PYONCORD_PLUGINS", "Plugins", () => import("@ui/screens/Plugins"), "ic_progress_wrench_24px"]
+        ["PYONCORD", "Pyoncord", () => import("@ui/screens/General"), icons.Discord],
+        ["PYONCORD_PLUGINS", "Plugins", () => import("@ui/screens/Plugins"), icons.Wrench]
     ]
 } as {
-    [key: string]: [key: string, title: string, getRender: () => Promise<any>, icon: string][];
+    [key: string]: [key: string, title: string, getRender: () => Promise<any>, icon: number][];
 };
 
 const CustomPageRenderer = React.memo(() => {
@@ -39,7 +51,7 @@ function SettingsSection() {
                 {sections[sect].map(row => (
                     <FormRow
                         label={row[1]}
-                        leading={<FormIcon source={assets.getAssetIDByName(row[3])} />}
+                        leading={<FormIcon source={row[3]} />}
                         trailing={FormRow.Arrow}
                         onPress={() => lazyNavigate(navigation, row[2](), row[1])}
                     />
@@ -101,9 +113,7 @@ function patchTabsUI() {
                 module.SETTING_RENDERER_CONFIGS[key] = {
                     type: "pressable",
                     get icon() {
-                        return typeof icon === "string"
-                            ? assets.getAssetIDByName(icon)
-                            : icon;
+                        return icon;
                     },
                     onPress: () => {
                         const ref = TabsNavigationRef.getRootNavigationRef();
