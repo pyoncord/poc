@@ -4,6 +4,7 @@ import { findByPropsLazy } from "@metro";
 export const AssetManager = findByPropsLazy("getAssetByID");
 export const I18n = findByPropsLazy("Messages");
 export const Forms = findByPropsLazy("FormSection");
+export const Tables = findByPropsLazy("TableRow");
 export const NavigationNative = findByPropsLazy("NavigationContainer");
 export const Styles = findByPropsLazy("createThemedStyleSheet");
 export const Colors = findByPropsLazy("unsafe_rawColors");
