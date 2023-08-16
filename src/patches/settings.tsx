@@ -2,20 +2,14 @@
 import Patcher from "@api/Patcher";
 import { filters, waitForModule } from "@metro";
 import { Forms, I18n, NavigationNative, TabsNavigationRef } from "@metro/common";
-import { assets, findInReactTree, lazyNavigate } from "@utils";
+import { findInReactTree, lazyNavigate } from "@utils";
 import { resolveAssets } from "@utils/assets";
 
 const patcher = new Patcher("settings-patcher");
 
 const icons = resolveAssets({
-    Discord: {
-        path: "/assets/images/native/main_tabs",
-        name: "Discord"
-    },
-    Wrench: {
-        path: "/assets/images/native/icons/settings",
-        name: "ic_progress_wrench_24px"
-    }
+    Discord: "Discord",
+    Wrench: "ic_progress_wrench_24px"
 });
 
 // @ts-expect-error

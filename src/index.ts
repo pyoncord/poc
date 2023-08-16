@@ -3,7 +3,6 @@ import { connectToDebugger } from "@debug";
 import { loadPlugins } from "@managers/plugins";
 import { initMetro } from "@metro";
 import { patchChatInput, patchExperiments, patchIdle, patchSettings } from "@patches";
-import { patchAssets } from "@utils/assets";
 
 export * as api from "@api";
 export * as debug from "@debug";
@@ -26,7 +25,6 @@ export default async () => {
     const settingsProxy = (await settings.init()).proxy;
 
     const patches = [
-        patchAssets(),
         settingsProxy.experiments && patchExperiments(),
         settingsProxy.hideGiftButton && patchChatInput(),
         settingsProxy.hideIdling && patchIdle(),
