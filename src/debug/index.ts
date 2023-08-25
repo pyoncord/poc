@@ -1,12 +1,22 @@
 import Patcher from "@api/Patcher";
+import { filters, waitForModule } from "@metro";
 
-const { before } = new Patcher("debug-ws-patcher");
+const { before, after } = new Patcher("debug-patches");
 const patcher = new Patcher("ws-patcher");
 
 let websocket: WebSocket | null = null;
 
 const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 
+export function debugPatches() {
+    waitForModule(filters.byName("ErrorBoundary"), ErrorBoundary => {
+        after(ErrorBoundary.prototype, "render", function (this: any, args, ret) {
+            console.error(this.state?.error?.stack);
+        });
+    });
+
+    return () => patcher.unpatchAllAndStop();
+}
 /**
  * Connects to the debugger.
  */
