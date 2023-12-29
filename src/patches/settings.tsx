@@ -90,9 +90,10 @@ function patchPanelUI() {
 }
 
 function patchTabsUI() {
-    waitForModule("SETTING_RENDERER_CONFIGS", module => {
-        module.SETTING_RENDERER_CONFIGS.PYONCORD_CUSTOM_PAGE = {
+    waitForModule("SETTING_RENDERER_CONFIG", module => {
+        module.SETTING_RENDERER_CONFIG.PYONCORD_CUSTOM_PAGE = {
             type: "route",
+            title: () => "Blah?",
             screen: {
                 route: "PyoncordCustomPage",
                 getComponent: () => CustomPageRenderer
@@ -101,41 +102,29 @@ function patchTabsUI() {
 
         for (const sect of Object.values(sections)) {
             sect.forEach(([key, title, getRender, icon]) => {
-                module.SETTING_RELATIONSHIPS[key] = null;
-                module.PRESSABLE_SETTINGS_WITH_TRAILING_ARROW?.add(key);
-
-                module.SETTING_RENDERER_CONFIGS[key] = {
+                module.SETTING_RENDERER_CONFIG[key] = {
                     type: "pressable",
-                    get icon() {
-                        return icon;
-                    },
+                    title: () => title,
+                    icon: icon,
                     onPress: () => {
                         const ref = TabsNavigationRef.getRootNavigationRef();
                         lazyNavigate(ref, getRender(), title);
-                    }
+                    },
+                    withArrow: true
                 };
             });
         }
-
-        patcher.after(module, "getSettingTitleConfig", (args, res) => {
-            // This will eventually get overriden with navigation.setOptions
-            res.PYONCORD_CUSTOM_PAGE = "Pyon!";
-
-            Object.values(sections).forEach(sect => {
-                sect.forEach(([key, title]) => res[key] = title);
-            });
-        });
     });
 
-    waitForModule("useOverviewSettings", module => {
-        patcher.after(module, "useOverviewSettings", (args, res) => {
-            if (!res || !Array.isArray(res)) return;
+    waitForModule("SearchableSettingsList", module => {
+        patcher.before(module.SearchableSettingsList, "type", ([{ sections: res }]) => {
+            if (res.__pyonMarkDirty) return;
+            res.__pyonMarkDirty = true;
 
-            let index = -~res.findIndex((i: any) => i.title === I18n.Messages.ACCOUNT_SETTINGS) || 1;
-
+            let index = -~res.findIndex((i: any) => i.label === I18n.Messages.ACCOUNT_SETTINGS) || 1;
             Object.keys(sections).forEach(sect => {
                 res.splice(index++, 0, {
-                    title: sect,
+                    label: sect,
                     settings: sections[sect].map(a => a[0])
                 });
             });

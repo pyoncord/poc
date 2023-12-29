@@ -1,4 +1,6 @@
-type PyoncordObject = Omit<typeof import("."), "default"> & {
+import * as index from ".";
+
+type PyoncordObject = Omit<index, "default"> & {
     unload: () => void;
 };
 

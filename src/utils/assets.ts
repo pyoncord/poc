@@ -7,7 +7,7 @@ const patcher = new Patcher("assets-patcher");
 type Asset = Record<string, any> & { id: number; };
 
 // @ts-ignore
-export const registeredAssets: Record<string, Asset> = window.__pyonModuleCache?.assets ?? {};
+export const registeredAssets: Record<string, Asset> = window.__pyonAssetsCache?.assets ?? {};
 export const assetNameToId: Record<string, number> = {};
 
 export const getAssetByName = (name: string): Asset => registeredAssets[name];

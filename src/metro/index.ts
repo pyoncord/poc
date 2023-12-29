@@ -1,6 +1,6 @@
 // NOTE: This file is import-sensitive, circular dependencies might crash the app!
 import proxyLazy from "@utils/proxyLazy";
-import { after } from "spitroast";
+import { after, before } from "spitroast";
 
 export * as common from "@metro/common";
 
@@ -45,6 +45,8 @@ export const filters = {
  * Patches the module factory to emit an event when the module is loaded.
  */
 export function initMetro() {
+    const filePathToId = globalThis.filePathToId = {};
+
     for (const id in modules) {
         const module = modules[id];
 
@@ -63,9 +65,16 @@ export function initMetro() {
              * - Everything is done synchronously.
             */
 
-            after("factory", module, ({ 5: exports }) => {
-                if (isInvalidExport(exports)) return;
-                factoryCallbacks.forEach(cb => cb(exports));
+            before("factory", module, ({ 4: moduleObject }) => {
+                const importTracker = findInitializedModule(m => m.fileFinishedImporting);
+                after("fileFinishedImporting", importTracker, ([path]) => {
+                    filePathToId[path] = moduleObject.id;
+                }, true);
+            }, true);
+
+            after("factory", module, ({ 4: moduleObject }) => {
+                if (isInvalidExport(moduleObject.exports)) return;
+                factoryCallbacks.forEach(cb => cb(moduleObject.exports));
             }, true);
         }
     }

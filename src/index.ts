@@ -1,5 +1,5 @@
 import { SettingsAPI } from "@api";
-import { connectToDebugger } from "@debug";
+import { connectToDebugger, debugPatches } from "@debug";
 import { loadPlugins } from "@managers/plugins";
 import { initMetro } from "@metro";
 import { patchChatInput, patchExperiments, patchIdle, patchSettings } from "@patches";
@@ -25,6 +25,7 @@ export default async () => {
     const settingsProxy = (await settings.init()).proxy;
 
     const patches = [
+        __PYONCORD_DEV__ && debugPatches(),
         settingsProxy.experiments && patchExperiments(),
         settingsProxy.hideGiftButton && patchChatInput(),
         settingsProxy.hideIdling && patchIdle(),
