@@ -7,7 +7,7 @@
     "typings": "index.d.ts"
   },
   "scripts": {
-    "build": "node build.mjs --release",
+    "build": "node build.mjs",
     "deploy:root": "node build.mjs --deploy-root",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx --ignore-pattern src/*",
     "prepublishOnly": "if [ -d lib ]; then rm -r lib; fi && tsc && cp package.json lib && cp LICENSE lib && cp README.md lib"

@@ -35,6 +35,9 @@ export default async () => {
 
     loadPlugins();
 
+    // @ts-ignore
+    window.__startDiscord?.();
+
     await Promise.all(patches);
 
     return () => {

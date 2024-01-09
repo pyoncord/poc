@@ -50,6 +50,7 @@ export function resolveAsset(asset): number {
     });
 }
 
+// TODO: This may differ between platforms
 export function resolveAssets<T>(assets: T) {
     const assetMap = {} as { [Property in keyof T]: number };
 

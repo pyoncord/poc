@@ -1,6 +1,6 @@
 const {
     RTNFileManager
-} = ReactNative.NativeModules;
+} = nativeModuleProxy;
 
 /**
  * A wrapper to write to a file to the documents directory

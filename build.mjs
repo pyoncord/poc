@@ -6,11 +6,13 @@ import { argv } from "process";
 
 const flags = argv.slice(2).filter(arg => arg.startsWith("--")).map(arg => arg.slice(2));
 const isDev = !flags.includes("release");
+const shouldServe = flags.includes("serve");
+const shouldWatch = flags.includes("watch");
 
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 console.log(`Building with commit hash ${commitHash}, isDev=${isDev}`);
 
-const buildOutput = "dist/pyoncord.js";
+const buildOutput = "dist/vendetta.js";
 
 /** @type {import("esbuild").Plugin}  */
 const swcPlugin = {
@@ -34,30 +36,55 @@ const swcPlugin = {
     }
 };
 
-await esbuild.build({
-    entryPoints: ["entry.js"],
-    bundle: true,
-    minify: !isDev,
-    format: "iife",
-    target: "esnext",
-    outfile: buildOutput,
-    footer: {
-        js: "//# sourceURL=pyoncord",
-    },
-    define: {
-        __PYONCORD_COMMIT_HASH__: JSON.stringify(commitHash),
-        __PYONCORD_DEV__: JSON.stringify(isDev),
-    },
-    legalComments: "none",
-    alias: {
-        "@/*": "./src/*"
-    },
-    plugins: [
-        swcPlugin
-    ]
-});
+try {
+    const ctx = await esbuild.context({
+        entryPoints: ["entry.js"],
+        bundle: true,
+        minify: !isDev,
+        format: "iife",
+        target: "esnext",
+        outfile: buildOutput,
+        footer: {
+            js: "//# sourceURL=pyoncord",
+        },
+        define: {
+            __PYONCORD_COMMIT_HASH__: JSON.stringify(commitHash),
+            __PYONCORD_DEV__: JSON.stringify(isDev),
+        },
+        legalComments: "none",
+        alias: {
+            "@/*": "./src/*"
+        },
+        plugins: [
+            swcPlugin,
+            {
+                name: "buildLog",
+                setup: build => {
+                    build.onStart(() => console.log(`Building commit ${commitHash}, isDev=${isDev}...`));
+                    build.onEnd(result => console.log(`Built with ${result.errors?.length} errors!`));
+                }
+            },
+        ]
+    });
 
-console.log("Build complete!");
+    if (shouldWatch) {
+        await ctx.watch();
+        console.log("Watching...");
+    }
+
+    if (shouldServe) {
+        const server = await ctx.serve({ port: 4040 });
+        console.log(`Serving on ${server.host}:${server.port}, CTRL+C to stop`);
+    }
+
+    if (!shouldServe && !shouldWatch) {
+        ctx.rebuild();
+        ctx.dispose();
+    }
+} catch (e) {
+    console.error("Build failed...", e);
+    process.exit(1);
+}
 
 if (flags.includes("deploy-root")) {
     console.log("Deploying to device with root...");

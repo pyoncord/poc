@@ -63,10 +63,8 @@
         "use-isnan": "error",
         "prefer-const": "error",
         "prefer-spread": "error",
-
         "simple-import-sort/imports": "error",
         "simple-import-sort/exports": "error",
-
         "path-alias/no-relative": "error"
     }
 }
