@@ -3,7 +3,8 @@ import swc from "@swc/core";
 import { execSync } from "child_process";
 import { createHash } from "crypto";
 import esbuild from "esbuild";
-import { readFile, writeFile } from "fs/promises";
+import { existsSync } from "fs";
+import { mkdir, readFile, writeFile } from "fs/promises";
 import { createServer } from "http";
 import { argv } from "process";
 
@@ -14,8 +15,6 @@ const shouldWatch = flags.includes("watch");
 
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 console.log(`Building with commit hash ${commitHash}, isDev=${isDev}`);
-
-const buildOutput = "dist/vendetta.js";
 
 /** @type {import("esbuild").Plugin}  */
 const swcPlugin = {
@@ -48,7 +47,7 @@ try {
         minify: !isDev,
         format: "esm",
         target: "esnext",
-        outfile: buildOutput,
+        outfile: "dist/pyoncord.js",
         keepNames: true,
         write: false,
         define: {
@@ -73,10 +72,11 @@ try {
                         const contents = [
                             `globalThis.__PYON_MODULE_DEFINITIONS__=${moduleDef};`,
                             `globalThis.__PYON_MODULE_DEFINITIONS_HASH__='${moduleDefHash}';`,
-                            `(async function(){${text}})();`,
+                            `(async function(){${text}})().catch(alert);`,
                             "//# sourceURL=pyoncord"
                         ].join("\n");
 
+                        !existsSync("dist") && await mkdir("dist");
                         await writeFile(path, contents);
                     });
                 }
@@ -101,7 +101,7 @@ try {
             try {
                 if (req.url.endsWith("/vendetta.js") || req.url.endsWith("/pyoncord.js")) {
                     await ctx.rebuild();
-                    const content = await readFile("./dist/vendetta.js");
+                    const content = await readFile("./dist/pyoncord.js");
                     res.writeHead(200);
                     res.end(content, "utf-8");
                 } else {
@@ -124,19 +124,4 @@ try {
 } catch (e) {
     console.error("Build failed...", e);
     process.exit(1);
-}
-
-if (flags.includes("deploy-root")) {
-    console.log("Deploying to device with root...");
-
-    // Hardcode stuff because I'm lazy :trollface:
-    const packageName = "com.discord";
-
-    // Make sure to configure the loader to load from an invalid URL so it uses the cache
-    // This is still an issue because the cache is cleared intervally so we need to make our own loader
-    execSync("adb wait-for-device root");
-    execSync(`adb shell am force-stop ${packageName}`);
-    // execSync(`adb push ${buildOutput} sdcard/Documents/pyoncord/pyoncord/cache/pyoncord.js`);
-    execSync(`adb push ${buildOutput} /data/data/${packageName}/files/pyoncord/cache/pyoncord.js`);
-    execSync(`adb shell am start ${packageName}/com.discord.main.MainActivity`);
 }

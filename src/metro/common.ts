@@ -1,13 +1,12 @@
-import { findByPropsLazy } from "@metro";
+import { requireMetroLazy } from "@metro";
 
 // To prevent from getting top-level side effects, always load modules lazily.
-export const AssetManager = findByPropsLazy("getAssetByID");
-export const I18n = findByPropsLazy("Messages");
-export const Forms = findByPropsLazy("FormSection");
-export const Tables = findByPropsLazy("TableRow");
-export const NavigationNative = findByPropsLazy("NavigationContainer");
-export const Styles = findByPropsLazy("createThemedStyleSheet");
-export const Colors = findByPropsLazy("unsafe_rawColors");
-export const Constants = findByPropsLazy("NODE_SIZE");
-export const FluxDispatcher = findByPropsLazy("dispatch", "subscribe");
-export const TabsNavigationRef = findByPropsLazy("getRootNavigationRef");
+export const AssetManager = requireMetroLazy("AssetManager");
+export const I18n = requireMetroLazy("I18n").default;
+export const Forms = requireMetroLazy("uikit-native/refresh/form/index.tsx");
+export const Tables = requireMetroLazy("Tables");
+export const NavigationNative = requireMetroLazy("NavigationNative");
+export const Colors = requireMetroLazy("Colors").default;
+export const Constants = requireMetroLazy("Constants");
+export const FluxDispatcher = requireMetroLazy("FluxDispatcher").default;
+export const TabsNavigationRef = requireMetroLazy("TabsNavigationRef");

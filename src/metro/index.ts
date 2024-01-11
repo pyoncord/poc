@@ -95,6 +95,21 @@ export function initMetro() {
     );
 }
 
+export function requireMetro(name: string) {
+    const id = pyonRequire(name);
+    if (!id) {
+        throw new Error(`No module with name '${name}' was cached`);
+    } else if (id === -1) {
+        throw new Error(`Module '${name}' was not found during caching`);
+    }
+
+    return globalThis.__r(id);
+}
+
+export function requireMetroLazy(name: string) {
+    return proxyLazy(() => requireMetro(name));
+}
+
 /**
  * Get all the modules that are already initialized.
  * @returns An iterable of the modules

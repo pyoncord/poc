@@ -1,13 +1,13 @@
-import { findByProps, waitForModule } from "@metro";
-
 console.log(`Pyon! (Pyoncord, hash=${__PYONCORD_COMMIT_HASH__}, dev=${__PYONCORD_DEV__})`);
 
 try {
     Object.freeze = Object.seal = Object;
 
     window.pyonRequire = await import("@cacher").then(m => m.default());
-    window.React = findByProps("createElement");
 
+    const { findByProps, waitForModule } = await import("@metro");
+
+    window.React = findByProps("createElement");
     waitForModule("View", m => window.ReactNative = m);
 
     window.pyoncord = { ...await import("@") };

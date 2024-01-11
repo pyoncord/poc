@@ -29,7 +29,8 @@ function getIDByExports(exports: any) {
 }
 
 async function beginCache() {
-    console.log("Cache invalidated, begining cache for version: " + currentVersion);
+    console.log(`Cache invalidated, begining cache for version=${currentVersion}, hash=${__PYON_MODULE_DEFINITIONS_HASH__}`);
+
     const cache = {
         version: currentVersion,
         hash: __PYON_MODULE_DEFINITIONS_HASH__,
@@ -57,8 +58,8 @@ async function beginCache() {
         cache.assets[asset.name] = asset;
     });
 
-    const importTracker = metro.findInitializedModule(m => m.fileFinishedimporting);
-    before("fileFinishedimporting", importTracker, ([location]) => {
+    const importTracker = metro.findInitializedModule(m => m.fileFinishedImporting);
+    before("fileFinishedImporting", importTracker, ([location]) => {
         if (_importingModuleId === -1) return;
         modules[_importingModuleId].location = location;
     });
@@ -80,16 +81,23 @@ async function beginCache() {
     for (const key in declaredModules) {
         const exports = Function("metro", "return metro." + declaredModules[key])(metro);
         if (!exports) {
+            cache.modules[key] = -1;
             console.warn(`Failed to find ${key} with parameter ${declaredModules[key]}`);
+            continue;
         }
 
         const id = getIDByExports(exports);
-        if (id === -1) throw new Error("Could not find ID by exports");
+        if (id === -1) {
+            throw new Error("Could not find ID by exports");
+        }
+
+        cache.modules[key] = id;
+
         if (modules[id].location) {
+            cache.modules[modules[id].location] = id;
             console.warn(`Module ${key} (id: ${id}) is locatable with path '${modules[id].location}'`);
         }
 
-        cache.modules[modules[id].location] = id;
     }
 
     await updateItemAndRestart("pyon-cache", cache);
