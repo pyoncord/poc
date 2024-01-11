@@ -5,6 +5,8 @@ type PyoncordObject = Omit<typeof import("."), "default"> & {
 declare global {
     const __PYONCORD_COMMIT_HASH__: string;
     const __PYONCORD_DEV__: boolean;
+    const __PYON_MODULE_DEFINITIONS__: { [key: string]: string; };
+    const __PYON_MODULE_DEFINITIONS_HASH__: string;
 
     const nativeModuleProxy: any;
 
@@ -13,6 +15,10 @@ declare global {
     const ReactNative: typeof import("react-native");
 
     const pyoncord: PyoncordObject;
+    const pyonRequire: {
+        (id: string): number,
+        requireAsset: (id: string) => any;
+    };
 }
 
 export { };

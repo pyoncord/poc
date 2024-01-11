@@ -6,20 +6,10 @@ const { ScrollView } = ReactNative;
 const { Stack, TableRow, TableSwitchRow, TableRowGroup } = Tables;
 
 const icons = resolveAssets({
-    StaffBadge: {
-        path: "/assets/images/native/badge",
-        name: "ic_badge_staff"
-    },
-    Gift: {
-        path: "/assets/images/native/icons/settings",
-        name: "ic_gift_24px"
-    },
-    Idle: {
-        path: "/assets/images/native/status",
-        name: "StatusIdle"
-    }
+    StaffBadge: "ic_badge_staff",
+    Gift: "ic_gift_24px",
+    Idle: "StatusIdle"
 });
-
 
 export default function General() {
     const settings = settingsDef.useStorage();

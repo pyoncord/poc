@@ -1,7 +1,10 @@
 // Derived from Vendetta's build script
 import swc from "@swc/core";
 import { execSync } from "child_process";
+import { createHash } from "crypto";
 import esbuild from "esbuild";
+import { readFile, writeFile } from "fs/promises";
+import { createServer } from "http";
 import { argv } from "process";
 
 const flags = argv.slice(2).filter(arg => arg.startsWith("--")).map(arg => arg.slice(2));
@@ -19,6 +22,8 @@ const swcPlugin = {
     name: "swc",
     setup(build) {
         build.onLoad({ filter: /\.[jt]sx?/ }, async args => {
+            if (args.path?.includes(".json")) return;
+
             const result = await swc.transformFile(args.path, {
                 jsc: {
                     externalHelpers: true,
@@ -41,15 +46,14 @@ try {
         entryPoints: ["entry.js"],
         bundle: true,
         minify: !isDev,
-        format: "iife",
+        format: "esm",
         target: "esnext",
         outfile: buildOutput,
-        footer: {
-            js: "//# sourceURL=pyoncord",
-        },
+        keepNames: true,
+        write: false,
         define: {
             __PYONCORD_COMMIT_HASH__: JSON.stringify(commitHash),
-            __PYONCORD_DEV__: JSON.stringify(isDev),
+            __PYONCORD_DEV__: JSON.stringify(isDev)
         },
         legalComments: "none",
         alias: {
@@ -58,12 +62,32 @@ try {
         plugins: [
             swcPlugin,
             {
-                name: "buildLog",
+                name: "bundleWrapper",
                 setup: build => {
+                    build.onEnd(async r => {
+                        const { text, path } = r.outputFiles[0];
+
+                        const moduleDef = JSON.stringify(JSON.parse(await readFile(new URL("src/modules.json", import.meta.url))));
+                        const moduleDefHash = createHash("sha256").update(moduleDef).digest("hex");
+
+                        const contents = [
+                            `globalThis.__PYON_MODULE_DEFINITIONS__=${moduleDef};`,
+                            `globalThis.__PYON_MODULE_DEFINITIONS_HASH__='${moduleDefHash}';`,
+                            `(async function(){${text}})();`,
+                            "//# sourceURL=pyoncord"
+                        ].join("\n");
+
+                        await writeFile(path, contents);
+                    });
+                }
+            },
+            {
+                name: "buildLog",
+                setup: async build => {
                     build.onStart(() => console.log(`Building commit ${commitHash}, isDev=${isDev}...`));
                     build.onEnd(result => console.log(`Built with ${result.errors?.length} errors!`));
                 }
-            },
+            }
         ]
     });
 
@@ -73,8 +97,24 @@ try {
     }
 
     if (shouldServe) {
-        const server = await ctx.serve({ port: 4040 });
-        console.log(`Serving on ${server.host}:${server.port}, CTRL+C to stop`);
+        const server = createServer(async (req, res) => {
+            try {
+                if (req.url.endsWith("/vendetta.js") || req.url.endsWith("/pyoncord.js")) {
+                    await ctx.rebuild();
+                    const content = await readFile("./dist/vendetta.js");
+                    res.writeHead(200);
+                    res.end(content, "utf-8");
+                } else {
+                    res.writeHead(404);
+                    res.end();
+                }
+            } catch (error) {
+                res.writeHead(500);
+                res.end();
+            }
+        }).listen(4040);
+
+        console.log(`Serving on port ${server.address().port}, CTRL+C to stop`);
     }
 
     if (!shouldServe && !shouldWatch) {

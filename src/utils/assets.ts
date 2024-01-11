@@ -30,33 +30,19 @@ export function patchAssets() {
     return () => patcher.unpatchAllAndStop();
 }
 
+
 export const getAssetByName = (name: string): Asset => registeredAssets[name];
 export const getAssetByID = (id: number): Asset => AssetManager.getAssetByID(id);
 export const getAssetIDByName = (name: string) => registeredAssets[name]?.id;
 
-export function resolveAsset(asset): number {
-    const { path } = asset;
-    delete asset.path;
-
-    return AssetManager.registerAsset({
-        __packager_asset: true,
-        httpServerLocation: path,
-        hash: Math.random().toString(),
-        type: "png",
-        height: 64,
-        width: 64,
-        scales: [1],
-        ...asset
-    });
+export function requireAssetFromCache(name: string): number {
+    const cache = pyonRequire.requireAsset(name);
+    return AssetManager.registerAsset(cache);
 }
 
-// TODO: This may differ between platforms
-export function resolveAssets<T>(assets: T) {
-    const assetMap = {} as { [Property in keyof T]: number };
-
-    for (const key in assets) {
-        assetMap[key] = resolveAsset(assets[key]);
-    }
-
-    return assetMap;
+// TODO: This may be different between platforms
+export function resolveAssets(assets: Record<string, string>) {
+    return new Proxy({}, {
+        get: (t, p: string) => t[p] ??= requireAssetFromCache(assets[p])
+    }) as { [key: string]: number; };
 }

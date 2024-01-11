@@ -1,4 +1,4 @@
-import { FilterFn, filters, waitForModule } from "@metro";
+import { FilterFn, waitForModule } from "@metro";
 import { after, before, instead } from "spitroast";
 
 type Unpatcher = () => (void | boolean);

@@ -1,6 +1,6 @@
 // NOTE: This file is import-sensitive, circular dependencies might crash the app!
 import proxyLazy from "@utils/proxyLazy";
-import { after } from "spitroast";
+import { after, instead } from "spitroast";
 
 export * as common from "@metro/common";
 
@@ -39,6 +39,19 @@ export const filters = {
     byStoreName: (storeName: string, deExp = true) => (exp: any) => exp._dispatcher && (deExp ? exp : exp.default)?.getName?.() === storeName,
 };
 
+// This value is non -1 while a module is being loaded (see below)
+let _importingModuleId = -1;
+
+Object.keys(modules).forEach((id: any) => {
+    if (modules[id].factory) {
+        instead("factory", modules[id], (args, orig) => {
+            _importingModuleId = Number(id);
+            orig(...args);
+            _importingModuleId = -1;
+        }, true);
+    }
+});
+
 /**
  * @private
  * Called during the initialization of a module.
@@ -53,8 +66,8 @@ export function initMetro() {
              * The factory method contains these args:
              * 0: the global object
              * 1: the metroRequire function (window.__r)
-             * 2: the metroImportDefault function (window.__r.metroImportDefault)
-             * 3: the metroImportAll function (window.__r.metroImportAll)
+             * 2: the metroimportDefault function (window.__r.metroimportDefault)
+             * 3: the metroimportAll function (window.__r.metroimportAll)
              * 4: the exports object
              * 5: the module/return object
              * 6: the module dependencies ids (array)
