@@ -66,13 +66,11 @@ try {
                     build.onEnd(async r => {
                         const { text, path } = r.outputFiles[0];
 
-                        const moduleDef = JSON.stringify(JSON.parse(await readFile(new URL("src/modules.json", import.meta.url))));
-                        const moduleDefHash = createHash("sha256").update(moduleDef).digest("hex");
+                        const moduleDefHash = createHash("sha256").update(await readFile("internal-metro/requireDef.ts")).digest("hex");
 
                         const contents = [
-                            `globalThis.__PYON_MODULE_DEFINITIONS__=${moduleDef};`,
                             `globalThis.__PYON_MODULE_DEFINITIONS_HASH__='${moduleDefHash}';`,
-                            `(async function(){${text}})().catch(alert);`,
+                            `(async function(){${text}})().catch(e => alert(e?.stack ?? e));`,
                             "//# sourceURL=pyoncord"
                         ].join("\n");
 

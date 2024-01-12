@@ -1,16 +1,19 @@
 import { before, instead } from "spitroast";
 
+import { findInitializedModule } from ".";
+import getRequireDefinition from "./requireDef";
+
 const MMKVManager = nativeModuleProxy.MMKVManager as any;
 const currentVersion = nativeModuleProxy.RTNClientInfoManager.Build;
 const window = globalThis as typeof globalThis & { [key: string]: any; };
 
-async function getItem(key: string) {
-    const raw = await MMKVManager.getItem(key);
+async function getItem() {
+    const raw = await MMKVManager.getItem("pyon-cache");
     if (raw == null) return;
     return JSON.parse(raw);
 }
 
-async function updateItemAndRestart(key: string, value: any) {
+async function updateItemAndRestart(value: any, key = "pyon-cache") {
     MMKVManager.removeItem(key);
     MMKVManager.setItem(key, JSON.stringify(value));
     await MMKVManager.getItem(key);
@@ -38,7 +41,6 @@ async function beginCache() {
         assets: {}
     };
 
-    const metro = await import("@metro");
     const { modules } = globalThis as typeof window;
 
     let _importingModuleId = -1;
@@ -53,12 +55,13 @@ async function beginCache() {
         }
     });
 
-    const AssetManager = metro.findInitializedModule(m => m.registerAsset);
+    const AssetManager = findInitializedModule(m => m.registerAsset);
     before("registerAsset", AssetManager, ([asset]) => {
         cache.assets[asset.name] = asset;
     });
 
-    const importTracker = metro.findInitializedModule(m => m.fileFinishedImporting);
+    // importTracker exists once index.bundle.tsx is loaded
+    const importTracker = findInitializedModule(m => m.fileFinishedImporting);
     before("fileFinishedImporting", importTracker, ([location]) => {
         if (_importingModuleId === -1) return;
         modules[_importingModuleId].location = location;
@@ -76,10 +79,10 @@ async function beginCache() {
         }
     }
 
-    const declaredModules = __PYON_MODULE_DEFINITIONS__;
+    const declaredModules = getRequireDefinition();
 
     for (const key in declaredModules) {
-        const exports = Function("metro", "return metro." + declaredModules[key])(metro);
+        const exports = declaredModules[key];
         if (!exports) {
             cache.modules[key] = -1;
             console.warn(`Failed to find ${key} with parameter ${declaredModules[key]}`);
@@ -97,10 +100,9 @@ async function beginCache() {
             cache.modules[modules[id].location] = id;
             console.warn(`Module ${key} (id: ${id}) is locatable with path '${modules[id].location}'`);
         }
-
     }
 
-    await updateItemAndRestart("pyon-cache", cache);
+    await updateItemAndRestart(cache);
 }
 
 function isCacheInvalidated(cache: any) {
@@ -109,7 +111,7 @@ function isCacheInvalidated(cache: any) {
 }
 
 export default async () => {
-    const cached = await getItem("pyon-cache");
+    const cached = await getItem();
 
     if (cached && !isCacheInvalidated(cached)) {
         window.pyonRequire = function pyonRequire(id: string) {
@@ -126,6 +128,6 @@ export default async () => {
 
     window.ErrorUtils = void 0;
     window.__startDiscord?.();
-    await beginCache();
+    await beginCache().then(console.error);
     await new Promise(() => void 0);
 };

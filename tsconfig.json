@@ -1,6 +1,13 @@
 {
-    "include": [ "src/**/*" ],
-    "exclude": [ "node_modules" ],
+    "include": [
+        "src/**/*",
+        "global.d.ts",
+        "internal-metro/requireDef.ts",
+        "internal-metro/cacher.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ],
     "compilerOptions": {
         "baseUrl": ".",
         "module": "ESNext",
@@ -17,7 +24,9 @@
         "skipLibCheck": true,
         "noImplicitAny": false,
         "paths": {
-            "@*": [ "src/*" ]
+            "@*": [
+                "src/*"
+            ]
         }
     }
 }

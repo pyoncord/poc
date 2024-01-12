@@ -1,7 +1,7 @@
-import { findByStoreNameLazy, onceReady } from "@metro";
+import { onceReady, requireMetroLazyDefault } from "@metro";
 
-const UserStore = findByStoreNameLazy("UserStore");
-const ExperimentStore = findByStoreNameLazy("ExperimentStore");
+const UserStore = requireMetroLazyDefault("UserStore");
+const ExperimentStore = requireMetroLazyDefault("ExperimentStore");
 
 export default async function patchExperiments() {
     try {

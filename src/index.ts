@@ -1,7 +1,6 @@
 import { SettingsAPI } from "@api";
 import { connectToDebugger } from "@debug";
 import { loadPlugins } from "@managers/plugins";
-import { initMetro } from "@metro";
 import { patchChatInput, patchExperiments, patchIdle, patchSettings } from "@patches";
 import { patchAssets } from "@utils/assets";
 
@@ -20,7 +19,6 @@ export const settings = new SettingsAPI("settings.json", {
 });
 
 export default async () => {
-    initMetro();
     connectToDebugger();
 
     const settingsProxy = (await settings.init()).proxy;

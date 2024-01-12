@@ -1,4 +1,4 @@
-import { FilterFn, waitForModule } from "@metro";
+// this is very horrid
 import { after, before, instead } from "spitroast";
 
 type Unpatcher = () => (void | boolean);
@@ -32,26 +32,26 @@ export default class Patcher {
     after = <T>(parent: NonPrimitive<T>, method: string, patch: AfterCallback) => this.addUnpatcher(after(method, parent, patch));
     instead = <T>(parent: NonPrimitive<T>, method: string, patch: InsteadCallback) => this.addUnpatcher(instead(method, parent, patch));
 
-    private waitAndPatch<P extends "before" | "after" | "instead">(
-        patchType: P,
-        filter: FilterFn,
-        method: string,
-        patch: Parameters<typeof Patcher.prototype[typeof patchType]>[2],
-    ) {
-        let unpatch: Unpatcher;
-        const unwaiter = waitForModule(filter, module => {
-            if (this.stopped) return false;
-            unpatch = this[patchType](module, method, <any>patch);
-        });
+    // private waitAndPatch<P extends "before" | "after" | "instead">(
+    //     patchType: P,
+    //     filter: FilterFn,
+    //     method: string,
+    //     patch: Parameters<typeof Patcher.prototype[typeof patchType]>[2],
+    // ) {
+    //     let unpatch: Unpatcher;
+    //     const unwaiter = waitForModule(filter, module => {
+    //         if (this.stopped) return false;
+    //         unpatch = this[patchType](module, method, <any>patch);
+    //     });
 
-        return () => (this.addUnpatcher(unwaiter), unpatch());
-    }
+    //     return () => (this.addUnpatcher(unwaiter), unpatch());
+    // }
 
-    patch = (filter: FilterFn) => ({
-        before: (method: string, patch: BeforeCallback) => this.waitAndPatch("before", filter, method, patch),
-        after: (method: string, patch: AfterCallback) => this.waitAndPatch("after", filter, method, patch),
-        instead: (method: string, patch: InsteadCallback) => this.waitAndPatch("instead", filter, method, patch),
-    });
+    // patch = (filter: FilterFn) => ({
+    //     before: (method: string, patch: BeforeCallback) => this.waitAndPatch("before", filter, method, patch),
+    //     after: (method: string, patch: AfterCallback) => this.waitAndPatch("after", filter, method, patch),
+    //     instead: (method: string, patch: InsteadCallback) => this.waitAndPatch("instead", filter, method, patch),
+    // });
 
     addUnpatcher = (callback: Unpatcher) => {
         if (this.stopped) return () => false;

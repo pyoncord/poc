@@ -34,7 +34,7 @@ const CustomPageRenderer = React.memo(() => {
 });
 
 export default function patchSettings() {
-    waitForModule("SETTING_RENDERER_CONFIG", module => {
+    waitForModule("SettingConstants", module => {
         module.SETTING_RENDERER_CONFIG.PYONCORD_CUSTOM_PAGE = {
             type: "route",
             title: () => "Blah?",
@@ -60,7 +60,7 @@ export default function patchSettings() {
         }
     });
 
-    waitForModule("SearchableSettingsList", module => {
+    waitForModule("modules/main_tabs_v2/native/settings/renderer/SettingListRenderer.tsx", module => {
         patcher.before(module.SearchableSettingsList, "type", ([{ sections: res }]) => {
             if (res.__pyonMarkDirty) return;
             res.__pyonMarkDirty = true;

@@ -1,4 +1,4 @@
-type PyoncordObject = Omit<typeof import("."), "default"> & {
+type PyoncordObject = Omit<typeof import("./src"), "default"> & {
     unload: () => void;
 };
 

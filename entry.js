@@ -2,16 +2,14 @@ console.log(`Pyon! (Pyoncord, hash=${__PYONCORD_COMMIT_HASH__}, dev=${__PYONCORD
 
 try {
     Object.freeze = Object.seal = Object;
+    window.pyonRequire = await import("internal-metro/cacher").then(m => m.default());
 
-    window.pyonRequire = await import("@cacher").then(m => m.default());
+    const { waitForModule } = await import("@metro");
 
-    const { findByProps, waitForModule } = await import("@metro");
-
-    window.React = findByProps("createElement");
-    waitForModule("View", m => window.ReactNative = m);
+    waitForModule("react", m => window.React = m);
+    waitForModule("react-native", m => window.ReactNative = m);
 
     window.pyoncord = { ...await import("@") };
-
     pyoncord.unload = await pyoncord.default();
 
     // Delete the initializer; Pyoncord has already been loaded.
@@ -28,4 +26,5 @@ try {
     ].join("\n"));
 
     console.error(error);
+    window.__startDiscord?.();
 }

@@ -4,8 +4,8 @@ export default async function patchChatInput() {
     let hideGiftButton: boolean, moduleExports: any;
 
     const unwait = waitForModule(
-        m => typeof m?.defaultProps?.hideGiftButton === "boolean",
-        exports => {
+        "uikit-native/ChatInput.tsx",
+        ({ default: exports }) => {
             moduleExports = exports;
             ({ hideGiftButton } = exports.defaultProps);
 
