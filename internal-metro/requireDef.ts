@@ -1,4 +1,4 @@
-import { findByProps, findByStoreName } from "internal-metro";
+import { findByProps } from "internal-metro";
 
 export default () => ({
     "react": findByProps("createElement"),
@@ -11,9 +11,5 @@ export default () => ({
     "Constants": findByProps("NODE_SIZE"),
     "FluxDispatcher": findByProps("dispatch", "subscribe"),
     "TabsNavigationRef": findByProps("getRootNavigationRef"),
-    "SettingConstants": findByProps("SETTING_RENDERER_CONFIG"),
-
-    // Stores
-    "UserStore": findByStoreName("UserStore"),
-    "ExperimentStore": findByStoreName("ExperimentStore"),
+    "SettingConstants": findByProps("SETTING_RENDERER_CONFIG")
 });

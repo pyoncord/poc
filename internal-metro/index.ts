@@ -30,6 +30,26 @@ function blacklist(id: number) {
     });
 }
 
+function waitForModuleWithProp(prop: string, callback: (exports: any) => void) {
+    const find = findInitializedModule(filters.byProps(prop));
+    if (find) return (callback(find), () => { });
+
+    const matches = (exports: any) => {
+        if (exports.default && exports.__esModule && filters.byProps(prop)(exports.default)) {
+            factoryCallbacks.delete(matches);
+            callback(exports.default);
+        }
+
+        if (filters.byProps(prop)(exports)) {
+            factoryCallbacks.delete(matches);
+            callback(exports);
+        }
+    };
+
+    factoryCallbacks.add(matches);
+    return () => factoryCallbacks.delete(matches);
+}
+
 export const filters = {
     byProps: (...props: string[]) => (exp: any) => props.length === 1 ? exp[props[0]] != null : props.every(prop => exp?.[prop] != null),
     byName: (name: string, deExp = true) => (exp: any) => (deExp ? exp.name : exp.default?.name) === name,
@@ -56,8 +76,8 @@ Object.keys(modules).forEach((id: any) => {
     }
 });
 
-__waitForModule(
-    ["fileFinishedImporting"],
+waitForModuleWithProp(
+    "fileFinishedImporting",
     importTracker => {
         before("fileFinishedImporting", importTracker, ([location]) => {
             if (_importingModuleId === -1) return;
@@ -66,8 +86,8 @@ __waitForModule(
     }
 );
 
-__waitForModule(
-    ["dispatch", "_actionHandlers"],
+waitForModuleWithProp(
+    "_actionHandlers",
     FluxDispatcher => {
         const cb = () => {
             _resolveReady();
@@ -93,35 +113,6 @@ export function* getInitializedModules(): IterableIterator<any> {
             yield modules[id].publicModule;
         }
     }
-}
-
-/**
- * Wait for a module to be loaded, then call a callback with the module exports.
- * @param {(m) => boolean} filter
- * @param {(exports) => void} callback
-*/
-function __waitForModule(filter: string | string[] | FilterFn, callback: (exports: any) => void) {
-    if (typeof filter !== "function") {
-        filter = Array.isArray(filter) ? filters.byProps(...filter) : filters.byProps(filter);
-    }
-
-    const find = findInitializedModule(filter as FilterFn);
-    if (find) return (callback(find), () => { });
-
-    const matches = (exports: any) => {
-        if (exports.default && exports.__esModule && (filter as FilterFn)(exports.default)) {
-            factoryCallbacks.delete(matches);
-            callback(exports.default);
-        }
-
-        if ((filter as FilterFn)(exports)) {
-            factoryCallbacks.delete(matches);
-            callback(exports);
-        }
-    };
-
-    factoryCallbacks.add(matches);
-    return () => factoryCallbacks.delete(matches);
 }
 
 /**

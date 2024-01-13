@@ -74,25 +74,38 @@ async function beginCache() {
     });
 
     for (const key in window.modules) {
-        try {
-            window.__r(key);
-        } catch (e) {
-            // log(`Skipping ${key} due to an error while initializing: ${e}`);
-            cache.stats.skippedModuleIds.push(Number(key));
+        const exports = (() => {
+            try {
+                return window.__r(key);
+            } catch (e) {
+                // log(`Skipping ${key} due to an error while initializing: ${e}`);
+                cache.stats.skippedModuleIds.push(Number(key));
+            }
+        })();
+
+        // Cache stores
+        if (exports?.default && exports.default._dispatcher && typeof exports.default.getName === "function") {
+            cache.modules[exports.default.getName()] = Number(key);
         }
 
+        // Cache locations
         if (window.modules[key]?.location) {
             cache.modules[window.modules[key].location] = Number(key);
         }
     }
 
-    const declaredModules = getRequireDefinition();
+    const requireDefinition = getRequireDefinition();
 
-    for (const key in declaredModules) {
-        const exports = declaredModules[key];
+    for (const key in requireDefinition) {
+        if (cache.modules[key] != null) {
+            log(`Manual require definition of ('${key}') conflicts with internal cacher ('${key}'), skipping..`);
+            continue;
+        }
+
+        const exports = requireDefinition[key];
         if (!exports) {
             cache.modules[key] = -1;
-            log(`Failed to execute find '${key}'`);
+            log(`Failed to execute find of '${key}'`);
             continue;
         }
 
@@ -105,7 +118,7 @@ async function beginCache() {
 
         if (modules[id].location) {
             cache.modules[modules[id].location] = id;
-            log(`Module '${key}' (id: ${id}) is already locatable with path '${modules[id].location}'`);
+            log(`Module '${key}' (${id}) can be located with path '${modules[id].location}'`);
         }
     }
 
