@@ -1,8 +1,6 @@
-globalThis.__PYON_MODULE_DEFINITIONS_HASH__='79c2a27dd4ca4a055a4c685f13be62b8e4dd6831a1867da657ea319bca95c4a9';
+globalThis.__PYON_MODULE_DEFINITIONS_HASH__='f9e59ef92560efbe30b6ae4f6d631f27aaeb223641c0abc2a8a55ebef85503ac';
 (async function(){var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
@@ -11,15 +9,6 @@ var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // node_modules/.pnpm/spitroast@1.4.3/node_modules/spitroast/dist/esm/shared.js
 var patchTypes, patchedObjects;
@@ -175,81 +164,7 @@ var init_esm = __esm({
   }
 });
 
-// src/utils/proxyLazy.ts
-function proxyLazy(factory) {
-  const dummy = /* @__PURE__ */ __name(function() {
-    return void 0;
-  }, "dummy");
-  dummy[factorySymbol] = function() {
-    return dummy[cacheSymbol] ??= factory();
-  };
-  return new Proxy(dummy, lazyHandler);
-}
-var factorySymbol, cacheSymbol, unconfigurable, isUnconfigurable, lazyHandler;
-var init_proxyLazy = __esm({
-  "src/utils/proxyLazy.ts"() {
-    "use strict";
-    factorySymbol = Symbol("lazyFactory");
-    cacheSymbol = Symbol("lazyCache");
-    unconfigurable = [
-      "arguments",
-      "caller",
-      "prototype"
-    ];
-    isUnconfigurable = /* @__PURE__ */ __name(function(key) {
-      return typeof key === "string" && unconfigurable.includes(key);
-    }, "isUnconfigurable");
-    lazyHandler = {
-      ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(function(fnName) {
-        return [
-          fnName,
-          function(target) {
-            for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-              args[_key - 1] = arguments[_key];
-            }
-            return Reflect[fnName](target[factorySymbol](), ...args);
-          }
-        ];
-      })),
-      ownKeys: function(target) {
-        const cacheKeys = Reflect.ownKeys(target[factorySymbol]());
-        unconfigurable.forEach(function(key) {
-          return isUnconfigurable(key) && cacheKeys.push(key);
-        });
-        return cacheKeys;
-      },
-      getOwnPropertyDescriptor: function(target, p) {
-        if (isUnconfigurable(p))
-          return Reflect.getOwnPropertyDescriptor(target, p);
-        const descriptor = Reflect.getOwnPropertyDescriptor(target[factorySymbol](), p);
-        if (descriptor)
-          Object.defineProperty(target, p, descriptor);
-        return descriptor;
-      }
-    };
-    __name(proxyLazy, "proxyLazy");
-  }
-});
-
 // internal-metro/index.ts
-var internal_metro_exports = {};
-__export(internal_metro_exports, {
-  _resolveReady: () => _resolveReady,
-  factoryCallbacks: () => factoryCallbacks,
-  filters: () => filters,
-  findByDisplayName: () => findByDisplayName,
-  findByDisplayNameLazy: () => findByDisplayNameLazy,
-  findByName: () => findByName,
-  findByNameLazy: () => findByNameLazy,
-  findByProps: () => findByProps,
-  findByPropsLazy: () => findByPropsLazy,
-  findByStoreName: () => findByStoreName,
-  findByStoreNameLazy: () => findByStoreNameLazy,
-  findInitializedModule: () => findInitializedModule,
-  findLazy: () => findLazy,
-  getInitializedModules: () => getInitializedModules,
-  onceReady: () => onceReady
-});
 function isInvalidExport(exports) {
   return exports == null || exports === globalThis || typeof exports === "boolean" || typeof exports === "number" || typeof exports === "string" || exports["whar???"] === null;
 }
@@ -263,8 +178,8 @@ function blacklist(id) {
 }
 function waitForModuleWithProp(prop, callback) {
   const find = findInitializedModule(filters.byProps(prop));
-  if (find)
-    return callback(find), function() {
+  if (find !== -1)
+    return callback(globalThis.__r(find)), function() {
     };
   const matches = /* @__PURE__ */ __name(function(exports) {
     if (exports.default && exports.__esModule && filters.byProps(prop)(exports.default)) {
@@ -288,26 +203,20 @@ function* getInitializedModules() {
         blacklist(id);
         continue;
       }
-      yield modules[id].publicModule;
+      yield {
+        id: Number(id),
+        ...modules[id].publicModule
+      };
     }
   }
 }
 function findInitializedModule(filter) {
-  let returnDefault = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
-  for (const { exports } of getInitializedModules()) {
-    if (exports?.default && exports.__esModule && filter(exports.default)) {
-      return returnDefault ? exports.default : exports;
-    }
-    if (filter(exports)) {
-      return exports;
+  for (const { exports, id } of getInitializedModules()) {
+    if (exports?.default && filter(exports.default) || filter(exports)) {
+      return id;
     }
   }
-}
-function findLazy(filter) {
-  let returnDefault = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
-  return proxyLazy(function() {
-    return findInitializedModule(filter, returnDefault);
-  });
+  return -1;
 }
 function findByProps() {
   for (var _len = arguments.length, props = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -315,48 +224,20 @@ function findByProps() {
   }
   return findInitializedModule(filters.byProps(...props));
 }
-function findByPropsLazy() {
-  for (var _len = arguments.length, props = new Array(_len), _key = 0; _key < _len; _key++) {
-    props[_key] = arguments[_key];
-  }
-  return proxyLazy(function() {
-    return findByProps(...props);
-  });
-}
 function findByName(name) {
-  let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
-  return findInitializedModule(filters.byName(name), defaultExport);
-}
-function findByNameLazy(name) {
-  let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
-  return proxyLazy(function() {
-    return findByName(name, defaultExport);
-  });
+  return findInitializedModule(filters.byName(name));
 }
 function findByDisplayName(displayName) {
-  let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
-  return findInitializedModule(filters.byDisplayName(displayName), defaultExport);
-}
-function findByDisplayNameLazy(displayName) {
-  let defaultExport = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
-  return proxyLazy(function() {
-    return findByDisplayName(displayName, defaultExport);
-  });
+  return findInitializedModule(filters.byDisplayName(displayName));
 }
 function findByStoreName(storeName) {
   return findInitializedModule(filters.byStoreName(storeName));
-}
-function findByStoreNameLazy(storeName) {
-  return proxyLazy(function() {
-    return findByStoreName(storeName);
-  });
 }
 var factoryCallbacks, _resolveReady, onceReady, filters, _importingModuleId;
 var init_internal_metro = __esm({
   "internal-metro/index.ts"() {
     "use strict";
     init_esm();
-    init_proxyLazy();
     factoryCallbacks = /* @__PURE__ */ new Set();
     onceReady = new Promise(function(resolve) {
       return _resolveReady = resolve;
@@ -427,15 +308,10 @@ var init_internal_metro = __esm({
     });
     __name(getInitializedModules, "getInitializedModules");
     __name(findInitializedModule, "findInitializedModule");
-    __name(findLazy, "findLazy");
     __name(findByProps, "findByProps");
-    __name(findByPropsLazy, "findByPropsLazy");
     __name(findByName, "findByName");
-    __name(findByNameLazy, "findByNameLazy");
     __name(findByDisplayName, "findByDisplayName");
-    __name(findByDisplayNameLazy, "findByDisplayNameLazy");
     __name(findByStoreName, "findByStoreName");
-    __name(findByStoreNameLazy, "findByStoreNameLazy");
   }
 });
 
@@ -453,6 +329,7 @@ function requireDef_default() {
     "FluxDispatcher": findByProps("dispatch", "subscribe"),
     "TabsNavigationRef": findByProps("getRootNavigationRef"),
     "SettingConstants": findByProps("SETTING_RENDERER_CONFIG")
+    //
   };
 }
 var init_requireDef = __esm({
@@ -481,15 +358,6 @@ async function updateItemAndRestart(value) {
   await MMKVManager.getItem(key);
   window2.nativeModuleProxy.BundleUpdaterManager.reload();
 }
-function getIDByExports(exports) {
-  for (const key in window2.modules) {
-    const _exports = window2.modules[key]?.publicModule?.exports;
-    if (_exports === exports || _exports?.default === exports) {
-      return Number(key);
-    }
-  }
-  return -1;
-}
 async function beginCache() {
   console.log(`Cache invalidated, begining cache for version=${currentVersion}, hash=${__PYON_MODULE_DEFINITIONS_HASH__}`);
   const cache = {
@@ -503,34 +371,15 @@ async function beginCache() {
     assets: {}
   };
   const log = /* @__PURE__ */ __name(function(w) {
-    return console.log(w), cache.stats.logs.push(w), void 0;
+    console.log(w);
+    cache.stats.logs.push(w);
   }, "log");
-  const { modules: modules2 } = globalThis;
-  let _importingModuleId2 = -1;
-  Object.keys(modules2).forEach(function(id) {
-    if (modules2[id].factory) {
-      instead("factory", modules2[id], function(args, orig) {
-        _importingModuleId2 = Number(id);
-        orig(...args);
-        _importingModuleId2 = -1;
-      }, true);
-    }
-  });
-  const AssetManager2 = findInitializedModule(function(m) {
+  const AssetManager2 = globalThis.__r(findInitializedModule(function(m) {
     return m.registerAsset;
-  });
+  }));
   before("registerAsset", AssetManager2, function(param) {
     let [asset] = param;
     cache.assets[asset.name] = asset;
-  });
-  const importTracker = findInitializedModule(function(m) {
-    return m.fileFinishedImporting;
-  });
-  before("fileFinishedImporting", importTracker, function(param) {
-    let [location] = param;
-    if (_importingModuleId2 === -1)
-      return;
-    modules2[_importingModuleId2].location = location;
   });
   for (const key in window2.modules) {
     const exports = function() {
@@ -550,23 +399,19 @@ async function beginCache() {
   const requireDefinition = requireDef_default();
   for (const key in requireDefinition) {
     if (cache.modules[key] != null) {
-      log(`Manual require definition of ('${key}') conflicts with internal cacher ('${key}'), skipping..`);
+      log(`Manual require definition of ('${key}') conflicts with internal cacher, skipping..`);
       continue;
     }
-    const exports = requireDefinition[key];
-    if (!exports) {
+    const id = requireDefinition[key];
+    if (id === -1) {
       cache.modules[key] = -1;
       log(`Failed to execute find of '${key}'`);
       continue;
     }
-    const id = getIDByExports(exports);
-    if (id === -1) {
-      throw new Error("Unexpected getIDByExports return");
-    }
     cache.modules[key] = id;
-    if (modules2[id].location) {
-      cache.modules[modules2[id].location] = id;
-      log(`Module '${key}' (${id}) can be located with path '${modules2[id].location}'`);
+    if (window2.modules[id].location) {
+      cache.modules[window2.modules[id].location] = id;
+      log(`Module '${key}' (${id}) can be located with path '${window2.modules[id].location}'`);
     }
   }
   await updateItemAndRestart(cache);
@@ -611,10 +456,167 @@ var init_cacher = __esm({
     window2 = globalThis;
     __name(getItem, "getItem");
     __name(updateItemAndRestart, "updateItemAndRestart");
-    __name(getIDByExports, "getIDByExports");
     __name(beginCache, "beginCache");
     __name(isCacheInvalidated, "isCacheInvalidated");
     __name(cacher_default, "default");
+  }
+});
+
+// src/utils/proxyLazy.ts
+function proxyLazy(factory) {
+  const dummy = /* @__PURE__ */ __name(function() {
+    return void 0;
+  }, "dummy");
+  dummy[factorySymbol] = function() {
+    return dummy[cacheSymbol] ??= factory();
+  };
+  return new Proxy(dummy, lazyHandler);
+}
+var factorySymbol, cacheSymbol, unconfigurable, isUnconfigurable, lazyHandler;
+var init_proxyLazy = __esm({
+  "src/utils/proxyLazy.ts"() {
+    "use strict";
+    factorySymbol = Symbol("lazyFactory");
+    cacheSymbol = Symbol("lazyCache");
+    unconfigurable = [
+      "arguments",
+      "caller",
+      "prototype"
+    ];
+    isUnconfigurable = /* @__PURE__ */ __name(function(key) {
+      return typeof key === "string" && unconfigurable.includes(key);
+    }, "isUnconfigurable");
+    lazyHandler = {
+      ...Object.fromEntries(Object.getOwnPropertyNames(Reflect).map(function(fnName) {
+        return [
+          fnName,
+          function(target) {
+            for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+              args[_key - 1] = arguments[_key];
+            }
+            return Reflect[fnName](target[factorySymbol](), ...args);
+          }
+        ];
+      })),
+      ownKeys: function(target) {
+        const cacheKeys = Reflect.ownKeys(target[factorySymbol]());
+        unconfigurable.forEach(function(key) {
+          return isUnconfigurable(key) && cacheKeys.push(key);
+        });
+        return cacheKeys;
+      },
+      getOwnPropertyDescriptor: function(target, p) {
+        if (isUnconfigurable(p))
+          return Reflect.getOwnPropertyDescriptor(target, p);
+        const descriptor = Reflect.getOwnPropertyDescriptor(target[factorySymbol](), p);
+        if (descriptor)
+          Object.defineProperty(target, p, descriptor);
+        return descriptor;
+      }
+    };
+    __name(proxyLazy, "proxyLazy");
+  }
+});
+
+// src/metro/common.ts
+var AssetManager, I18n, Forms, Tables, NavigationNative, Colors, Constants, FluxDispatcher, TabsNavigationRef;
+var init_common = __esm({
+  "src/metro/common.ts"() {
+    "use strict";
+    init_metro();
+    AssetManager = requireMetroLazy("AssetManager");
+    I18n = requireMetroDefaultLazy("I18n");
+    Forms = requireMetroLazy("uikit-native/refresh/form/index.tsx");
+    Tables = requireMetroLazy("Tables");
+    NavigationNative = requireMetroLazy("NavigationNative");
+    Colors = requireMetroDefaultLazy("Colors");
+    Constants = requireMetroLazy("Constants");
+    FluxDispatcher = requireMetroDefaultLazy("FluxDispatcher");
+    TabsNavigationRef = requireMetroLazy("TabsNavigationRef");
+  }
+});
+
+// src/metro/index.ts
+var metro_exports = {};
+__export(metro_exports, {
+  AssetManager: () => AssetManager,
+  Colors: () => Colors,
+  Constants: () => Constants,
+  FluxDispatcher: () => FluxDispatcher,
+  Forms: () => Forms,
+  I18n: () => I18n,
+  NavigationNative: () => NavigationNative,
+  Tables: () => Tables,
+  TabsNavigationRef: () => TabsNavigationRef,
+  _resolveReady: () => _resolveReady,
+  canRequire: () => canRequire,
+  factoryCallbacks: () => factoryCallbacks,
+  filters: () => filters,
+  findByDisplayName: () => findByDisplayName,
+  findByName: () => findByName,
+  findByProps: () => findByProps,
+  findByStoreName: () => findByStoreName,
+  findInitializedModule: () => findInitializedModule,
+  getInitializedModules: () => getInitializedModules,
+  onceReady: () => onceReady,
+  requireMetro: () => requireMetro,
+  requireMetroDefaultLazy: () => requireMetroDefaultLazy,
+  requireMetroLazy: () => requireMetroLazy,
+  waitForModule: () => waitForModule
+});
+function canRequire(name) {
+  return pyonRequire(name) != null && pyonRequire(name) !== -1;
+}
+function requireMetro(name) {
+  if (!canRequire(name))
+    throw new Error(`Module with name '${name}' was not found/cached`);
+  const id = pyonRequire(name);
+  return globalThis.__r(id);
+}
+function requireMetroLazy(name, resolver) {
+  if (!canRequire(name))
+    throw new Error(`Module with name '${name}' was not found/cached`);
+  return proxyLazy(function() {
+    return resolver ? resolver(requireMetro(name)) : requireMetro(name);
+  });
+}
+function requireMetroDefaultLazy(name) {
+  return requireMetroLazy(name, function(m) {
+    return m.default;
+  });
+}
+function waitForModule(name, callback) {
+  const id = pyonRequire(name);
+  if (!id || id === -1) {
+    throw new Error(`Module '${name}' was ${id ? "not found" : "not cached"}`);
+  }
+  const module = modules[id];
+  if (module.isInitialized) {
+    callback(module.publicModule.exports, module, id);
+    return function() {
+      return void 0;
+    };
+  } else {
+    const unpatch2 = after("factory", modules[id], function(args) {
+      callback(args[4].exports, module, id);
+    }, true);
+    return function() {
+      return unpatch2();
+    };
+  }
+}
+var init_metro = __esm({
+  "src/metro/index.ts"() {
+    "use strict";
+    init_proxyLazy();
+    init_esm();
+    init_common();
+    init_internal_metro();
+    __name(canRequire, "canRequire");
+    __name(requireMetro, "requireMetro");
+    __name(requireMetroLazy, "requireMetroLazy");
+    __name(requireMetroDefaultLazy, "requireMetroDefaultLazy");
+    __name(waitForModule, "waitForModule");
   }
 });
 
@@ -745,21 +747,35 @@ var init_Patcher = __esm({
   }
 });
 
-// src/metro/common.ts
-var AssetManager, I18n, Forms, Tables, NavigationNative, Colors, Constants, FluxDispatcher, TabsNavigationRef;
-var init_common = __esm({
-  "src/metro/common.ts"() {
+// src/native.ts
+var native_exports = {};
+__export(native_exports, {
+  readFile: () => readFile,
+  writeFile: () => writeFile
+});
+async function writeFile(path, data) {
+  let prefix = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "pyoncord/";
+  return void await RTNFileManager.writeFile("documents", `${prefix}${path}`, data, "utf8");
+}
+async function readFile(path, fallback) {
+  let prefix = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "pyoncord/";
+  try {
+    return await RTNFileManager.readFile(`${RTNFileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
+  } catch {
+    if (fallback == null) {
+      throw new Error(`File ${path} doesn't exist`);
+    }
+    writeFile(path, fallback);
+    return fallback;
+  }
+}
+var RTNFileManager;
+var init_native = __esm({
+  "src/native.ts"() {
     "use strict";
-    init_metro();
-    AssetManager = requireMetroLazy("AssetManager");
-    I18n = requireMetroDefaultLazy("I18n");
-    Forms = requireMetroLazy("uikit-native/refresh/form/index.tsx");
-    Tables = requireMetroLazy("Tables");
-    NavigationNative = requireMetroLazy("NavigationNative");
-    Colors = requireMetroDefaultLazy("Colors");
-    Constants = requireMetroLazy("Constants");
-    FluxDispatcher = requireMetroDefaultLazy("FluxDispatcher");
-    TabsNavigationRef = requireMetroLazy("TabsNavigationRef");
+    ({ RTNFileManager } = nativeModuleProxy);
+    __name(writeFile, "writeFile");
+    __name(readFile, "readFile");
   }
 });
 
@@ -829,25 +845,6 @@ var init_assets = __esm({
     }, "getAssetIDByName");
     __name(requireAssetFromCache, "requireAssetFromCache");
     __name(resolveAssets, "resolveAssets");
-  }
-});
-
-// src/utils/awaitUntil.ts
-function awaitUntil(condition) {
-  let timeout = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 100;
-  return new Promise(function(resolve) {
-    const interval = setInterval(function() {
-      if (condition()) {
-        clearInterval(interval);
-        resolve();
-      }
-    }, timeout);
-  });
-}
-var init_awaitUntil = __esm({
-  "src/utils/awaitUntil.ts"() {
-    "use strict";
-    __name(awaitUntil, "awaitUntil");
   }
 });
 
@@ -984,7 +981,6 @@ var init_observeObject = __esm({
 var utils_exports = {};
 __export(utils_exports, {
   assets: () => assets_exports,
-  awaitUntil: () => awaitUntil,
   findInReactTree: () => findInReactTree,
   findInTree: () => findInTree,
   lazyNavigate: () => lazyNavigate,
@@ -995,118 +991,11 @@ var init_utils = __esm({
   "src/utils/index.ts"() {
     "use strict";
     init_assets();
-    init_awaitUntil();
     init_findInReactTree();
     init_findInTree();
     init_lazyNavigate();
     init_observeObject();
     init_proxyLazy();
-  }
-});
-
-// src/metro/index.ts
-var metro_exports = {};
-__export(metro_exports, {
-  AssetManager: () => AssetManager,
-  Colors: () => Colors,
-  Constants: () => Constants,
-  FluxDispatcher: () => FluxDispatcher,
-  Forms: () => Forms,
-  I18n: () => I18n,
-  NavigationNative: () => NavigationNative,
-  Tables: () => Tables,
-  TabsNavigationRef: () => TabsNavigationRef,
-  _internal: () => _internal,
-  onceReady: () => onceReady,
-  requireMetro: () => requireMetro,
-  requireMetroDefaultLazy: () => requireMetroDefaultLazy,
-  requireMetroLazy: () => requireMetroLazy,
-  waitForModule: () => waitForModule
-});
-function requireMetro(name) {
-  const id = pyonRequire(name);
-  if (!id) {
-    throw new Error(`No module with name '${name}' was cached`);
-  } else if (id === -1) {
-    throw new Error(`Module '${name}' was not found during caching`);
-  }
-  return globalThis.__r(id);
-}
-function requireMetroLazy(name) {
-  return proxyLazy(function() {
-    return requireMetro(name);
-  });
-}
-function requireMetroDefaultLazy(name) {
-  return proxyLazy(function() {
-    return requireMetro(name).default;
-  });
-}
-function waitForModule(name, callback) {
-  const id = pyonRequire(name);
-  if (!id || id === -1) {
-    throw new Error(`Module '${name}' was ${id ? "not found" : "not cached"}`);
-  }
-  const module = modules[id];
-  if (module.isInitialized) {
-    callback(module.publicModule.exports, module, id);
-    return function() {
-      return void 0;
-    };
-  } else {
-    const unpatch2 = after("factory", modules[id], function(args) {
-      callback(args[4].exports, module, id);
-    }, true);
-    return function() {
-      return unpatch2();
-    };
-  }
-}
-var _internal;
-var init_metro = __esm({
-  "src/metro/index.ts"() {
-    "use strict";
-    init_utils();
-    init_esm();
-    init_common();
-    init_internal_metro();
-    _internal = (init_internal_metro(), __toCommonJS(internal_metro_exports));
-    __name(requireMetro, "requireMetro");
-    __name(requireMetroLazy, "requireMetroLazy");
-    __name(requireMetroDefaultLazy, "requireMetroDefaultLazy");
-    __name(waitForModule, "waitForModule");
-  }
-});
-
-// src/native.ts
-var native_exports = {};
-__export(native_exports, {
-  readFile: () => readFile,
-  writeFile: () => writeFile
-});
-async function writeFile(path, data) {
-  let prefix = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "pyoncord/";
-  return void await RTNFileManager.writeFile("documents", `${prefix}${path}`, data, "utf8");
-}
-async function readFile(path, fallback) {
-  let prefix = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "pyoncord/";
-  try {
-    return await RTNFileManager.readFile(`${RTNFileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
-  } catch {
-    if (fallback == null) {
-      throw new Error(`File ${path} doesn't exist`);
-    }
-    writeFile(path, fallback);
-    return fallback;
-  }
-}
-var RTNFileManager;
-var init_native = __esm({
-  "src/native.ts"() {
-    "use strict";
-    ({ RTNFileManager } = nativeModuleProxy);
-    __name(writeFile, "writeFile");
-    __name(readFile, "readFile");
   }
 });
 
@@ -1539,7 +1428,7 @@ var init_settings = __esm({
       Wrench: "ic_progress_wrench_24px"
     });
     sections = window.__pyoncord_sections_patch = {
-      [`Pyoncord (${"f1abf6f"}) ${true ? "(DEV)" : ""}`.trimEnd()]: [
+      [`Pyoncord (${"c80ee49"}) ${true ? "(DEV)" : ""}`.trimEnd()]: [
         [
           "PYONCORD",
           "Pyoncord",
@@ -1709,7 +1598,7 @@ var init_src = __esm({
 });
 
 // entry.js
-console.log(`Pyon! (Pyoncord, hash=${"f1abf6f"}, dev=${true})`);
+console.log(`Pyon! (Pyoncord, hash=${"c80ee49"}, dev=${true})`);
 try {
   Object.freeze = Object.seal = Object;
   window.pyonRequire = await Promise.resolve().then(() => (init_cacher(), cacher_exports)).then(function(m) {
@@ -1731,7 +1620,7 @@ try {
   error = error?.stack ?? error;
   alert([
     "Failed to load Pyoncord.\n",
-    `Build Hash: ${"f1abf6f"}`,
+    `Build Hash: ${"c80ee49"}`,
     `Debug Build: ${true}`,
     `Build Number: ${nativeModuleProxy.RTNClientInfoManager?.Build}`,
     error
