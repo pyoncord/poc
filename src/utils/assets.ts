@@ -30,7 +30,6 @@ export function patchAssets() {
     return () => patcher.unpatchAllAndStop();
 }
 
-
 export const getAssetByName = (name: string): Asset => registeredAssets[name];
 export const getAssetByID = (id: number): Asset => AssetManager.getAssetByID(id);
 export const getAssetIDByName = (name: string) => registeredAssets[name]?.id;

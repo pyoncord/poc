@@ -37,9 +37,15 @@ async function beginCache() {
     const cache = {
         version: currentVersion,
         hash: __PYON_MODULE_DEFINITIONS_HASH__,
+        stats: {
+            skippedModuleIds: new Array<number>,
+            logs: new Array<string>
+        },
         modules: {},
         assets: {}
     };
+
+    const log = (w: string) => (console.log(w), cache.stats.logs.push(w), void 0);
 
     const { modules } = globalThis as typeof window;
 
@@ -71,7 +77,8 @@ async function beginCache() {
         try {
             window.__r(key);
         } catch (e) {
-            // console.log(`Skipping ${key} due to an error while initializing: ${e}`);
+            // log(`Skipping ${key} due to an error while initializing: ${e}`);
+            cache.stats.skippedModuleIds.push(Number(key));
         }
 
         if (window.modules[key]?.location) {
@@ -85,20 +92,20 @@ async function beginCache() {
         const exports = declaredModules[key];
         if (!exports) {
             cache.modules[key] = -1;
-            console.warn(`Failed to find ${key} with parameter ${declaredModules[key]}`);
+            log(`Failed to execute find '${key}'`);
             continue;
         }
 
         const id = getIDByExports(exports);
         if (id === -1) {
-            throw new Error("Could not find ID by exports");
+            throw new Error("Unexpected getIDByExports return");
         }
 
         cache.modules[key] = id;
 
         if (modules[id].location) {
             cache.modules[modules[id].location] = id;
-            console.warn(`Module ${key} (id: ${id}) is locatable with path '${modules[id].location}'`);
+            log(`Module '${key}' (id: ${id}) is already locatable with path '${modules[id].location}'`);
         }
     }
 

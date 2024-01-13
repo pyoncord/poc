@@ -1,7 +1,9 @@
 import { proxyLazy } from "@utils";
 import { after } from "spitroast";
 
-export * from "internal-metro";
+export * from "@metro/common";
+export { onceReady } from "internal-metro";
+export const _internal = require("internal-metro");
 
 declare const modules: Record<number, any>;
 
@@ -20,7 +22,7 @@ export function requireMetroLazy(name: string) {
     return proxyLazy(() => requireMetro(name));
 }
 
-export function requireMetroLazyDefault(name: string) {
+export function requireMetroDefaultLazy(name: string) {
     return proxyLazy(() => requireMetro(name).default);
 }
 
