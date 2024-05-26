@@ -1,18 +1,12 @@
-## pyoncord
+> [!IMPORTANT]
+> Due to maintenance difficulties *(why? read below)*, this project is now discontinued, hence being marked as a "proof-of-concept" project since it was never finished. Worry not, I am working on an alternative, which is a fork and a drop-in Vendetta replacement, [Bunny](https://github.com/pyoncord/Bunny).
 
-Pyoncord, *yet* another Discord mobile client mod made to enhance Discord mobile experience. It currently is very WIP, and is not getting actively worked on. A few inbuilt patches has been implemented at the moment so this mod at least have some functionalities.
+## Pyoncord (client mod)
 
-Current inbuilt patches are: Experiments, NoGiftButton and NoIdle
+##### Pyoncord is often confused with [Bunny](https://github.com/pyoncord/Bunny). Pyoncord nowadays only exists as a form of "team" or community. If you see Pyoncord being mentioned as a client mod, it is likely referring to [Bunny](https://github.com/pyoncord/Bunny) rather than this discontinued project.
 
-Use [Vendetta](https://github.com/vendetta-mod/Vendetta) for more active development and community.
+Pyoncord *was* an experimental Discord mobile client mod that was not seriously made to compete with any other client mod and also a proof-of-concept of implementing lazy [Metro](https://github.com/facebook/metro) bundle runtime patching. Instead of force initializing all modules in the registry to find and patch, Pyoncord waits until Discord itself initializes a module when they require it and patches its exports right before Discord uses them.
 
-### What's so different about this mod?
-Pyoncord has a different approach in how it fetches Discord modules. Unlike other mods, pyoncord waits for Discord to initialize a module, which is lazy loaded. This enables a faster start-up and prevents issues such as the [light/AMOLED theme bug](https://github.com/Aliucord/AliucordRN/issues/39) and [Hindi timestamps](https://github.com/enmity-mod/enmity/issues/11).
+Thanks to [Hermes](https://github.com/facebook/hermes)' limitations, we are unable to depend on Discord's modules and libraries bundled with it, thus integrating this concept into an existing mod (like [Vendetta](https://github.com/vendetta-mod/Vendetta/)) isn't possible and mostly requires rewriting from the ground up (otherwise this project wouldn't exist as, fun fact, I was a part of Team Vendetta :nyaboom:).
 
-### Limitations
-Due to how Pyoncord fetches Discord modules, modules may be required before they're loaded. This is unlikely to affect patches--but when requiring UI components. This *might* be solvable with a custom Hermes, which is planned.
-
-This limitation is why this mod exists in the first place, as rearchitecturing is needed to implement this approach in an existing mod. This also makes addons compatibility for other mods nearly impossible.
-
-### How can I try/contribute to this?
-Pyoncord supports loading from Vendetta's loader, you can load Pyoncord by overriding the loader url to load Pyoncord instead. Be familiar with Vendetta development environment: [Vendetta#installing](https://github.com/vendetta-mod/Vendetta#installing) and [Vendetta#contributing](https://github.com/vendetta-mod/Vendetta#contributing).
+Due to how torturous it is for me to work on this mod with fragile goals, along with the discovery of another approach to achieve similar benefits, I've decided to drop this project without it being finished. The "other approach" is expected to be integrated into [Bunny](https://github.com/pyoncord/Bunny), Pyoncord's iteration of Vendetta.
